@@ -766,6 +766,10 @@
 
         let archivedOrders = [];
         let sessionScannedLog = [];
+        
+        // PASTE / TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI DALAM TANDA PETIK DI BAWAH INI:
+        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbz4NqpoPlV95UJbF6rPqEBK-RmboG73oTdUCMrkq0QvjHLvTIbJzAzchpbpsBHNavXBnw/exec"; 
+        
         let gasUrl = '';
         let pendingRejectId = null;
         let pendingDeleteId = null;
@@ -842,7 +846,7 @@
                 const savedArch = localStorage.getItem('nametag_archives');
                 if (savedArch) archivedOrders = JSON.parse(savedArch);
 
-                gasUrl = localStorage.getItem('nametag_gas_url') || '';
+                gasUrl = localStorage.getItem('nametag_gas_url') || DEFAULT_GAS_URL;
                 const gasInput = document.getElementById('gasUrlInput');
                 if (gasInput) gasInput.value = gasUrl;
             } catch(e) {}
