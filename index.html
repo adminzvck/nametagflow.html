@@ -737,8 +737,8 @@
         let archivedOrders = [];
         let sessionScannedLog = [];
         
-        // URL WEB APP GOOGLE APPS SCRIPT ANDA (TERAPAT DUA-ARAH REALTIME)
-        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbz4NqpoPlV95UJbF6rPqEBK-RmboG73oTdUCMrkq0QvjHLvTIbJzAzchpbpsBHNavXBnw/exec"; 
+        // URL WEB APP GOOGLE APPS SCRIPT LATEST (TERAPAT DUA-ARAH REALTIME)
+        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwKpok4J-Ezh_SD7kOZ8B8j2r1v8QGob5MfZYCHynSdFfeFDbAzA75zsDbRDtyLwIYvkw/exec"; 
         
         let gasUrl = '';
         let pendingRejectId = null;
@@ -823,7 +823,8 @@
                 const savedArch = localStorage.getItem('nametag_archives');
                 if (savedArch) archivedOrders = JSON.parse(savedArch);
 
-                gasUrl = localStorage.getItem('nametag_gas_url') || DEFAULT_GAS_URL;
+                gasUrl = DEFAULT_GAS_URL;
+                localStorage.setItem('nametag_gas_url', DEFAULT_GAS_URL);
                 const gasInput = document.getElementById('gasUrlInput');
                 if (gasInput) gasInput.value = gasUrl;
             } catch(e) {}
