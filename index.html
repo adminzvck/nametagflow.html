@@ -49,11 +49,12 @@
                 </div>
 
                 <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-1">
-                    <!-- Sync Indicator -->
-                    <div id="syncStatus" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700 shrink-0">
+                    <!-- Sync Indicator & Manual Sync Button -->
+                    <button onclick="loadOrdersFromSheet(true)" id="syncStatus" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 shrink-0 transition" title="Klik untuk refresh data dari Google Sheet">
                         <span id="statusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
                         <span id="statusText" class="text-[11px] hidden lg:inline">Offline</span>
-                    </div>
+                        <i class="fa-solid fa-arrows-rotate text-[10px] text-slate-400 ml-0.5"></i>
+                    </button>
 
                     <button onclick="openModal('scanModal')" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-black bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 shadow-md transition flex items-center gap-1.5 shrink-0">
                         <i class="fa-solid fa-barcode text-xs"></i>
@@ -730,44 +731,13 @@
     </div>
 
     <script>
-        // Default Mock Data Initial State
-        let orders = [
-            {
-                id: 'NT-1001',
-                name: 'SUPRIYADI',
-                nip: '',
-                model: 'Model 1 (Lis + Nama)',
-                hook: 'Magnet',
-                logo: '',
-                mp: '240820SHOP101',
-                resi: 'JP8890219201',
-                sku: 'NT-AKR-MAG-01',
-                printCount: 1,
-                currentStep: 6,
-                isReject: false,
-                rejectReason: ''
-            },
-            {
-                id: 'NT-1002',
-                name: 'ERNA NARLIA, S.Pd',
-                nip: 'NIP. 19770611 200421 2 002',
-                model: 'Model 2 (Lis + Nama + NIP)',
-                hook: 'Magnet',
-                logo: '',
-                mp: 'TKP-9021029182',
-                resi: 'SPX092019281',
-                sku: 'NT-AKR-MAG-02',
-                printCount: 1,
-                currentStep: 2,
-                isReject: false,
-                rejectReason: ''
-            }
-        ];
+        // Default State (Data kosong untuk sinkronisasi riil dari Google Sheet)
+        let orders = [];
 
         let archivedOrders = [];
         let sessionScannedLog = [];
         
-        // PASTE / TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI DALAM TANDA PETIK DI BAWAH INI:
+        // URL WEB APP GOOGLE APPS SCRIPT ANDA (TERAPAT DUA-ARAH REALTIME)
         const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbz4NqpoPlV95UJbF6rPqEBK-RmboG73oTdUCMrkq0QvjHLvTIbJzAzchpbpsBHNavXBnw/exec"; 
         
         let gasUrl = '';
@@ -777,12 +747,19 @@
         let activeStationTab = 1;
         let html5QrCodeScanner = null;
         let isCameraActive = false;
+        let autoSyncTimer = null;
 
         window.onload = function() {
             loadSavedData();
             updateGasBadge();
             renderOrders();
-            loadOrdersFromSheet();
+            loadOrdersFromSheet(true);
+
+            // SINKRONISASI OTOMATIS: Ambil data dari Google Sheets setiap 10 detik secara background
+            if (autoSyncTimer) clearInterval(autoSyncTimer);
+            autoSyncTimer = setInterval(() => {
+                loadOrdersFromSheet(false);
+            }, 10000);
         };
 
         // Modal and Tab Switch Compatibility Wrappers
@@ -852,29 +829,30 @@
             } catch(e) {}
         }
 
-        function loadOrdersFromSheet() {
+        function loadOrdersFromSheet(showToastNotice = false) {
+            const currentGasUrl = gasUrl || DEFAULT_GAS_URL;
+            if (showToastNotice) showToast('🔄 Mengambil data terbaru dari Google Sheet...');
+
             if (typeof google !== 'undefined' && google.script && google.script.run) {
                 google.script.run.withSuccessHandler(function(res) {
                     if (res && res.status === 'success' && Array.isArray(res.orders)) {
-                        if (res.orders.length > 0) {
-                            orders = res.orders;
-                            saveLocalOnly();
-                            renderOrders();
-                            showToast('✅ Data disinkronkan dari Google Sheet!');
-                        }
+                        orders = res.orders;
+                        saveLocalOnly();
+                        renderOrders();
+                        updateGasBadge();
+                        if (showToastNotice) showToast('✅ Data terbaru tersinkron!');
                     }
                 }).getActiveOrdersFromSheet();
-            } else if (gasUrl) {
-                fetch(gasUrl + '?action=getOrders')
+            } else if (currentGasUrl) {
+                fetch(currentGasUrl + '?action=getOrders')
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.status === 'success' && Array.isArray(data.orders)) {
-                            if (data.orders.length > 0) {
-                                orders = data.orders;
-                                saveLocalOnly();
-                                renderOrders();
-                                showToast('✅ Data disinkronkan dari Google Sheet!');
-                            }
+                            orders = data.orders;
+                            saveLocalOnly();
+                            renderOrders();
+                            updateGasBadge();
+                            if (showToastNotice) showToast('✅ Data terbaru tersinkron!');
                         }
                     })
                     .catch(err => console.log('Fetch error:', err));
