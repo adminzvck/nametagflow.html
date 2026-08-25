@@ -14,21 +14,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- HTML5 QRCode Scanner Library -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <style>
         * { -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         body.modal-open { overflow: hidden; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        #reader video, #qr-reader video { object-fit: cover !important; border-radius: 0.75rem; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen pb-16 antialiased selection:bg-amber-400 selection:text-slate-950">
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-16 antialiased selection:bg-amber-400 selection:text-slate-950 flex flex-col">
 
     <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
@@ -48,15 +49,20 @@
                 </div>
 
                 <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-1">
-                    <button onclick="openModal('scanModal')" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-black bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 shadow-md transition flex items-center gap-1.5 shrink-0 animate-pulse">
+                    <!-- Sync Indicator -->
+                    <div id="syncStatus" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700 shrink-0">
+                        <span id="statusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+                        <span id="statusText" class="text-[11px] hidden lg:inline">Offline</span>
+                    </div>
+
+                    <button onclick="openModal('scanModal')" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-black bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 shadow-md transition flex items-center gap-1.5 shrink-0">
                         <i class="fa-solid fa-barcode text-xs"></i>
                         <span>Scan Resi</span>
                     </button>
 
-                    <button onclick="openModal('sheetModal')" id="btnSheetStatus" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shrink-0">
+                    <button onclick="openModal('sheetModal')" id="btnSheetStatus" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shrink-0" title="Integrasi Google Sheet">
                         <i class="fa-solid fa-file-excel text-emerald-400 text-xs"></i>
                         <span class="hidden md:inline">Integrasi Sheet</span>
-                        <span id="sheetBadge" class="w-2 h-2 rounded-full bg-slate-500"></span>
                     </button>
 
                     <button onclick="openModal('catalogModal')" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shrink-0">
@@ -92,8 +98,9 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 space-y-4 sm:space-y-6">
+    <main class="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 space-y-4 sm:space-y-6 flex-1">
 
+        <!-- STATS BAR -->
         <section class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 sm:gap-3">
             <div class="bg-white p-3 sm:p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between text-slate-400">
@@ -181,7 +188,7 @@
             <div class="bg-white p-3 sm:p-3.5 rounded-2xl border border-cyan-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-1.5 sm:w-2 h-full bg-cyan-500"></div>
                 <div class="flex items-center justify-between text-cyan-600">
-                    <span class="text-[11px] sm:text-xs font-bold">7. Pengiriman</span>
+                    <span class="text-[11px] sm:text-xs font-bold">7. Kirim</span>
                     <i class="fa-solid fa-truck-fast text-xs sm:text-sm"></i>
                 </div>
                 <div class="mt-1.5 sm:mt-2">
@@ -191,6 +198,7 @@
             </div>
         </section>
 
+        <!-- SEARCH AND CONTROL BAR -->
         <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
                 <div class="relative flex-1">
@@ -223,8 +231,10 @@
             </div>
         </div>
 
+        <!-- CARDS VIEW CONTAINER -->
         <div id="cardsViewContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4"></div>
 
+        <!-- STATION VIEW CONTAINER -->
         <div id="stationViewContainer" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-4 space-y-4">
             <div class="flex items-center gap-1.5 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar">
                 <button onclick="switchStageTab(1)" id="tabStage1" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 whitespace-nowrap transition">1. Cetak Vinyl</button>
@@ -264,6 +274,8 @@
         </div>
     </main>
 
+
+    <!-- MODAL: SCAN RESI LIVE -->
     <div id="scanModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -319,6 +331,7 @@
         </div>
     </div>
 
+    <!-- MODAL: INTEGRASI GOOGLE SHEET -->
     <div id="sheetModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -354,6 +367,7 @@
         </div>
     </div>
 
+    <!-- MODAL: TAMBAH SINGLE PESANAN (DENGAN ALL 11 MODEL) -->
     <div id="singleModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -376,7 +390,7 @@
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Pilih Model *</label>
+                        <label class="block font-semibold text-slate-700 mb-1">Pilih Model (1 - 11) *</label>
                         <select id="singleModel" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-amber-400 focus:outline-none">
                             <option value="Model 1 (Lis + Nama)">Model 1 (Lis + Nama)</option>
                             <option value="Model 2 (Lis + Nama + NIP)">Model 2 (Lis + Nama + NIP)</option>
@@ -388,14 +402,16 @@
                             <option value="Model 8 (Polos + Logo + Nama)">Model 8 (Polos + Logo + Nama)</option>
                             <option value="Model 9 (Polos + Logo + Nama + NIP)">Model 9 (Polos + Logo + Nama + NIP)</option>
                             <option value="Model 10 (Polos + Logo + Nama + Line + NIP)">Model 10 (Polos + Logo + Nama + Line + NIP)</option>
+                            <option value="Model 11 (Custom Desain)">Model 11 (Custom Desain)</option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Pengait *</label>
                         <select id="singleHook" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-amber-400 focus:outline-none">
-                            <option value="Magnet">Magnet</option>
-                            <option value="Peniti">Peniti</option>
+                            <option value="Magnet">Magnet Standard</option>
+                            <option value="Peniti">Peniti Kebaya / Standard</option>
+                            <option value="Paku / Pin">Paku Pin Butterfly</option>
                         </select>
                     </div>
                 </div>
@@ -423,6 +439,7 @@
         </div>
     </div>
 
+    <!-- MODAL: BATCH IMPORT (DENGAN ALL 11 MODEL) -->
     <div id="batchModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -453,14 +470,21 @@
                             <option value="Model 3 (Lis + Logo + Nama)">Model 3 (Lis + Logo + Nama)</option>
                             <option value="Model 4 (Lis + Logo + Nama + NIP)">Model 4 (Lis + Logo + Nama + NIP)</option>
                             <option value="Model 5 (Lis + Logo + Nama + Line + NIP)">Model 5 (Lis + Logo + Nama + Line + NIP)</option>
+                            <option value="Model 6 (Polos + Nama)">Model 6 (Polos + Nama)</option>
+                            <option value="Model 7 (Polos + Nama + NIP)">Model 7 (Polos + Nama + NIP)</option>
+                            <option value="Model 8 (Polos + Logo + Nama)">Model 8 (Polos + Logo + Nama)</option>
+                            <option value="Model 9 (Polos + Logo + Nama + NIP)">Model 9 (Polos + Logo + Nama + NIP)</option>
+                            <option value="Model 10 (Polos + Logo + Nama + Line + NIP)">Model 10 (Polos + Logo + Nama + Line + NIP)</option>
+                            <option value="Model 11 (Custom Desain)">Model 11 (Custom Desain)</option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Pengait Default</label>
                         <select id="batchDefaultHook" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-amber-400 focus:outline-none">
-                            <option value="Magnet">Magnet</option>
-                            <option value="Peniti">Peniti</option>
+                            <option value="Magnet">Magnet Standard</option>
+                            <option value="Peniti">Peniti Kebaya / Standard</option>
+                            <option value="Paku / Pin">Paku Pin Butterfly</option>
                         </select>
                     </div>
                 </div>
@@ -484,11 +508,12 @@
         </div>
     </div>
 
+    <!-- MODAL: KATALOG MODEL (1 - 11) -->
     <div id="catalogModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-book-open text-amber-500"></i> Katalog Model Nametag (1 - 10)
+                    <i class="fa-solid fa-book-open text-amber-500"></i> Katalog Model Nametag (1 - 11)
                 </h3>
                 <button onclick="closeModal('catalogModal')" class="text-slate-400 hover:text-slate-600 p-1 text-lg leading-none"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -541,7 +566,7 @@
                 </div>
 
                 <div class="text-xs font-bold text-slate-800 bg-slate-100 p-2 rounded-xl border border-slate-200 pt-3">
-                    Grup B: Model Polos / Tanpa Lis (6 - 10)
+                    Grup B: Model Polos / Tanpa Lis (6 - 10) & Custom (11)
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -575,13 +600,22 @@
                         </div>
                     </div>
 
-                    <div class="sm:col-span-2 p-3 bg-slate-950 rounded-xl text-white border border-slate-800 flex items-center justify-between gap-2">
+                    <div class="p-3 bg-slate-950 rounded-xl text-white border border-slate-800 flex items-center justify-between gap-2">
                         <span class="text-[9px] font-bold text-slate-400 absolute top-1 left-2">10</span>
                         <div class="shrink-0 ml-3 pr-2 border-r border-slate-400"><i class="fa-solid fa-building-columns text-emerald-400 text-sm"></i></div>
                         <div class="flex-1 text-center">
                             <div class="font-black text-xs">PATRIAH, S.Pd.I</div>
                             <div class="border-t border-slate-400 my-0.5 w-full"></div>
                             <div class="text-[9px] text-slate-300 font-mono">NIP. 19801202 202421 2 023</div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-gradient-to-r from-amber-950 to-slate-950 rounded-xl text-white border border-amber-500/50 flex items-center justify-between gap-2">
+                        <span class="text-[9px] font-bold text-amber-400 absolute top-1 left-2">11</span>
+                        <div class="shrink-0 ml-3 pr-2 border-r border-amber-400/30"><i class="fa-solid fa-wand-magic-sparkles text-amber-400 text-sm"></i></div>
+                        <div class="flex-1 text-center">
+                            <div class="font-black text-xs text-amber-300">CUSTOM DESAIN / LOGO</div>
+                            <div class="text-[9px] text-slate-300">Sesuai Permintaan Pemesan</div>
                         </div>
                     </div>
                 </div>
@@ -593,6 +627,7 @@
         </div>
     </div>
 
+    <!-- MODAL: ARCHIVE -->
     <div id="archiveModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -646,6 +681,7 @@
         </div>
     </div>
 
+    <!-- MODAL: REJECT / CACAT -->
     <div id="rejectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -670,6 +706,7 @@
         </div>
     </div>
 
+    <!-- MODAL: HAPUS PESANAN -->
     <div id="deleteModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 text-center">
             <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-xl">
@@ -693,6 +730,7 @@
     </div>
 
     <script>
+        // Default Mock Data Initial State
         let orders = [
             {
                 id: 'NT-1001',
@@ -742,6 +780,47 @@
             renderOrders();
             loadOrdersFromSheet();
         };
+
+        // Modal and Tab Switch Compatibility Wrappers
+        function switchTab(tabName) {
+            if (tabName === 'scan') {
+                openModal('scanModal');
+            } else if (tabName === 'archive') {
+                openModal('archiveModal');
+            } else if (tabName === 'active') {
+                closeModal('scanModal');
+                closeModal('archiveModal');
+            }
+        }
+
+        function openAddModal() { openModal('singleModal'); }
+        function closeAddModal() { closeModal('singleModal'); }
+        function openConfigModal() { openModal('sheetModal'); }
+        function closeConfigModal() { closeModal('sheetModal'); }
+
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+                if (id === 'scanModal') {
+                    const scanInput = document.getElementById('scanResiInput');
+                    if (scanInput) setTimeout(() => scanInput.focus(), 100);
+                }
+                if (id === 'archiveModal') {
+                    renderArchives();
+                }
+            }
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+                if (id === 'scanModal') stopCameraScanner();
+            }
+        }
 
         function saveLocalOnly() {
             try {
@@ -945,10 +1024,14 @@
                 isCameraActive = true;
 
                 try {
-                    html5QrCodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: { width: 250, height: 150 } }, false);
-                    html5QrCodeScanner.render((decodedText) => {
-                        processResiScan(decodedText);
-                    }, (errorMessage) => {});
+                    if (typeof Html5QrcodeScanner !== 'undefined') {
+                        html5QrCodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: { width: 250, height: 150 } }, false);
+                        html5QrCodeScanner.render((decodedText) => {
+                            processResiScan(decodedText);
+                        }, (errorMessage) => {});
+                    } else {
+                        showToast('Library scanner sedang dimuat, coba lagi sebentar...');
+                    }
                 } catch(e) {
                     showToast('Gagal membuka kamera. Gunakan scanner USB/ketik manual.');
                 }
@@ -981,15 +1064,21 @@
         }
 
         function updateGasBadge() {
-            const badge = document.getElementById('sheetBadge');
+            const dot = document.getElementById('statusDot');
+            const txt = document.getElementById('statusText');
             const stateText = document.getElementById('syncStateText');
-            if (badge && stateText) {
-                if (gasUrl || (typeof google !== 'undefined' && google.script)) {
-                    badge.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+
+            if (gasUrl || (typeof google !== 'undefined' && google.script)) {
+                if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+                if (txt) txt.textContent = "Terhubung Sheet";
+                if (stateText) {
                     stateText.textContent = "Terhubung";
                     stateText.className = "font-bold text-emerald-600";
-                } else {
-                    badge.className = "w-2 h-2 rounded-full bg-slate-500";
+                }
+            } else {
+                if (dot) dot.className = "w-2 h-2 rounded-full bg-slate-500";
+                if (txt) txt.textContent = "Offline / Disconnected";
+                if (stateText) {
                     stateText.textContent = "Belum Terhubung";
                     stateText.className = "font-bold text-slate-500";
                 }
@@ -1073,30 +1162,6 @@
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', 'translate-y-5', 'pointer-events-none');
             }, 3000);
-        }
-
-        function openModal(id) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.classList.remove('hidden');
-                document.body.classList.add('modal-open');
-                if (id === 'scanModal') {
-                    const scanInput = document.getElementById('scanResiInput');
-                    if (scanInput) setTimeout(() => scanInput.focus(), 100);
-                }
-                if (id === 'archiveModal') {
-                    renderArchives();
-                }
-            }
-        }
-
-        function closeModal(id) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.classList.add('hidden');
-                document.body.classList.remove('modal-open');
-                if (id === 'scanModal') stopCameraScanner();
-            }
         }
 
         function switchViewMode(mode) {
@@ -1198,6 +1263,7 @@
             if (str === '8' || str === 'model 8' || str.includes('model 8')) return 'Model 8 (Polos + Logo + Nama)';
             if (str === '9' || str === 'model 9' || str.includes('model 9')) return 'Model 9 (Polos + Logo + Nama + NIP)';
             if (str === '10' || str === 'model 10' || str.includes('model 10')) return 'Model 10 (Polos + Logo + Nama + Line + NIP)';
+            if (str === '11' || str === 'model 11' || str.includes('model 11') || str.includes('custom')) return 'Model 11 (Custom Desain)';
             
             return defaultModel;
         }
@@ -1503,17 +1569,26 @@
             let countS6 = orders.filter(o => o.currentStep === 6).length;
             let countS7 = orders.filter(o => o.currentStep === 7).length;
 
-            document.getElementById('statTotal').textContent = countTotal;
-            document.getElementById('statStep1').textContent = countS1;
-            document.getElementById('statStep2').textContent = countS2;
-            document.getElementById('statStep3').textContent = countS3;
-            document.getElementById('statStep4').textContent = countS4;
-            document.getElementById('statStep5').textContent = countS5;
-            document.getElementById('statStep6').textContent = countS6;
-            document.getElementById('statStep7').textContent = countS7;
+            const elTotal = document.getElementById('statTotal');
+            if (elTotal) elTotal.textContent = countTotal;
+            const elS1 = document.getElementById('statStep1');
+            if (elS1) elS1.textContent = countS1;
+            const elS2 = document.getElementById('statStep2');
+            if (elS2) elS2.textContent = countS2;
+            const elS3 = document.getElementById('statStep3');
+            if (elS3) elS3.textContent = countS3;
+            const elS4 = document.getElementById('statStep4');
+            if (elS4) elS4.textContent = countS4;
+            const elS5 = document.getElementById('statStep5');
+            if (elS5) elS5.textContent = countS5;
+            const elS6 = document.getElementById('statStep6');
+            if (elS6) elS6.textContent = countS6;
+            const elS7 = document.getElementById('statStep7');
+            if (elS7) elS7.textContent = countS7;
 
             const totalPages = Math.ceil(countTotal / 29) || 0;
-            document.getElementById('statPages').textContent = `${totalPages} Lembar Desain (29/hal)`;
+            const elPages = document.getElementById('statPages');
+            if (elPages) elPages.textContent = `${totalPages} Lembar Desain (29/hal)`;
 
             let filtered = orders.filter(o => {
                 const matchesSearch = o.name.toLowerCase().includes(searchVal) || 
