@@ -18,16 +18,34 @@
 
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        body.modal-open { overflow: hidden; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; overflow-y: auto; }
+        
+        /* Custom Scrollbar PC & Mobile */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 9999px; border: 2px solid #f1f5f9; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; width: 12px; }
+        
+        /* Scrollbar Halus & Tipis Khusus Header Navbar */
+        .header-scrollbar::-webkit-scrollbar { height: 3px; }
+        .header-scrollbar::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.4); border-radius: 9999px; }
+        .header-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.35); border-radius: 9999px; }
+        .header-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.6); }
+
+        body.modal-open { overflow: hidden !important; touch-action: none; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         #reader video, #qr-reader video { object-fit: cover !important; border-radius: 0.75rem; }
         
+        /* Smooth Modal Scroll Container */
+        .modal-scrollable {
+            max-height: 85vh;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+        }
+
         /* Custom Tooltip Styling */
         .tooltip-container { position: relative; display: inline-block; }
         .tooltip-box {
@@ -79,10 +97,11 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-1">
+                <!-- NAVBAR BUTTONS CONTAINER WITH PC DRAG & WHEEL SCROLL -->
+                <div id="headerNavContainer" class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto header-scrollbar py-1.5 cursor-grab active:cursor-grabbing select-none scroll-smooth">
                     <button onclick="loadOrdersFromSheet(true)" id="syncStatus" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 shrink-0 transition" title="Klik untuk refresh data dari Google Sheet">
                         <span id="statusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-                        <span id="statusText" class="text-[11px] hidden lg:inline">Offline</span>
+                        <span id="statusText" class="text-[11px] hidden lg:inline">Terhubung Sheet</span>
                         <i class="fa-solid fa-arrows-rotate text-[10px] text-slate-400 ml-0.5"></i>
                     </button>
 
@@ -91,15 +110,14 @@
                         <span>Scan Resi</span>
                     </button>
 
-                    <button onclick="openModal('sheetModal')" id="btnSheetStatus" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shrink-0" title="Integrasi Google Sheet">
-                        <i class="fa-solid fa-file-excel text-emerald-400 text-xs"></i>
-                        <span class="hidden md:inline">Integrasi Sheet</span>
+                    <button onclick="openModal('singleModal')" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-white border border-slate-700 transition flex items-center gap-1 shrink-0">
+                        <i class="fa-solid fa-plus text-amber-400 text-xs"></i>
+                        <span class="text-[11px] sm:text-xs">+ Single</span>
                     </button>
 
-                    <button onclick="openModal('catalogModal')" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shrink-0">
-                        <i class="fa-solid fa-book-open text-amber-400 text-xs"></i>
-                        <span class="hidden md:inline">Katalog Model</span>
-                        <span class="inline md:hidden text-[11px]">Katalog</span>
+                    <button onclick="openModal('batchModal')" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-extrabold bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 shadow-md transition flex items-center gap-1.5 shrink-0">
+                        <i class="fa-solid fa-file-import text-xs"></i>
+                        <span>Import</span>
                     </button>
 
                     <button onclick="openModal('archiveModal')" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shrink-0">
@@ -115,20 +133,22 @@
 
                     <div class="h-5 w-px bg-slate-700 mx-0.5 hidden sm:block shrink-0"></div>
 
-                    <button onclick="openModal('singleModal')" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-white border border-slate-700 transition flex items-center gap-1 shrink-0">
-                        <i class="fa-solid fa-plus text-amber-400 text-xs"></i>
-                        <span class="text-[11px] sm:text-xs">+ Single</span>
+                    <button onclick="openModal('sheetModal')" id="btnSheetStatus" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shrink-0" title="Integrasi Google Sheet">
+                        <i class="fa-solid fa-file-excel text-emerald-400 text-xs"></i>
+                        <span class="hidden md:inline">Integrasi Sheet</span>
                     </button>
 
-                    <button onclick="openModal('batchModal')" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-extrabold bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 shadow-md transition flex items-center gap-1.5 shrink-0">
-                        <i class="fa-solid fa-file-import text-xs"></i>
-                        <span>Import</span>
+                    <button onclick="openModal('catalogModal')" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shrink-0">
+                        <i class="fa-solid fa-book-open text-amber-400 text-xs"></i>
+                        <span class="hidden md:inline">Katalog Model</span>
+                        <span class="inline md:hidden text-[11px]">Katalog</span>
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- MAIN CONTENT -->
     <main class="max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 space-y-4 sm:space-y-6 flex-1">
 
         <!-- STATS BAR -->
@@ -306,10 +326,11 @@
         </div>
     </main>
 
+    <!-- MODAL POPUPS -->
 
     <!-- MODAL: SCAN RESI LIVE & SEARCH -->
-    <div id="scanModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+    <div id="scanModal" onclick="handleBackdropClick(event, 'scanModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-barcode text-cyan-500 text-base"></i> Scan Barcode / Cari Pesanan
@@ -320,7 +341,7 @@
             <div class="space-y-3">
                 <div class="flex items-center gap-2 p-1 bg-slate-100 rounded-xl text-xs font-bold border border-slate-200">
                     <button id="scanModeShip" onclick="setScanAction('ship')" class="flex-1 py-1.5 rounded-lg bg-cyan-600 text-white shadow-xs transition flex items-center justify-center gap-1 font-bold">
-                        <i class="fa-solid fa-truck-fast text-xs"></i> Mode Auto Kirim (Ke Tahap 7)
+                        <i class="fa-solid fa-truck-fast text-xs"></i> Mode Auto Kirim (Tahap 7)
                     </button>
                     <button id="scanModeFind" onclick="setScanAction('find')" class="flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1 font-semibold">
                         <i class="fa-solid fa-magnifying-glass text-xs"></i> Mode Cari & Sorot Nama
@@ -373,8 +394,8 @@
     </div>
 
     <!-- MODAL: INTEGRASI GOOGLE SHEET -->
-    <div id="sheetModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+    <div id="sheetModal" onclick="handleBackdropClick(event, 'sheetModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-file-excel text-emerald-500"></i> Pengaturan Integrasi Google Sheets
@@ -409,8 +430,8 @@
     </div>
 
     <!-- MODAL: TAMBAH SINGLE PESANAN -->
-    <div id="singleModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+    <div id="singleModal" onclick="handleBackdropClick(event, 'singleModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-plus text-amber-500"></i> Tambah Pesanan Satuan
@@ -421,7 +442,7 @@
             <form id="singleOrderForm" onsubmit="handleSingleOrderSubmit(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Nama Pemesan / Pegawai *</label>
-                    <input type="text" id="singleName" required placeholder="Contoh: SUPRIYADI, S.Pd" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none uppercase">
+                    <input type="text" id="singleName" required placeholder="Contoh: SUPRIYADI, S.Pd" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
                 </div>
 
                 <div>
@@ -486,8 +507,8 @@
     </div>
 
     <!-- MODAL: EDIT PESANAN -->
-    <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+    <div id="editModal" onclick="handleBackdropClick(event, 'editModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square text-amber-500"></i> Edit Data Pesanan
@@ -498,7 +519,7 @@
             <form id="editOrderForm" onsubmit="handleEditOrderSubmit(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Nama Pemesan / Pegawai *</label>
-                    <input type="text" id="editName" required placeholder="Contoh: SUPRIYADI, S.Pd" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none uppercase">
+                    <input type="text" id="editName" required placeholder="Contoh: SUPRIYADI, S.Pd" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
                 </div>
 
                 <div>
@@ -549,7 +570,7 @@
                     </div>
                 </div>
 
-                <!-- FITUR BARU: CENTANG EDIT RESI MASSAL PER NO. MP -->
+                <!-- EDIT RESI MASSAL PER NO. MP -->
                 <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2">
                     <input type="checkbox" id="editApplyAllMp" checked class="w-4 h-4 text-amber-600 rounded focus:ring-amber-400 cursor-pointer">
                     <label for="editApplyAllMp" class="text-xs font-bold text-amber-900 cursor-pointer flex items-center gap-1.5">
@@ -572,8 +593,8 @@
     </div>
 
     <!-- MODAL: BATCH IMPORT PESANAN MASSAL -->
-    <div id="batchModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+    <div id="batchModal" onclick="handleBackdropClick(event, 'batchModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-file-import text-amber-500"></i> Import Pesanan Massal
@@ -582,20 +603,28 @@
             </div>
 
             <div class="space-y-3 text-xs">
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 space-y-1 text-slate-700">
-                    <p class="font-bold text-amber-900">Format Input per Baris (6 Bidang):</p>
-                    <p class="font-mono text-[11px] bg-white p-1.5 rounded border border-amber-200">NAMA | NIP | LOGO | PENGAIT | MODEL | CATATAN</p>
-                    <p class="text-[11px] text-slate-500 italic">*Contoh: SUPRIYADI | NIP. 1980... | Tut Wuri | Magnet | Model 4 | Tulisan Bold</p>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 space-y-1.5 text-slate-700">
+                    <p class="font-bold text-amber-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-lightbulb text-amber-600"></i> Format Input per Baris (Copy-Paste dari Excel/Sheets/BigSeller):
+                    </p>
+                    <p class="font-mono text-[11px] bg-white p-2 rounded border border-amber-200 text-slate-800 font-bold overflow-x-auto whitespace-nowrap">
+                        NO_MP | NO_RESI | SKU | NAMA | NIP | LOGO | PENGAIT | MODEL | CATATAN
+                    </p>
+                    <p class="text-[11px] text-slate-600 italic">
+                        *Contoh Multi No. MP & SKU:<br>
+                        240820SHOP01 | JP88901 | NT-AKR-MAG | SUPRIYADI | NIP. 1980... | Tut Wuri | Magnet | Model 4 | Tulisan Tebal<br>
+                        240820SHOP02 | JP88902 | NT-AKR-PEN | ERNA NARLIA | | Tanpa Logo | Peniti | 2 |
+                    </p>
                 </div>
 
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Tempelkan Data Pesanan Di Sini:</label>
-                    <textarea id="batchInput" rows="6" placeholder="SUPRIYADI | NIP. 19800101 | Tut Wuri | Magnet | Model 4 | Tulisan Tebal&#10;ERNA NARLIA | | Tanpa Logo | Peniti | 2 |" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
+                    <textarea id="batchInput" rows="6" placeholder="240820SHOP01 | JP88901 | NT-AKR-MAG | SUPRIYADI | NIP. 19800101 | Tut Wuri | Magnet | Model 4 | Tulisan Tebal&#10;240820SHOP02 | JP88902 | NT-AKR-PEN | ERNA NARLIA | | Tanpa Logo | Peniti | 2 |" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Model Default (Jika Kolom 5 Kosong)</label>
+                        <label class="block font-semibold text-slate-700 mb-1">Model Default (Jika Kosong)</label>
                         <select id="batchDefaultModel" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-amber-400 focus:outline-none">
                             <option value="Model 1 (Lis + Nama)">Model 1 (Lis + Nama)</option>
                             <option value="Model 2 (Lis + Nama + NIP)">Model 2 (Lis + Nama + NIP)</option>
@@ -621,14 +650,18 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-3 gap-2">
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">No. MP (Opsional Batch)</label>
+                        <label class="block font-semibold text-slate-700 mb-1">No. MP Cadangan</label>
                         <input type="text" id="batchMp" placeholder="240820SHOP..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">No. Resi (Opsional Batch)</label>
+                        <label class="block font-semibold text-slate-700 mb-1">No. Resi Cadangan</label>
                         <input type="text" id="batchResi" placeholder="JP889021..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">SKU Cadangan</label>
+                        <input type="text" id="batchSku" placeholder="NT-AKR-MAG" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none">
                     </div>
                 </div>
             </div>
@@ -641,8 +674,8 @@
     </div>
 
     <!-- MODAL: KATALOG MODEL (1 - 11) -->
-    <div id="catalogModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+    <div id="catalogModal" onclick="handleBackdropClick(event, 'catalogModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-book-open text-amber-500"></i> Katalog Model Nametag (1 - 11)
@@ -760,8 +793,8 @@
     </div>
 
     <!-- MODAL: ARCHIVE -->
-    <div id="archiveModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+    <div id="archiveModal" onclick="handleBackdropClick(event, 'archiveModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-box-archive text-emerald-500"></i> Riwayat Arsip Pesanan Terkirim
@@ -814,7 +847,7 @@
     </div>
 
     <!-- MODAL: REJECT / CACAT -->
-    <div id="rejectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div id="rejectModal" onclick="handleBackdropClick(event, 'rejectModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="font-extrabold text-red-600 text-sm flex items-center gap-2">
@@ -840,7 +873,7 @@
     </div>
 
     <!-- MODAL: HAPUS PESANAN -->
-    <div id="deleteModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div id="deleteModal" onclick="handleBackdropClick(event, 'deleteModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 text-center">
             <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-xl">
                 <i class="fa-solid fa-trash-can"></i>
@@ -862,17 +895,14 @@
         <span id="toastMessage">Notifikasi sistem</span>
     </div>
 
-    <!-- APPLICATION LOGIC & JAVASCRIPT -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Default State
+        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwKpok4J-Ezh_SD7kOZ8B8j2r1v8QGob5MfZYCHynSdFfeFDbAzA75zsDbRDtyLwIYvkw/exec";
+
         let orders = [];
         let archivedOrders = [];
         let sessionScannedLog = [];
-        
-        // URL Web App Google Apps Script Aktif Anda
-        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwKpok4J-Ezh_SD7kOZ8B8j2r1v8QGob5MfZYCHynSdFfeFDbAzA75zsDbRDtyLwIYvkw/exec"; 
-        
-        let gasUrl = '';
+        let gasUrl = DEFAULT_GAS_URL;
         let pendingRejectId = null;
         let pendingDeleteId = null;
         let pendingEditId = null;
@@ -880,71 +910,88 @@
         let activeStationTab = 1;
         let html5QrCodeScanner = null;
         let isCameraActive = false;
-        let autoSyncTimer = null;
-        let currentScanAction = 'ship'; // 'ship' atau 'find'
+        let currentScanAction = 'ship'; // 'ship' or 'find'
 
         window.onload = function() {
             loadSavedData();
             updateGasBadge();
             renderOrders();
-            loadOrdersFromSheet(true);
+            loadOrdersFromSheet();
+            initNavbarPcScroll();
 
-            // SINKRONISASI OTOMATIS: Ambil data dari Google Sheets setiap 10 detik secara background
-            if (autoSyncTimer) clearInterval(autoSyncTimer);
-            autoSyncTimer = setInterval(() => {
-                loadOrdersFromSheet(false);
+            // Background polling every 10 seconds for real-time sync across devices
+            setInterval(() => {
+                if (gasUrl || (typeof google !== 'undefined' && google.script)) {
+                    loadOrdersFromSheet(false);
+                }
             }, 10000);
         };
 
-        function getCurrentFormattedDate() {
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const year = now.getFullYear();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const mins = String(now.getMinutes()).padStart(2, '0');
-            return `${day}/${month}/${year} ${hours}:${mins}`;
+        // SCROLL MOUSE & DRAG KHUSUS PC UNTUK NAVBAR HEADER
+        function initNavbarPcScroll() {
+            const nav = document.getElementById('headerNavContainer');
+            if (!nav) return;
+
+            nav.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    nav.scrollLeft += e.deltaY * 1.5;
+                }
+            }, { passive: false });
+
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            nav.addEventListener('mousedown', (e) => {
+                isDown = true;
+                nav.classList.add('cursor-grabbing');
+                startX = e.pageX - nav.offsetLeft;
+                scrollLeft = nav.scrollLeft;
+            });
+
+            nav.addEventListener('mouseleave', () => { isDown = false; });
+            nav.addEventListener('mouseup', () => { isDown = false; });
+            nav.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - nav.offsetLeft;
+                const walk = (x - startX) * 2;
+                nav.scrollLeft = scrollLeft - walk;
+            });
         }
 
-        function formatDisplayDate(dateStr) {
-            if (!dateStr || dateStr === '-') return '-';
-            if (/^\d{2}\/\d{2}\/\d{4}/.test(dateStr)) return dateStr;
+        function handleBackdropClick(event, modalId) {
+            if (event.target.id === modalId) {
+                closeModal(modalId);
+            }
+        }
+
+        function formatDateClean(dateStr) {
+            if (!dateStr || dateStr === '-') {
+                const now = new Date();
+                const d = String(now.getDate()).padStart(2, '0');
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                const y = now.getFullYear();
+                const hh = String(now.getHours()).padStart(2, '0');
+                const mm = String(now.getMinutes()).padStart(2, '0');
+                return `${d}/${m}/${y} ${hh}:${mm}`;
+            }
+            if (typeof dateStr === 'string' && dateStr.includes('/') && dateStr.length <= 19) {
+                return dateStr;
+            }
             try {
-                const d = new Date(dateStr);
-                if (!isNaN(d.getTime())) {
-                    const day = String(d.getDate()).padStart(2, '0');
-                    const month = String(d.getMonth() + 1).padStart(2, '0');
-                    const year = d.getFullYear();
-                    const hours = String(d.getHours()).padStart(2, '0');
-                    const mins = String(d.getMinutes()).padStart(2, '0');
-                    return `${day}/${month}/${year} ${hours}:${mins}`;
+                const dObj = new Date(dateStr);
+                if (!isNaN(dObj.getTime())) {
+                    const d = String(dObj.getDate()).padStart(2, '0');
+                    const m = String(dObj.getMonth() + 1).padStart(2, '0');
+                    const y = dObj.getFullYear();
+                    const hh = String(dObj.getHours()).padStart(2, '0');
+                    const mm = String(dObj.getMinutes()).padStart(2, '0');
+                    return `${d}/${m}/${y} ${hh}:${mm}`;
                 }
             } catch(e) {}
             return dateStr;
-        }
-
-        function openModal(id) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.classList.remove('hidden');
-                document.body.classList.add('modal-open');
-                if (id === 'scanModal') {
-                    const scanInput = document.getElementById('scanResiInput');
-                    if (scanInput) setTimeout(() => scanInput.focus(), 100);
-                }
-                if (id === 'archiveModal') {
-                    renderArchives();
-                }
-            }
-        }
-
-        function closeModal(id) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.classList.add('hidden');
-                document.body.classList.remove('modal-open');
-                if (id === 'scanModal') stopCameraScanner();
-            }
         }
 
         function saveLocalOnly() {
@@ -967,44 +1014,52 @@
                 const savedArch = localStorage.getItem('nametag_archives');
                 if (savedArch) archivedOrders = JSON.parse(savedArch);
 
-                gasUrl = localStorage.getItem('nametag_gas_url') || DEFAULT_GAS_URL;
+                const customGas = localStorage.getItem('nametag_gas_url');
+                if (customGas) gasUrl = customGas;
+
                 const gasInput = document.getElementById('gasUrlInput');
                 if (gasInput) gasInput.value = gasUrl;
             } catch(e) {}
         }
 
-        function loadOrdersFromSheet(showToastNotice = false) {
-            const currentGasUrl = gasUrl || DEFAULT_GAS_URL;
-            if (showToastNotice) showToast('🔄 Mengambil data terbaru dari Google Sheet...');
-
-            const processResult = function(res) {
-                if (res && res.status === 'success' && Array.isArray(res.orders)) {
-                    const nowStr = getCurrentFormattedDate();
-                    // Proteksi agar Tanggal Dibuat tidak hilang saat sheet dikembalikan kosong
-                    res.orders.forEach(incoming => {
-                        const existing = orders.find(o => o.id === incoming.id);
-                        if (!incoming.createdAt || incoming.createdAt.trim() === '' || incoming.createdAt === '-') {
-                            incoming.createdAt = (existing && existing.createdAt && existing.createdAt !== '-') 
-                                ? existing.createdAt 
-                                : nowStr;
-                        }
-                    });
-                    orders = res.orders;
-                    saveLocalOnly();
-                    renderOrders();
-                    updateGasBadge();
-                    if (showToastNotice) showToast('✅ Data terbaru tersinkron!');
-                }
-            };
-
+        function loadOrdersFromSheet(showNotification = false) {
             if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run.withSuccessHandler(processResult).getActiveOrdersFromSheet();
-            } else if (currentGasUrl) {
-                fetch(currentGasUrl + '?action=getOrders')
+                google.script.run.withSuccessHandler(function(res) {
+                    if (res && res.status === 'success' && Array.isArray(res.orders)) {
+                        mergeSheetOrders(res.orders);
+                        if (showNotification) showToast('✅ Data disinkronkan dari Google Sheet!');
+                    }
+                }).getActiveOrdersFromSheet();
+            } else if (gasUrl) {
+                fetch(gasUrl + '?action=getOrders')
                     .then(res => res.json())
-                    .then(data => processResult(data))
+                    .then(data => {
+                        if (data && data.status === 'success' && Array.isArray(data.orders)) {
+                            mergeSheetOrders(data.orders);
+                            if (showNotification) showToast('✅ Data disinkronkan dari Google Sheet!');
+                        }
+                    })
                     .catch(err => console.log('Fetch error:', err));
             }
+        }
+
+        function mergeSheetOrders(sheetOrders) {
+            if (!Array.isArray(sheetOrders)) return;
+            
+            sheetOrders.forEach(so => {
+                const existing = orders.find(o => o.id === so.id);
+                if (existing) {
+                    // Protect notes from being erased by empty sheet response
+                    so.notes = (so.notes && so.notes.trim() !== '') ? so.notes : (existing.notes || '');
+                    so.createdAt = so.createdAt || existing.createdAt || formatDateClean('');
+                } else {
+                    so.createdAt = formatDateClean(so.createdAt);
+                }
+            });
+
+            orders = sheetOrders;
+            saveLocalOnly();
+            renderOrders();
         }
 
         function playBeep(type = 'success') {
@@ -1033,20 +1088,20 @@
             } catch(e) {}
         }
 
-        function setScanAction(mode) {
-            currentScanAction = mode;
+        function setScanAction(action) {
+            currentScanAction = action;
             const btnShip = document.getElementById('scanModeShip');
             const btnFind = document.getElementById('scanModeFind');
             const desc = document.getElementById('scanModeDesc');
 
-            if (mode === 'ship') {
-                btnShip.className = "flex-1 py-1.5 rounded-lg bg-cyan-600 text-white shadow-xs transition flex items-center justify-center gap-1 font-bold";
-                btnFind.className = "flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1 font-semibold";
-                desc.innerHTML = `Scan Barcode Resi untuk memindahkan pesanan dari <span class="bg-amber-100 text-amber-800 font-bold px-1 py-0.5 rounded">6. Packing & Kirim</span> langsung ke <span class="bg-cyan-100 text-cyan-800 font-bold px-1 py-0.5 rounded">7. Dalam Pengiriman</span>.`;
+            if (action === 'ship') {
+                if (btnShip) btnShip.className = "flex-1 py-1.5 rounded-lg bg-cyan-600 text-white shadow-xs transition flex items-center justify-center gap-1 font-bold";
+                if (btnFind) btnFind.className = "flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1 font-semibold";
+                if (desc) desc.innerHTML = `Scan Barcode Resi untuk memindahkan pesanan dari <span class="bg-amber-100 text-amber-800 font-bold px-1 py-0.5 rounded">6. Packing & Kirim</span> langsung ke <span class="bg-cyan-100 text-cyan-800 font-bold px-1 py-0.5 rounded">7. Dalam Pengiriman</span>.`;
             } else {
-                btnFind.className = "flex-1 py-1.5 rounded-lg bg-cyan-600 text-white shadow-xs transition flex items-center justify-center gap-1 font-bold";
-                btnShip.className = "flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1 font-semibold";
-                desc.innerHTML = `Scan Barcode / Ketik No. Resi atau Nama untuk <span class="bg-sky-100 text-sky-800 font-bold px-1 py-0.5 rounded">Mencari & Menyorot Kartu Pesanan</span> secara otomatis di layar utama.`;
+                if (btnShip) btnShip.className = "flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1 font-semibold";
+                if (btnFind) btnFind.className = "flex-1 py-1.5 rounded-lg bg-cyan-600 text-white shadow-xs transition flex items-center justify-center gap-1 font-bold";
+                if (desc) desc.innerHTML = `Scan Barcode Resi / Ketik Nama untuk **mencari & menyorot** posisi kartu pesanan di layar secara instan.`;
             }
         }
 
@@ -1077,7 +1132,8 @@
                 (o.mp && o.mp.toLowerCase() === cleanQuery) ||
                 (o.id && o.id.toLowerCase() === cleanQuery) ||
                 (o.name && o.name.toLowerCase().includes(cleanQuery)) ||
-                (o.resi && o.resi.toLowerCase().includes(cleanQuery))
+                (o.resi && o.resi.toLowerCase().includes(cleanQuery)) ||
+                (o.mp && o.mp.toLowerCase().includes(cleanQuery))
             );
 
             const statusBox = document.getElementById('scanStatusBox');
@@ -1087,72 +1143,68 @@
             if (matchedOrders.length === 0) {
                 playBeep('error');
                 if (statusText) {
-                    statusText.innerHTML = `<span class="text-red-600 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Resi / Nama "${escapeHtml(rawQuery)}" TIDAK DITEMUKAN!</span>`;
+                    statusText.innerHTML = `<span class="text-red-600 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Resi / MP / Nama "${escapeHtml(rawQuery)}" TIDAK DITEMUKAN!</span>`;
                 }
-                showToast(`Resi / Nama "${rawQuery}" tidak ditemukan!`);
+                showToast(`Pencarian "${rawQuery}" tidak ditemukan!`);
                 return;
             }
 
-            if (currentScanAction === 'find') {
-                playBeep('success');
-                const matchedOrder = matchedOrders[0];
-                const searchInput = document.getElementById('searchInput');
-                if (searchInput) searchInput.value = matchedOrder.name;
-                renderOrders();
+            if (currentScanAction === 'ship') {
+                let updatedCount = 0;
+                let namesProcessed = [];
 
-                if (statusText) {
-                    statusText.innerHTML = `<span class="text-sky-700 font-bold"><i class="fa-solid fa-magnifying-glass"></i> DITEMUKAN (${matchedOrders.length} Pesanan): ${escapeHtml(matchedOrders.map(m => m.name).join(', '))} [Tahap ${matchedOrder.currentStep}]</span>`;
+                matchedOrders.forEach(o => {
+                    if (o.currentStep < 7) {
+                        o.currentStep = 7;
+                        o.isReject = false;
+                        updatedCount++;
+                        namesProcessed.push(o.name);
+
+                        sessionScannedLog.unshift({
+                            name: o.name,
+                            resi: o.resi || o.mp || o.id,
+                            time: new Date().toLocaleTimeString('id-ID')
+                        });
+                    }
+                });
+
+                if (updatedCount > 0) {
+                    playBeep('success');
+                    saveData();
+                    renderOrders();
+                    renderScannedLog();
+
+                    if (statusText) {
+                        statusText.innerHTML = `<span class="text-emerald-700 font-bold"><i class="fa-solid fa-circle-check"></i> BERHASIL (${updatedCount} Paket): ${escapeHtml(namesProcessed.join(', '))} dipindahkan ke [7. Dalam Pengiriman]!</span>`;
+                    }
+                    showToast(`✅ ${namesProcessed.join(', ')} dipindahkan ke Pengiriman!`);
+                } else {
+                    playBeep('error');
+                    if (statusText) {
+                        statusText.innerHTML = `<span class="text-amber-700 font-bold"><i class="fa-solid fa-circle-info"></i> Resi "${escapeHtml(rawQuery)}" SUDAH di Tahap Pengiriman!</span>`;
+                    }
+                    showToast(`Resi "${rawQuery}" sudah di tahap Pengiriman.`);
                 }
-
+            } else {
+                playBeep('success');
                 closeModal('scanModal');
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = rawQuery;
+                    renderOrders();
+                }
+                showToast(`🔍 Menampilkan hasil pencarian untuk "${rawQuery}"`);
                 
                 setTimeout(() => {
-                    const targetEl = document.getElementById(`card-order-${matchedOrder.id}`);
-                    if (targetEl) {
-                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        targetEl.classList.add('highlight-card');
-                        setTimeout(() => targetEl.classList.remove('highlight-card'), 3500);
-                    }
-                }, 300);
-
-                showToast(`🔍 Menyorot pesanan: ${matchedOrder.name}`);
-                return;
-            }
-
-            let updatedCount = 0;
-            let namesProcessed = [];
-
-            matchedOrders.forEach(o => {
-                if (o.currentStep < 7) {
-                    o.currentStep = 7;
-                    o.isReject = false;
-                    updatedCount++;
-                    namesProcessed.push(o.name);
-
-                    sessionScannedLog.unshift({
-                        name: o.name,
-                        resi: o.resi || o.mp || o.id,
-                        time: new Date().toLocaleTimeString('id-ID')
+                    matchedOrders.forEach(o => {
+                        const cardEl = document.getElementById(`card-${o.id}`);
+                        if (cardEl) {
+                            cardEl.classList.add('highlight-card');
+                            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            setTimeout(() => cardEl.classList.remove('highlight-card'), 3000);
+                        }
                     });
-                }
-            });
-
-            if (updatedCount > 0) {
-                playBeep('success');
-                saveData();
-                renderOrders();
-                renderScannedLog();
-
-                if (statusText) {
-                    statusText.innerHTML = `<span class="text-emerald-700 font-bold"><i class="fa-solid fa-circle-check"></i> BERHASIL (${updatedCount} Paket): ${escapeHtml(namesProcessed.join(', '))} dipindahkan ke [7. Pengiriman]!</span>`;
-                }
-                showToast(`✅ ${namesProcessed.join(', ')} dipindahkan ke Pengiriman!`);
-            } else {
-                playBeep('error');
-                if (statusText) {
-                    statusText.innerHTML = `<span class="text-amber-700 font-bold"><i class="fa-solid fa-circle-info"></i> Resi "${escapeHtml(rawQuery)}" SUDAH di Tahap Pengiriman!</span>`;
-                }
-                showToast(`Resi "${rawQuery}" sudah di tahap Pengiriman.`);
+                }, 300);
             }
         }
 
@@ -1198,14 +1250,10 @@
                 isCameraActive = true;
 
                 try {
-                    if (typeof Html5QrcodeScanner !== 'undefined') {
-                        html5QrCodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: { width: 250, height: 150 } }, false);
-                        html5QrCodeScanner.render((decodedText) => {
-                            processResiScan(decodedText);
-                        }, (errorMessage) => {});
-                    } else {
-                        showToast('Library scanner sedang dimuat, coba lagi sebentar...');
-                    }
+                    html5QrCodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: { width: 250, height: 150 } }, false);
+                    html5QrCodeScanner.render((decodedText) => {
+                        processResiScan(decodedText);
+                    }, (errorMessage) => {});
                 } catch(e) {
                     showToast('Gagal membuka kamera. Gunakan scanner USB/ketik manual.');
                 }
@@ -1238,23 +1286,17 @@
         }
 
         function updateGasBadge() {
-            const dot = document.getElementById('statusDot');
-            const txt = document.getElementById('statusText');
-            const stateText = document.getElementById('syncStateText');
-
-            if (gasUrl || (typeof google !== 'undefined' && google.script)) {
-                if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
-                if (txt) txt.textContent = "Terhubung Sheet";
-                if (stateText) {
-                    stateText.textContent = "Terhubung";
-                    stateText.className = "font-bold text-emerald-600";
-                }
-            } else {
-                if (dot) dot.className = "w-2 h-2 rounded-full bg-slate-500";
-                if (txt) txt.textContent = "Offline / Disconnected";
-                if (stateText) {
+            const badge = document.getElementById('statusDot');
+            const stateText = document.getElementById('statusText');
+            if (badge && stateText) {
+                if (gasUrl || (typeof google !== 'undefined' && google.script)) {
+                    badge.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+                    stateText.textContent = "Terhubung Sheet";
+                    stateText.className = "text-[11px] hidden lg:inline text-emerald-400 font-bold";
+                } else {
+                    badge.className = "w-2 h-2 rounded-full bg-slate-500";
                     stateText.textContent = "Belum Terhubung";
-                    stateText.className = "font-bold text-slate-500";
+                    stateText.className = "text-[11px] hidden lg:inline text-slate-400";
                 }
             }
         }
@@ -1338,6 +1380,30 @@
             }, 3000);
         }
 
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+                if (id === 'scanModal') {
+                    const scanInput = document.getElementById('scanResiInput');
+                    if (scanInput) setTimeout(() => scanInput.focus(), 100);
+                }
+                if (id === 'archiveModal') {
+                    renderArchives();
+                }
+            }
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+                if (id === 'scanModal') stopCameraScanner();
+            }
+        }
+
         function switchViewMode(mode) {
             activeViewMode = mode;
             const cardsViewContainer = document.getElementById('cardsViewContainer');
@@ -1387,7 +1453,6 @@
             return '<i class="fa-solid fa-shield-halved text-indigo-400 text-base"></i>';
         }
 
-        // TAMBAH PESANAN SINGLE - DITAMBAHKAN KE BELAKANG ANTREAN (PUSH)
         function handleSingleOrderSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('singleName').value.trim();
@@ -1411,15 +1476,14 @@
                 mp: mp || ('MP-' + Math.floor(100000 + Math.random() * 900000)),
                 resi: resi,
                 sku: 'NT-AKR-' + (hook === 'Magnet' ? 'MAG' : 'PEN'),
-                notes: notes,
                 printCount: 1,
                 currentStep: 1,
                 isReject: false,
                 rejectReason: '',
-                createdAt: getCurrentFormattedDate()
+                createdAt: formatDateClean(''),
+                notes: notes
             };
 
-            // PUSH KE BELAKANG AGAR HALAMAN BERURUTAN DARI INPUT PERTAMA
             orders.push(newOrder);
             saveData();
             renderOrders();
@@ -1429,10 +1493,10 @@
         }
 
         function openEditModal(id) {
+            pendingEditId = id;
             const order = orders.find(o => o.id === id);
             if (!order) return;
 
-            pendingEditId = id;
             document.getElementById('editName').value = order.name || '';
             document.getElementById('editNip').value = order.nip || '';
             document.getElementById('editModel').value = order.model || 'Model 1 (Lis + Nama)';
@@ -1441,6 +1505,7 @@
             document.getElementById('editMp').value = order.mp || '';
             document.getElementById('editResi').value = order.resi || '';
             document.getElementById('editNotes').value = order.notes || '';
+            document.getElementById('editApplyAllMp').checked = true;
 
             openModal('editModal');
         }
@@ -1452,34 +1517,35 @@
             const order = orders.find(o => o.id === pendingEditId);
             if (!order) return;
 
-            const name = document.getElementById('editName').value.trim();
-            const nip = document.getElementById('editNip').value.trim();
-            const model = document.getElementById('editModel').value;
-            const hook = document.getElementById('editHook').value;
-            const logo = document.getElementById('editLogo').value.trim();
-            const mp = document.getElementById('editMp').value.trim();
-            const resi = document.getElementById('editResi').value.trim();
-            const notes = document.getElementById('editNotes').value.trim();
-            const applyAllMp = document.getElementById('editApplyAllMp')?.checked;
+            const newName = document.getElementById('editName').value.trim();
+            const newNip = document.getElementById('editNip').value.trim();
+            const newModel = document.getElementById('editModel').value;
+            const newHook = document.getElementById('editHook').value;
+            const newLogo = document.getElementById('editLogo').value.trim();
+            const newMp = document.getElementById('editMp').value.trim();
+            const newResi = document.getElementById('editResi').value.trim();
+            const newNotes = document.getElementById('editNotes').value.trim();
+            const applyAllMp = document.getElementById('editApplyAllMp').checked;
 
-            if (!name) return;
+            const oldMp = order.mp;
 
-            order.name = name;
-            order.nip = nip;
-            order.model = model;
-            order.hook = hook;
-            order.logo = logo;
-            order.mp = mp;
-            order.resi = resi;
-            order.notes = notes;
-            order.sku = 'NT-AKR-' + (hook === 'Magnet' ? 'MAG' : 'PEN');
+            order.name = newName;
+            order.nip = newNip;
+            order.model = newModel;
+            order.hook = newHook;
+            order.logo = newLogo;
+            order.mp = newMp;
+            order.resi = newResi;
+            order.notes = newNotes;
 
-            let updatedCount = 1;
-            if (applyAllMp && mp) {
+            let updatedBulkCount = 1;
+
+            if (applyAllMp && oldMp) {
                 orders.forEach(o => {
-                    if (o.id !== order.id && o.mp && o.mp.trim().toLowerCase() === mp.toLowerCase()) {
-                        o.resi = resi;
-                        updatedCount++;
+                    if (o.id !== pendingEditId && o.mp === oldMp) {
+                        o.resi = newResi;
+                        if (newMp) o.mp = newMp;
+                        updatedBulkCount++;
                     }
                 });
             }
@@ -1487,10 +1553,129 @@
             saveData();
             renderOrders();
             closeModal('editModal');
-            if (updatedCount > 1) {
-                showToast(`✏️ No. Resi berhasil diperbarui untuk ${updatedCount} nametag (No. MP: ${mp})!`);
+            pendingEditId = null;
+
+            if (updatedBulkCount > 1) {
+                showToast(`✏️ Data & No. Resi berhasil diperbarui untuk ${updatedBulkCount} nametag!`);
             } else {
-                showToast(`✏️ Pesanan ${order.name} berhasil diperbarui!`);
+                showToast('✏️ Data pesanan berhasil diperbarui!');
+            }
+        }
+
+        function parseModelString(rawModelStr, defaultModel) {
+            if (!rawModelStr) return defaultModel;
+            const str = rawModelStr.trim().toLowerCase();
+            
+            if (str === '1' || str === 'model 1' || str.includes('model 1')) return 'Model 1 (Lis + Nama)';
+            if (str === '2' || str === 'model 2' || str.includes('model 2')) return 'Model 2 (Lis + Nama + NIP)';
+            if (str === '3' || str === 'model 3' || str.includes('model 3')) return 'Model 3 (Lis + Logo + Nama)';
+            if (str === '4' || str === 'model 4' || str.includes('model 4')) return 'Model 4 (Lis + Logo + Nama + NIP)';
+            if (str === '5' || str === 'model 5' || str.includes('model 5')) return 'Model 5 (Lis + Logo + Nama + Line + NIP)';
+            if (str === '6' || str === 'model 6' || str.includes('model 6')) return 'Model 6 (Polos + Nama)';
+            if (str === '7' || str === 'model 7' || str.includes('model 7')) return 'Model 7 (Polos + Nama + NIP)';
+            if (str === '8' || str === 'model 8' || str.includes('model 8')) return 'Model 8 (Polos + Logo + Nama)';
+            if (str === '9' || str === 'model 9' || str.includes('model 9')) return 'Model 9 (Polos + Logo + Nama + NIP)';
+            if (str === '10' || str === 'model 10' || str.includes('model 10')) return 'Model 10 (Polos + Logo + Nama + Line + NIP)';
+            if (str === '11' || str === 'model 11' || str.includes('model 11') || str.includes('custom')) return 'Model 11 (Custom Desain)';
+            
+            return defaultModel;
+        }
+
+        function handleBatchImportSubmit() {
+            const rawText = document.getElementById('batchInput').value.trim();
+            const defaultModel = document.getElementById('batchDefaultModel').value;
+            const defaultHook = document.getElementById('batchDefaultHook').value;
+            const batchMp = document.getElementById('batchMp').value.trim();
+            const batchResi = document.getElementById('batchResi').value.trim();
+            const batchSku = document.getElementById('batchSku')?.value.trim() || '';
+
+            if (!rawText) return;
+
+            const lines = rawText.split('\n');
+            let addedCount = 0;
+
+            lines.forEach(line => {
+                if (!line.trim()) return;
+                
+                const parts = line.includes('\t') ? line.split('\t').map(p => p.trim()) : line.split('|').map(p => p.trim());
+                
+                let mp = '', resi = '', sku = '', name = '', nip = '', logo = '', hook = defaultHook, model = defaultModel, notes = '';
+
+                if (parts.length >= 9) {
+                    // 9-column format: NO_MP | NO_RESI | SKU | NAMA | NIP | LOGO | PENGAIT | MODEL | CATATAN
+                    mp = parts[0] || batchMp;
+                    resi = parts[1] || batchResi;
+                    sku = parts[2] || batchSku;
+                    name = parts[3] || '';
+                    nip = parts[4] || '';
+                    logo = parts[5] || '';
+                    if (parts[6]) {
+                        const h = parts[6].toLowerCase();
+                        hook = h.includes('peniti') ? 'Peniti' : (h.includes('paku') || h.includes('pin') ? 'Paku / Pin' : 'Magnet');
+                    }
+                    if (parts[7]) model = parseModelString(parts[7], defaultModel);
+                    notes = parts[8] || '';
+                } else if (parts.length >= 6) {
+                    // 8-column format: NO_MP | NO_RESI | NAMA | NIP | LOGO | PENGAIT | MODEL | CATATAN
+                    mp = parts[0] || batchMp;
+                    resi = parts[1] || batchResi;
+                    sku = batchSku;
+                    name = parts[2] || '';
+                    nip = parts[3] || '';
+                    logo = parts[4] || '';
+                    if (parts[5]) {
+                        const h = parts[5].toLowerCase();
+                        hook = h.includes('peniti') ? 'Peniti' : (h.includes('paku') || h.includes('pin') ? 'Paku / Pin' : 'Magnet');
+                    }
+                    if (parts[6]) model = parseModelString(parts[6], defaultModel);
+                    notes = parts[7] || '';
+                } else {
+                    // Legacy 5-column format: NAMA | NIP | LOGO | PENGAIT | MODEL
+                    name = parts[0] || '';
+                    nip = parts[1] || '';
+                    logo = parts[2] || '';
+                    if (parts[3]) {
+                        const h = parts[3].toLowerCase();
+                        hook = h.includes('peniti') ? 'Peniti' : (h.includes('paku') || h.includes('pin') ? 'Paku / Pin' : 'Magnet');
+                    }
+                    if (parts[4]) model = parseModelString(parts[4], defaultModel);
+                    mp = batchMp;
+                    resi = batchResi;
+                    sku = batchSku;
+                }
+
+                if (!sku) {
+                    sku = 'NT-AKR-' + (hook === 'Magnet' ? 'MAG' : (hook.includes('Peniti') ? 'PEN' : 'PIN'));
+                }
+
+                if (name) {
+                    orders.push({
+                        id: 'NT-' + Math.floor(1000 + Math.random() * 9000),
+                        name: name,
+                        nip: nip,
+                        model: model,
+                        hook: hook,
+                        logo: logo,
+                        mp: mp || ('MP-' + Math.floor(100000 + Math.random() * 900000)),
+                        resi: resi,
+                        sku: sku,
+                        printCount: 1,
+                        currentStep: 1,
+                        isReject: false,
+                        rejectReason: '',
+                        createdAt: formatDateClean(''),
+                        notes: notes
+                    });
+                    addedCount++;
+                }
+            });
+
+            if (addedCount > 0) {
+                saveData();
+                renderOrders();
+                closeModal('batchModal');
+                document.getElementById('batchInput').value = '';
+                showToast(`✅ Berhasil meng-import ${addedCount} pesanan!`);
             }
         }
 
@@ -1512,33 +1697,35 @@
             openModal('rejectModal');
         }
 
-        // LAPOR CACAT / REJECT - DIPINDAHKAN KE AKHIR ANTREAN CETAK
         function confirmRejectSubmit() {
             if (!pendingRejectId) return;
-            const newReason = document.getElementById('rejectReasonInput').value.trim() || 'Cacat produksi';
-            const orderIndex = orders.findIndex(o => o.id === pendingRejectId);
+            const reasonInput = document.getElementById('rejectReasonInput');
+            const newReason = reasonInput ? reasonInput.value.trim() : '';
+            
+            const idx = orders.findIndex(o => o.id === pendingRejectId);
+            if (idx !== -1) {
+                const order = orders[idx];
+                
+                orders.splice(idx, 1);
 
-            if (orderIndex !== -1) {
-                const order = orders[orderIndex];
                 order.currentStep = 1;
                 order.printCount += 1;
                 order.isReject = true;
-                
-                // Akumulasi alasan cacat
+
                 if (order.rejectReason && order.rejectReason.trim() !== '') {
-                    order.rejectReason = `${order.rejectReason}, ${newReason}`;
+                    if (newReason && !order.rejectReason.includes(newReason)) {
+                        order.rejectReason = `${order.rejectReason}, ${newReason}`;
+                    }
                 } else {
-                    order.rejectReason = newReason;
+                    order.rejectReason = newReason || 'Cacat produksi, perlu cetak ulang';
                 }
 
-                // DIGESER KE ANTREAN CETAK PALING BELAKANG (AKHIR)
-                orders.splice(orderIndex, 1);
                 orders.push(order);
 
                 saveData();
                 renderOrders();
                 closeModal('rejectModal');
-                showToast(`⚠️ Pesanan ${order.name} dikembalikan ke Cetak Ulang & dipindahkan ke antrean cetak paling baru!`);
+                showToast(`⚠️ Pesanan ${order.name} dikembalikan ke Tahap Cetak Ulang (#${order.printCount})!`);
             }
         }
 
@@ -1677,8 +1864,6 @@
                             <td class="p-3 font-semibold text-slate-900">
                                 <div>${escapeHtml(item.name)}</div>
                                 ${item.nip ? `<div class="text-[10px] text-slate-400 font-mono">${escapeHtml(item.nip)}</div>` : ''}
-                                ${item.createdAt ? `<div class="text-[9px] text-slate-400">Dibuat: ${escapeHtml(item.createdAt)}</div>` : ''}
-                                ${item.notes ? `<div class="text-[9px] text-amber-700 font-medium">Catatan: ${escapeHtml(item.notes)}</div>` : ''}
                             </td>
                             <td class="p-3 text-[11px] text-slate-600">${escapeHtml(item.model)}</td>
                             <td class="p-3 text-[11px] font-bold text-pink-600">${escapeHtml(item.hook)}</td>
@@ -1715,7 +1900,7 @@
             }
 
             let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-            csvContent += "Tanggal Arsip;ID Pesanan;Nama;NIP;Model;Pengait;Logo;No. MP;No. Resi;SKU Toko;Catatan;Cetak Ke-;Tanggal Dibuat;Status Transaksi\n";
+            csvContent += "Tanggal Arsip;ID Pesanan;Nama;NIP;Model;Pengait;Logo;No. MP;No. Resi;SKU Toko;Catatan;Cetak Ke-;Status Transaksi\n";
 
             archivedOrders.forEach(a => {
                 const row = [
@@ -1731,7 +1916,6 @@
                     a.sku || '',
                     a.notes || '',
                     a.printCount || 1,
-                    a.createdAt || '',
                     a.archiveStatus || 'Dalam Pengiriman'
                 ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(";");
 
@@ -1748,7 +1932,6 @@
             showToast('✅ File Rekap Excel/CSV berhasil diunduh!');
         }
 
-        // RENDER KARTU DAN TABEL STASIUN
         function renderOrders() {
             const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase();
             const filterStage = document.getElementById('stageFilterSelect')?.value || 'ALL';
@@ -1762,26 +1945,17 @@
             let countS6 = orders.filter(o => o.currentStep === 6).length;
             let countS7 = orders.filter(o => o.currentStep === 7).length;
 
-            const elTotal = document.getElementById('statTotal');
-            if (elTotal) elTotal.textContent = countTotal;
-            const elS1 = document.getElementById('statStep1');
-            if (elS1) elS1.textContent = countS1;
-            const elS2 = document.getElementById('statStep2');
-            if (elS2) elS2.textContent = countS2;
-            const elS3 = document.getElementById('statStep3');
-            if (elS3) elS3.textContent = countS3;
-            const elS4 = document.getElementById('statStep4');
-            if (elS4) elS4.textContent = countS4;
-            const elS5 = document.getElementById('statStep5');
-            if (elS5) elS5.textContent = countS5;
-            const elS6 = document.getElementById('statStep6');
-            if (elS6) elS6.textContent = countS6;
-            const elS7 = document.getElementById('statStep7');
-            if (elS7) elS7.textContent = countS7;
+            document.getElementById('statTotal').textContent = countTotal;
+            document.getElementById('statStep1').textContent = countS1;
+            document.getElementById('statStep2').textContent = countS2;
+            document.getElementById('statStep3').textContent = countS3;
+            document.getElementById('statStep4').textContent = countS4;
+            document.getElementById('statStep5').textContent = countS5;
+            document.getElementById('statStep6').textContent = countS6;
+            document.getElementById('statStep7').textContent = countS7;
 
             const totalPages = Math.ceil(countTotal / 29) || 0;
-            const elPages = document.getElementById('statPages');
-            if (elPages) elPages.textContent = `${totalPages} Lembar Desain (29/hal)`;
+            document.getElementById('statPages').textContent = `${totalPages} Lembar Desain (29/hal)`;
 
             let filtered = orders.filter(o => {
                 const matchesSearch = o.name.toLowerCase().includes(searchVal) || 
@@ -1817,19 +1991,19 @@
                         const logoIcon = getLogoIconHTML(order.logo);
                         const m = order.model || 'Model 1';
                         const hasFrame = !m.includes('Polos');
-                        const createdDateStr = formatDisplayDate((order.createdAt && order.createdAt !== '-') ? order.createdAt : getCurrentFormattedDate());
+                        const createdTimeStr = formatDateClean(order.createdAt);
 
                         let mockupHTML = '';
                         if (m.startsWith('Model 1') || m.startsWith('Model 6')) {
                             mockupHTML = `
                                 <div class="my-2.5 p-3 bg-slate-950 rounded-xl text-white shadow-inner relative overflow-hidden ${hasFrame ? 'border-2 border-slate-100' : 'border border-slate-800'} text-center">
-                                    <div class="font-bold text-xs sm:text-sm tracking-wide uppercase py-1 truncate text-white">${escapeHtml(order.name)}</div>
+                                    <div class="font-bold text-xs sm:text-sm tracking-wide py-1 truncate text-white">${escapeHtml(order.name)}</div>
                                 </div>
                             `;
                         } else if (m.startsWith('Model 2') || m.startsWith('Model 7')) {
                             mockupHTML = `
                                 <div class="my-2.5 p-3 bg-slate-950 rounded-xl text-white shadow-inner relative overflow-hidden ${hasFrame ? 'border-2 border-slate-100' : 'border border-slate-800'} text-center">
-                                    <div class="font-bold text-xs sm:text-sm tracking-wide truncate text-white uppercase">${escapeHtml(order.name)}</div>
+                                    <div class="font-bold text-xs sm:text-sm tracking-wide truncate text-white">${escapeHtml(order.name)}</div>
                                     ${order.nip ? `
                                         <div class="border-t border-slate-400 my-0.5 w-3/4 mx-auto"></div>
                                         <div class="text-[9px] text-slate-300 font-mono truncate">${escapeHtml(order.nip)}</div>
@@ -1841,7 +2015,7 @@
                                 <div class="my-2.5 p-3 bg-slate-950 rounded-xl text-white shadow-inner relative overflow-hidden ${hasFrame ? 'border-2 border-slate-100' : 'border border-slate-800'} flex items-center gap-2">
                                     ${logoIcon ? `<div class="shrink-0 ml-1 sm:ml-2 pr-2 border-r border-slate-400 flex items-center justify-center">${logoIcon}</div>` : ''}
                                     <div class="flex-1 text-center min-w-0">
-                                        <div class="font-bold text-xs sm:text-sm tracking-wide truncate text-white uppercase">${escapeHtml(order.name)}</div>
+                                        <div class="font-bold text-xs sm:text-sm tracking-wide truncate text-white">${escapeHtml(order.name)}</div>
                                         ${order.nip ? `
                                             <div class="border-t border-slate-400 my-0.5 w-full"></div>
                                             <div class="text-[9px] text-slate-300 font-mono truncate">${escapeHtml(order.nip)}</div>
@@ -1871,24 +2045,20 @@
                             `;
                         });
 
-                        const rejectHistoryText = order.rejectReason ? order.rejectReason : 'Tidak ada catatan cacat';
-                        const isRePrinted = order.printCount > 1;
-
                         const cardHTML = `
-                            <div id="card-order-${order.id}" class="bg-white rounded-2xl border ${order.isReject ? 'border-red-300 ring-2 ring-red-100' : 'border-slate-200'} shadow-sm p-3.5 sm:p-4 space-y-3 relative flex flex-col justify-between transition-all duration-300">
+                            <div id="card-${order.id}" class="bg-white rounded-2xl border ${order.isReject ? 'border-red-300 ring-2 ring-red-100' : 'border-slate-200'} shadow-sm p-3.5 sm:p-4 space-y-3 relative flex flex-col justify-between transition-all duration-300">
                                 <div>
                                     <div class="flex items-center justify-between gap-1.5 border-b border-slate-100 pb-2">
                                         <div class="flex items-center gap-1.5">
+                                            <!-- TOOLTIP HOVER CETAK ULANG -->
                                             <div class="tooltip-container">
-                                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold cursor-help ${isRePrinted ? 'bg-red-100 text-red-700 border border-red-200 shadow-xs' : 'bg-slate-100 text-slate-600'}">
+                                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold cursor-pointer ${order.printCount > 1 ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-slate-100 text-slate-600'}">
                                                     <i class="fa-solid fa-print"></i> Cetak #${order.printCount}
                                                 </span>
-                                                ${isRePrinted ? `
-                                                    <div class="tooltip-box bg-slate-900 text-white text-[11px] font-medium p-2.5 rounded-xl shadow-xl border border-slate-700 text-left">
-                                                        <div class="font-bold text-amber-400 border-b border-slate-700 pb-1 mb-1 flex items-center gap-1">
-                                                            <i class="fa-solid fa-circle-info text-xs"></i> Riwayat Penyebab Cetak Ulang:
-                                                        </div>
-                                                        <div class="text-slate-200 leading-snug">${escapeHtml(rejectHistoryText)}</div>
+                                                ${order.printCount > 1 ? `
+                                                    <div class="tooltip-box bg-slate-900 text-white p-2 rounded-xl text-[10px] shadow-xl border border-slate-700 font-normal">
+                                                        <div class="font-bold text-amber-400 mb-0.5"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Cetak Ulang:</div>
+                                                        <div>${escapeHtml(order.rejectReason || 'Cacat produksi')}</div>
                                                     </div>
                                                 ` : ''}
                                             </div>
@@ -1907,18 +2077,17 @@
 
                                     ${order.isReject ? `
                                         <div class="mt-2 p-2 bg-red-50 border border-red-200 rounded-xl text-[11px] text-red-700 font-medium">
-                                            <span class="font-bold">⚠️ Perlu Cetak Ulang:</span> ${escapeHtml(order.rejectReason)}
+                                            <span class="font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Perlu Cetak Ulang:</span> ${escapeHtml(order.rejectReason)}
                                         </div>
                                     ` : ''}
 
                                     <div class="mt-2.5 p-2 sm:p-2.5 bg-slate-50 rounded-xl border border-slate-100 space-y-1 text-xs">
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-slate-400 text-[10px] font-semibold">Tgl Dibuat:</span>
-                                            <span class="font-mono text-slate-700 font-bold text-[10px] flex items-center gap-1">
-                                                <i class="fa-regular fa-clock text-[9px] text-amber-500"></i> ${escapeHtml(createdDateStr)}
-                                            </span>
+                                        <div class="flex items-center justify-between text-[10px] text-slate-500 border-b border-slate-200/60 pb-1">
+                                            <span class="font-semibold text-slate-400"><i class="fa-regular fa-clock"></i> Tgl Dibuat:</span>
+                                            <span class="font-mono text-slate-700 font-bold">${escapeHtml(createdTimeStr)}</span>
                                         </div>
-                                        <div class="flex items-center justify-between">
+
+                                        <div class="flex items-center justify-between pt-0.5">
                                             <span class="text-slate-400 text-[10px] font-semibold">No. MP:</span>
                                             <span class="font-mono font-bold text-slate-700 cursor-pointer hover:text-amber-600 flex items-center gap-1" onclick="copyToClipboard('${escapeHtml(order.mp)}')">
                                                 ${escapeHtml(order.mp || '-')} <i class="fa-regular fa-copy text-[10px]"></i>
@@ -1936,14 +2105,14 @@
                                         </div>
                                     </div>
 
+                                    ${mockupHTML}
+
                                     ${order.notes ? `
-                                        <div class="mt-2 p-2 bg-amber-50/80 border border-amber-200/70 rounded-xl text-[11px] text-amber-900 font-medium flex items-start gap-1.5">
-                                            <i class="fa-solid fa-note-sticky text-amber-500 text-xs mt-0.5 shrink-0"></i>
-                                            <div><span class="font-bold">Catatan:</span> ${escapeHtml(order.notes)}</div>
+                                        <div class="p-2 bg-amber-50/80 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 flex items-start gap-1.5">
+                                            <i class="fa-solid fa-note-sticky text-amber-600 mt-0.5 shrink-0"></i>
+                                            <span class="font-medium"><b>Catatan:</b> ${escapeHtml(order.notes)}</span>
                                         </div>
                                     ` : ''}
-
-                                    ${mockupHTML}
 
                                     <div class="flex items-center justify-between text-xs text-slate-600 pt-0.5">
                                         <span class="font-bold bg-pink-50 text-pink-700 px-2 py-0.5 rounded-md text-[10px] border border-pink-100">
@@ -2010,19 +2179,14 @@
                                     <div>MP: ${escapeHtml(o.mp || '-')}</div>
                                     <div class="text-emerald-700 font-bold">Resi: ${escapeHtml(o.resi || '-')}</div>
                                 </td>
-                                <td class="p-3 text-[10px]">
-                                    <div class="font-mono text-slate-700 font-bold">${escapeHtml(o.createdAt || '-')}</div>
-                                    ${o.notes ? `<div class="text-amber-700 font-semibold truncate max-w-[150px]">Catatan: ${escapeHtml(o.notes)}</div>` : ''}
+                                <td class="p-3 text-[11px] text-slate-600">
+                                    <div class="font-mono text-[10px] text-slate-400">${escapeHtml(formatDateClean(o.createdAt))}</div>
+                                    ${o.notes ? `<div class="text-amber-800 font-semibold text-[10px] bg-amber-50 p-1 rounded mt-0.5">${escapeHtml(o.notes)}</div>` : ''}
                                 </td>
                                 <td class="p-3 text-center">
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <button onclick="openEditModal('${o.id}')" title="Edit Pesanan" class="px-2 py-1.5 rounded-lg text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 transition">
-                                            <i class="fa-solid fa-pen-to-square"></i> Edit
-                                        </button>
-                                        <button onclick="setOrderStep('${o.id}', ${o.currentStep + 1})" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition">
-                                            Lanjut Proses <i class="fa-solid fa-arrow-right ml-1"></i>
-                                        </button>
-                                    </div>
+                                    <button onclick="setOrderStep('${o.id}', ${o.currentStep + 1})" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition">
+                                        Lanjut Proses <i class="fa-solid fa-arrow-right ml-1"></i>
+                                    </button>
                                 </td>
                             </tr>
                         `;
