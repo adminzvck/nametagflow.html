@@ -61,6 +61,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-16 antialiased selection:bg-amber-400 selection:text-slate-950 flex flex-col">
 
+    <!-- HEADER BAR -->
     <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 gap-2">
@@ -233,7 +234,7 @@
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
                 <div class="relative flex-1">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                    <input type="text" id="searchInput" oninput="renderOrders()" placeholder="Cari Nama, NIP, MP, Resi, SKU, Tanggal..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none bg-slate-50 transition">
+                    <input type="text" id="searchInput" oninput="renderOrders()" placeholder="Cari Nama, NIP, MP, Resi, SKU, Catatan, Tanggal..." class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none bg-slate-50 transition">
                 </div>
 
                 <select id="stageFilterSelect" onchange="renderOrders()" class="py-2 px-3 rounded-xl border border-slate-200 text-xs font-bold bg-slate-50 text-slate-700 focus:ring-2 focus:ring-amber-400 focus:outline-none transition">
@@ -295,7 +296,7 @@
                             <th class="p-3">Nama & NIP</th>
                             <th class="p-3">Pengait</th>
                             <th class="p-3">No. MP / SKU</th>
-                            <th class="p-3">Tgl Dibuat</th>
+                            <th class="p-3">Tgl Dibuat & Catatan</th>
                             <th class="p-3 text-center">Aksi / Status</th>
                         </tr>
                     </thead>
@@ -471,6 +472,11 @@
                     </div>
                 </div>
 
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Catatan / Keterangan Khusus (Opsional)</label>
+                    <textarea id="singleNotes" rows="2" placeholder="Contoh: Minta tulisan tebal, pengiriman kilat, logo warna kuning..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
+                </div>
+
                 <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="closeModal('singleModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Batal</button>
                     <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-sm">Simpan Pesanan</button>
@@ -543,6 +549,11 @@
                     </div>
                 </div>
 
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Catatan / Keterangan Khusus</label>
+                    <textarea id="editNotes" rows="2" placeholder="Ubah catatan pesanan..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
+                </div>
+
                 <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
                     <button type="button" onclick="closeModal('editModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Batal</button>
                     <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-sm">Simpan Perubahan</button>
@@ -563,14 +574,14 @@
 
             <div class="space-y-3 text-xs">
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 space-y-1 text-slate-700">
-                    <p class="font-bold text-amber-900">Format Input per Baris (5 Bidang):</p>
-                    <p class="font-mono text-[11px] bg-white p-1.5 rounded border border-amber-200">NAMA | NIP | LOGO | PENGAIT | MODEL</p>
-                    <p class="text-[11px] text-slate-500 italic">*Contoh: SUPRIYADI | NIP. 1980... | Tut Wuri | Magnet | Model 4</p>
+                    <p class="font-bold text-amber-900">Format Input per Baris (6 Bidang):</p>
+                    <p class="font-mono text-[11px] bg-white p-1.5 rounded border border-amber-200">NAMA | NIP | LOGO | PENGAIT | MODEL | CATATAN</p>
+                    <p class="text-[11px] text-slate-500 italic">*Contoh: SUPRIYADI | NIP. 1980... | Tut Wuri | Magnet | Model 4 | Tulisan Bold</p>
                 </div>
 
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Tempelkan Data Pesanan Di Sini:</label>
-                    <textarea id="batchInput" rows="6" placeholder="SUPRIYADI | NIP. 19800101 | Tut Wuri | Magnet | Model 4&#10;ERNA NARLIA | | Tanpa Logo | Peniti | 2" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
+                    <textarea id="batchInput" rows="6" placeholder="SUPRIYADI | NIP. 19800101 | Tut Wuri | Magnet | Model 4 | Tulisan Tebal&#10;ERNA NARLIA | | Tanpa Logo | Peniti | 2 |" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -804,7 +815,7 @@
             </div>
 
             <div class="space-y-3 text-xs">
-                <p class="text-slate-600">Pesanan ini akan dikembalikan ke <b>Tahap 1 (Cetak Vinyl)</b>, menambah jumlah cetak, dan <b>dipindahkan ke urutan antrean terbaru</b>.</p>
+                <p class="text-slate-600">Pesanan ini akan dikembalikan ke <b>Tahap 1 (Cetak Vinyl)</b>, menambah jumlah cetak, dan <b>dipindahkan ke akhir antrean cetak paling baru</b>.</p>
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Alasan Cacat / Keterangan Baru *</label>
                     <textarea id="rejectReasonInput" rows="3" placeholder="Contoh: kertas melipat, gelembung, stiker miring..." class="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-red-400 focus:outline-none"></textarea>
@@ -842,6 +853,7 @@
         <span id="toastMessage">Notifikasi sistem</span>
     </div>
 
+    <!-- APPLICATION LOGIC & JAVASCRIPT -->
     <script>
         // Default State
         let orders = [];
@@ -884,22 +896,6 @@
             const mins = String(now.getMinutes()).padStart(2, '0');
             return `${day}/${month}/${year} ${hours}:${mins}`;
         }
-
-        function switchTab(tabName) {
-            if (tabName === 'scan') {
-                openModal('scanModal');
-            } else if (tabName === 'archive') {
-                openModal('archiveModal');
-            } else if (tabName === 'active') {
-                closeModal('scanModal');
-                closeModal('archiveModal');
-            }
-        }
-
-        function openAddModal() { openModal('singleModal'); }
-        function closeAddModal() { closeModal('singleModal'); }
-        function openConfigModal() { openModal('sheetModal'); }
-        function closeConfigModal() { closeModal('sheetModal'); }
 
         function openModal(id) {
             const el = document.getElementById(id);
@@ -955,28 +951,32 @@
             const currentGasUrl = gasUrl || DEFAULT_GAS_URL;
             if (showToastNotice) showToast('🔄 Mengambil data terbaru dari Google Sheet...');
 
+            const processResult = function(res) {
+                if (res && res.status === 'success' && Array.isArray(res.orders)) {
+                    const nowStr = getCurrentFormattedDate();
+                    // Proteksi agar Tanggal Dibuat tidak hilang saat sheet dikembalikan kosong
+                    res.orders.forEach(incoming => {
+                        const existing = orders.find(o => o.id === incoming.id);
+                        if (!incoming.createdAt || incoming.createdAt.trim() === '' || incoming.createdAt === '-') {
+                            incoming.createdAt = (existing && existing.createdAt && existing.createdAt !== '-') 
+                                ? existing.createdAt 
+                                : nowStr;
+                        }
+                    });
+                    orders = res.orders;
+                    saveLocalOnly();
+                    renderOrders();
+                    updateGasBadge();
+                    if (showToastNotice) showToast('✅ Data terbaru tersinkron!');
+                }
+            };
+
             if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run.withSuccessHandler(function(res) {
-                    if (res && res.status === 'success' && Array.isArray(res.orders)) {
-                        orders = res.orders;
-                        saveLocalOnly();
-                        renderOrders();
-                        updateGasBadge();
-                        if (showToastNotice) showToast('✅ Data terbaru tersinkron!');
-                    }
-                }).getActiveOrdersFromSheet();
+                google.script.run.withSuccessHandler(processResult).getActiveOrdersFromSheet();
             } else if (currentGasUrl) {
                 fetch(currentGasUrl + '?action=getOrders')
                     .then(res => res.json())
-                    .then(data => {
-                        if (data && data.status === 'success' && Array.isArray(data.orders)) {
-                            orders = data.orders;
-                            saveLocalOnly();
-                            renderOrders();
-                            updateGasBadge();
-                            if (showToastNotice) showToast('✅ Data terbaru tersinkron!');
-                        }
-                    })
+                    .then(data => processResult(data))
                     .catch(err => console.log('Fetch error:', err));
             }
         }
@@ -1068,7 +1068,6 @@
             }
 
             if (currentScanAction === 'find') {
-                // MODE CARI & SOROT
                 playBeep('success');
                 const matchedOrder = matchedOrders[0];
                 const searchInput = document.getElementById('searchInput');
@@ -1081,7 +1080,6 @@
 
                 closeModal('scanModal');
                 
-                // Highlight & Scroll to target card
                 setTimeout(() => {
                     const targetEl = document.getElementById(`card-order-${matchedOrder.id}`);
                     if (targetEl) {
@@ -1095,7 +1093,6 @@
                 return;
             }
 
-            // MODE AUTO KIRIM (TAHAP 7)
             let updatedCount = 0;
             let namesProcessed = [];
 
@@ -1364,6 +1361,7 @@
             return '<i class="fa-solid fa-shield-halved text-indigo-400 text-base"></i>';
         }
 
+        // TAMBAH PESANAN SINGLE - DITAMBAHKAN KE BELAKANG ANTREAN (PUSH)
         function handleSingleOrderSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('singleName').value.trim();
@@ -1373,6 +1371,7 @@
             const logo = document.getElementById('singleLogo').value.trim();
             const mp = document.getElementById('singleMp').value.trim();
             const resi = document.getElementById('singleResi').value.trim();
+            const notes = document.getElementById('singleNotes').value.trim();
 
             if (!name) return;
 
@@ -1386,6 +1385,7 @@
                 mp: mp || ('MP-' + Math.floor(100000 + Math.random() * 900000)),
                 resi: resi,
                 sku: 'NT-AKR-' + (hook === 'Magnet' ? 'MAG' : 'PEN'),
+                notes: notes,
                 printCount: 1,
                 currentStep: 1,
                 isReject: false,
@@ -1393,7 +1393,8 @@
                 createdAt: getCurrentFormattedDate()
             };
 
-            orders.unshift(newOrder);
+            // PUSH KE BELAKANG AGAR HALAMAN BERURUTAN DARI INPUT PERTAMA
+            orders.push(newOrder);
             saveData();
             renderOrders();
             closeModal('singleModal');
@@ -1413,6 +1414,7 @@
             document.getElementById('editLogo').value = order.logo || '';
             document.getElementById('editMp').value = order.mp || '';
             document.getElementById('editResi').value = order.resi || '';
+            document.getElementById('editNotes').value = order.notes || '';
 
             openModal('editModal');
         }
@@ -1431,6 +1433,7 @@
             const logo = document.getElementById('editLogo').value.trim();
             const mp = document.getElementById('editMp').value.trim();
             const resi = document.getElementById('editResi').value.trim();
+            const notes = document.getElementById('editNotes').value.trim();
 
             if (!name) return;
 
@@ -1441,6 +1444,7 @@
             order.logo = logo;
             order.mp = mp;
             order.resi = resi;
+            order.notes = notes;
             order.sku = 'NT-AKR-' + (hook === 'Magnet' ? 'MAG' : 'PEN');
 
             saveData();
@@ -1468,6 +1472,7 @@
             return defaultModel;
         }
 
+        // BATCH IMPORT MASSAL - DITAMBAHKAN KE BELAKANG ANTREAN (PUSH)
         function handleBatchImportSubmit() {
             const rawText = document.getElementById('batchInput').value.trim();
             const defaultModel = document.getElementById('batchDefaultModel').value;
@@ -1491,8 +1496,9 @@
                                  ? (parts[3].toLowerCase().includes('peniti') ? 'Peniti' : 'Magnet') 
                                  : defaultHook;
                     const model = parseModelString(parts[4], defaultModel);
+                    const notes = parts[5] || '';
 
-                    orders.unshift({
+                    orders.push({
                         id: 'NT-' + Math.floor(1000 + Math.random() * 9000),
                         name: name,
                         nip: nip,
@@ -1502,6 +1508,7 @@
                         mp: batchMp || ('MP-' + Math.floor(100000 + Math.random() * 900000)),
                         resi: batchResi,
                         sku: 'NT-AKR-' + (hook === 'Magnet' ? 'MAG' : 'PEN'),
+                        notes: notes,
                         printCount: 1,
                         currentStep: 1,
                         isReject: false,
@@ -1539,6 +1546,7 @@
             openModal('rejectModal');
         }
 
+        // LAPOR CACAT / REJECT - DIPINDAHKAN KE AKHIR ANTREAN CETAK
         function confirmRejectSubmit() {
             if (!pendingRejectId) return;
             const newReason = document.getElementById('rejectReasonInput').value.trim() || 'Cacat produksi';
@@ -1550,21 +1558,21 @@
                 order.printCount += 1;
                 order.isReject = true;
                 
-                // Jika sudah ada alasan cacat sebelumnya, gabungkan dengan koma
+                // Akumulasi alasan cacat
                 if (order.rejectReason && order.rejectReason.trim() !== '') {
                     order.rejectReason = `${order.rejectReason}, ${newReason}`;
                 } else {
                     order.rejectReason = newReason;
                 }
 
-                // DIPINDAHKAN KE URUTAN TERBARU/PALING DEPAN DALAM ANTREAN
+                // DIGESER KE ANTREAN CETAK PALING BELAKANG (AKHIR)
                 orders.splice(orderIndex, 1);
-                orders.unshift(order);
+                orders.push(order);
 
                 saveData();
                 renderOrders();
                 closeModal('rejectModal');
-                showToast(`⚠️ Pesanan ${order.name} dikembalikan ke Tahap Cetak & dipindahkan ke antrean terbaru!`);
+                showToast(`⚠️ Pesanan ${order.name} dikembalikan ke Cetak Ulang & dipindahkan ke antrean cetak paling baru!`);
             }
         }
 
@@ -1704,6 +1712,7 @@
                                 <div>${escapeHtml(item.name)}</div>
                                 ${item.nip ? `<div class="text-[10px] text-slate-400 font-mono">${escapeHtml(item.nip)}</div>` : ''}
                                 ${item.createdAt ? `<div class="text-[9px] text-slate-400">Dibuat: ${escapeHtml(item.createdAt)}</div>` : ''}
+                                ${item.notes ? `<div class="text-[9px] text-amber-700 font-medium">Catatan: ${escapeHtml(item.notes)}</div>` : ''}
                             </td>
                             <td class="p-3 text-[11px] text-slate-600">${escapeHtml(item.model)}</td>
                             <td class="p-3 text-[11px] font-bold text-pink-600">${escapeHtml(item.hook)}</td>
@@ -1740,7 +1749,7 @@
             }
 
             let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-            csvContent += "Tanggal Arsip;ID Pesanan;Nama;NIP;Model;Pengait;Logo;No. MP;No. Resi;SKU Toko;Cetak Ke-;Tanggal Dibuat;Status Transaksi\n";
+            csvContent += "Tanggal Arsip;ID Pesanan;Nama;NIP;Model;Pengait;Logo;No. MP;No. Resi;SKU Toko;Catatan;Cetak Ke-;Tanggal Dibuat;Status Transaksi\n";
 
             archivedOrders.forEach(a => {
                 const row = [
@@ -1754,6 +1763,7 @@
                     a.mp || '',
                     a.resi || '',
                     a.sku || '',
+                    a.notes || '',
                     a.printCount || 1,
                     a.createdAt || '',
                     a.archiveStatus || 'Dalam Pengiriman'
@@ -1772,6 +1782,7 @@
             showToast('✅ File Rekap Excel/CSV berhasil diunduh!');
         }
 
+        // RENDER KARTU DAN TABEL STASIUN
         function renderOrders() {
             const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase();
             const filterStage = document.getElementById('stageFilterSelect')?.value || 'ALL';
@@ -1812,6 +1823,7 @@
                                       (o.mp && o.mp.toLowerCase().includes(searchVal)) ||
                                       (o.resi && o.resi.toLowerCase().includes(searchVal)) ||
                                       (o.sku && o.sku.toLowerCase().includes(searchVal)) ||
+                                      (o.notes && o.notes.toLowerCase().includes(searchVal)) ||
                                       (o.createdAt && o.createdAt.toLowerCase().includes(searchVal));
                 
                 if (!matchesSearch) return false;
@@ -1839,7 +1851,7 @@
                         const logoIcon = getLogoIconHTML(order.logo);
                         const m = order.model || 'Model 1';
                         const hasFrame = !m.includes('Polos');
-                        const createdDateStr = order.createdAt || '-';
+                        const createdDateStr = (order.createdAt && order.createdAt !== '-') ? order.createdAt : getCurrentFormattedDate();
 
                         let mockupHTML = '';
                         if (m.startsWith('Model 1') || m.startsWith('Model 6')) {
@@ -1893,7 +1905,6 @@
                             `;
                         });
 
-                        // Tooltip & Badge Cetak Ke-
                         const rejectHistoryText = order.rejectReason ? order.rejectReason : 'Tidak ada catatan cacat';
                         const isRePrinted = order.printCount > 1;
 
@@ -1958,6 +1969,13 @@
                                             <span class="font-mono text-slate-600 text-[11px]">${escapeHtml(order.sku || '-')}</span>
                                         </div>
                                     </div>
+
+                                    ${order.notes ? `
+                                        <div class="mt-2 p-2 bg-amber-50/80 border border-amber-200/70 rounded-xl text-[11px] text-amber-900 font-medium flex items-start gap-1.5">
+                                            <i class="fa-solid fa-note-sticky text-amber-500 text-xs mt-0.5 shrink-0"></i>
+                                            <div><span class="font-bold">Catatan:</span> ${escapeHtml(order.notes)}</div>
+                                        </div>
+                                    ` : ''}
 
                                     ${mockupHTML}
 
@@ -2026,7 +2044,10 @@
                                     <div>MP: ${escapeHtml(o.mp || '-')}</div>
                                     <div class="text-emerald-700 font-bold">Resi: ${escapeHtml(o.resi || '-')}</div>
                                 </td>
-                                <td class="p-3 font-mono text-[10px] text-slate-500">${escapeHtml(o.createdAt || '-')}</td>
+                                <td class="p-3 text-[10px]">
+                                    <div class="font-mono text-slate-700 font-bold">${escapeHtml(o.createdAt || '-')}</div>
+                                    ${o.notes ? `<div class="text-amber-700 font-semibold truncate max-w-[150px]">Catatan: ${escapeHtml(o.notes)}</div>` : ''}
+                                </td>
                                 <td class="p-3 text-center">
                                     <div class="flex items-center justify-center gap-1.5">
                                         <button onclick="openEditModal('${o.id}')" title="Edit Pesanan" class="px-2 py-1.5 rounded-lg text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 transition">
