@@ -115,6 +115,11 @@
                         <span class="text-[11px] sm:text-xs">+ Single</span>
                     </button>
 
+                    <button onclick="openModal('historySearchModal')" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-white border border-slate-700 transition flex items-center gap-1.5 shrink-0" title="Cari data nametag yang pernah diproduksi">
+                        <i class="fa-solid fa-clock-rotate-left text-violet-400 text-xs"></i>
+                        <span class="text-[11px] sm:text-xs">Data Lama</span>
+                    </button>
+
                     <button onclick="openModal('batchModal')" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-extrabold bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 shadow-md transition flex items-center gap-1.5 shrink-0">
                         <i class="fa-solid fa-file-import text-xs"></i>
                         <span>Import</span>
@@ -442,12 +447,24 @@
             <form id="singleOrderForm" onsubmit="handleSingleOrderSubmit(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Nama Pemesan / Pegawai *</label>
-                    <input type="text" id="singleName" required placeholder="Contoh: SUPRIYADI, S.Pd" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                    <input type="text" id="singleName" required oninput="scheduleHistoryLookup()" placeholder="Contoh: SUPRIYADI, S.Pd" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
                 </div>
 
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">NIP / Jabatan (Opsional)</label>
-                    <input type="text" id="singleNip" placeholder="Contoh: NIP. 19800101 200501 1 001" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                    <input type="text" id="singleNip" oninput="scheduleHistoryLookup()" placeholder="Contoh: NIP. 19800101 200501 1 001" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                </div>
+
+                <div id="oldDataPanel" class="hidden p-3 rounded-xl border border-violet-200 bg-violet-50 space-y-2">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="font-black text-violet-900 flex items-center gap-1.5"><i class="fa-solid fa-clock-rotate-left"></i> Pernah Diproduksi</div>
+                            <div id="oldDataSummary" class="text-[11px] text-violet-700 mt-0.5">Riwayat lama ditemukan.</div>
+                        </div>
+                        <button type="button" onclick="applyReusableOldData()" class="shrink-0 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-bold text-[11px]">Pakai Data Lama</button>
+                    </div>
+                    <div id="oldDataDetail" class="text-[11px] text-slate-600 bg-white/80 rounded-lg border border-violet-100 p-2"></div>
+                    <p class="text-[10px] text-violet-600 font-medium">ID pesanan, No. MP, No. Resi, tanggal, cetak ke-, dan tahap produksi tidak akan disalin.</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -481,7 +498,8 @@
                 <div class="grid grid-cols-3 gap-2">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Logo</label>
-                        <input type="text" id="singleLogo" placeholder="Tut Wuri / Korpri..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                        <input type="text" id="singleLogo" list="logoMasterList" placeholder="Ketik / pilih logo atau instansi..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                        <datalist id="logoMasterList"></datalist>
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">No. MP</label>
@@ -889,6 +907,29 @@
         </div>
     </div>
 
+    <!-- MODAL: CARI DATA LAMA -->
+    <div id="historySearchModal" onclick="handleBackdropClick(event, 'historySearchModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-black text-slate-900 text-sm flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-violet-500"></i> Cari Data Nametag Lama</h3>
+                <button onclick="closeModal('historySearchModal')" class="text-slate-400 hover:text-slate-600 p-1 text-lg leading-none"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="flex gap-2">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input id="historySearchInput" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOldDataGlobal();}" placeholder="Cari nama, NIP, ID pesanan, MP, resi, SKU, logo..." class="w-full pl-8 pr-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-violet-400 focus:outline-none bg-slate-50">
+                </div>
+                <button type="button" onclick="searchOldDataGlobal()" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold">Cari</button>
+            </div>
+            <div id="historySearchResults" class="space-y-2 max-h-[55vh] overflow-y-auto">
+                <div class="p-5 text-center text-xs text-slate-400">Masukkan nama atau data pesanan untuk mencari riwayat.</div>
+            </div>
+            <div class="flex justify-end pt-2 border-t border-slate-100">
+                <button type="button" onclick="closeModal('historySearchModal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white">Tutup</button>
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST NOTIFICATION -->
     <div id="toast" class="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2.5 transition-all duration-300 opacity-0 translate-y-5 pointer-events-none max-w-[90vw]">
         <i class="fa-solid fa-circle-check text-emerald-400 text-base shrink-0"></i>
@@ -897,7 +938,7 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwKpok4J-Ezh_SD7kOZ8B8j2r1v8QGob5MfZYCHynSdFfeFDbAzA75zsDbRDtyLwIYvkw/exec";
+        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbyyubqshTCcDZ-hQY4GkTNV8dilVjOpvFskOGGVIrmIk5kEmNKmhTu665HbLo8OyuPG8w/exec";
 
         let orders = [];
         let archivedOrders = [];
@@ -911,12 +952,17 @@
         let html5QrCodeScanner = null;
         let isCameraActive = false;
         let currentScanAction = 'ship'; // 'ship' or 'find'
+        let historyLookupTimer = null;
+        let lastReusableOldData = null;
+        let historySearchResultsData = [];
 
         window.onload = function() {
             loadSavedData();
             updateGasBadge();
             renderOrders();
             loadOrdersFromSheet();
+            loadArchivedOrdersFromSheet();
+            loadLogoMaster();
             initNavbarPcScroll();
 
             // Background polling every 10 seconds for real-time sync across devices
@@ -1060,6 +1106,171 @@
             orders = sheetOrders;
             saveLocalOnly();
             renderOrders();
+        }
+
+        async function loadArchivedOrdersFromSheet() {
+            if (!gasUrl) return;
+            try {
+                const res = await fetch(gasUrl + '?action=getArchives&_=' + Date.now());
+                const data = await res.json();
+                if (data && data.status === 'success' && Array.isArray(data.archives)) {
+                    const localMap = new Map((archivedOrders || []).map(a => [a.id, a]));
+                    archivedOrders = data.archives.map(a => ({ ...localMap.get(a.id), ...a }));
+                    saveLocalOnly();
+                }
+            } catch (err) {
+                console.log('Archive fetch error:', err);
+            }
+        }
+
+        async function loadLogoMaster() {
+            if (!gasUrl) return;
+            try {
+                const res = await fetch(gasUrl + '?action=logos&_=' + Date.now());
+                const payload = await res.json();
+                const logos = payload && payload.ok ? payload.data : [];
+                const list = document.getElementById('logoMasterList');
+                if (!list || !Array.isArray(logos)) return;
+                list.innerHTML = logos
+                    .filter(x => x && x.name && String(x.active || '').toUpperCase() !== 'NONAKTIF')
+                    .map(x => `<option value="${escapeHtml(x.name)}">${escapeHtml(x.type || '')}</option>`)
+                    .join('');
+            } catch (err) {
+                console.log('Logo master fetch error:', err);
+            }
+        }
+
+        function scheduleHistoryLookup() {
+            clearTimeout(historyLookupTimer);
+            historyLookupTimer = setTimeout(checkExistingNametag, 450);
+        }
+
+        async function checkExistingNametag() {
+            const panel = document.getElementById('oldDataPanel');
+            const summary = document.getElementById('oldDataSummary');
+            const detail = document.getElementById('oldDataDetail');
+            const name = document.getElementById('singleName')?.value.trim() || '';
+            const nip = document.getElementById('singleNip')?.value.trim() || '';
+
+            lastReusableOldData = null;
+            if (!panel) return;
+            if (!gasUrl || (!name && !nip)) {
+                panel.classList.add('hidden');
+                return;
+            }
+            if (name.length < 3 && nip.length < 4) {
+                panel.classList.add('hidden');
+                return;
+            }
+
+            try {
+                const url = gasUrl + '?action=history&name=' + encodeURIComponent(name) + '&nip=' + encodeURIComponent(nip) + '&_=' + Date.now();
+                const res = await fetch(url);
+                const payload = await res.json();
+                const data = payload && payload.ok ? payload.data : null;
+
+                if (!data || !data.found || !data.reusable) {
+                    panel.classList.add('hidden');
+                    return;
+                }
+
+                lastReusableOldData = data.reusable;
+                panel.classList.remove('hidden');
+                if (summary) summary.textContent = `${data.count} riwayat ditemukan. Data terbaru bisa dipakai ulang.`;
+                if (detail) {
+                    detail.innerHTML = `
+                        <div><b>${escapeHtml(data.reusable.name || name)}</b>${data.reusable.nip ? ` • <span class="font-mono">${escapeHtml(data.reusable.nip)}</span>` : ''}</div>
+                        <div class="mt-1">${escapeHtml(data.reusable.model || '-')} • ${escapeHtml(data.reusable.fastener || '-')} • Logo: ${escapeHtml(data.reusable.logo || '-')}</div>
+                    `;
+                }
+            } catch (err) {
+                console.log('History lookup error:', err);
+                panel.classList.add('hidden');
+            }
+        }
+
+        function applyReusableOldData() {
+            if (!lastReusableOldData) return;
+            const d = lastReusableOldData;
+            if (d.name) document.getElementById('singleName').value = d.name;
+            if (d.nip) document.getElementById('singleNip').value = d.nip;
+            if (d.model && [...document.getElementById('singleModel').options].some(o => o.value === d.model)) document.getElementById('singleModel').value = d.model;
+            if (d.fastener && [...document.getElementById('singleHook').options].some(o => o.value === d.fastener)) document.getElementById('singleHook').value = d.fastener;
+            if (d.logo) document.getElementById('singleLogo').value = d.logo;
+            if (d.customNote && !document.getElementById('singleNotes').value.trim()) document.getElementById('singleNotes').value = d.customNote;
+            showToast('✅ Data lama dipakai. No. MP dan Resi tetap untuk pesanan baru.');
+        }
+
+        async function searchOldDataGlobal() {
+            const input = document.getElementById('historySearchInput');
+            const box = document.getElementById('historySearchResults');
+            const q = input?.value.trim() || '';
+            if (!box) return;
+            if (!q) {
+                box.innerHTML = '<div class="p-5 text-center text-xs text-slate-400">Masukkan kata pencarian.</div>';
+                return;
+            }
+            if (!gasUrl) {
+                box.innerHTML = '<div class="p-5 text-center text-xs text-red-500">Backend Apps Script belum terhubung.</div>';
+                return;
+            }
+
+            box.innerHTML = '<div class="p-5 text-center text-xs text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Mencari data lama...</div>';
+            try {
+                const res = await fetch(gasUrl + '?action=search&q=' + encodeURIComponent(q) + '&limit=50&_=' + Date.now());
+                const payload = await res.json();
+                historySearchResultsData = payload && payload.ok && Array.isArray(payload.data) ? payload.data : [];
+                if (!historySearchResultsData.length) {
+                    box.innerHTML = '<div class="p-5 text-center text-xs text-slate-400">Data tidak ditemukan.</div>';
+                    return;
+                }
+                box.innerHTML = historySearchResultsData.map((r, i) => `
+                    <div class="p-3 rounded-xl border ${r.source === 'ARCHIVE' ? 'border-emerald-200 bg-emerald-50/40' : 'border-sky-200 bg-sky-50/40'} flex items-start justify-between gap-3">
+                        <div class="min-w-0 text-xs">
+                            <div class="font-black text-slate-900 truncate">${escapeHtml(r.name || '-')}</div>
+                            <div class="text-[10px] text-slate-500 mt-0.5">${escapeHtml(r.nip || '-')} • ${escapeHtml(r.model || '-')} • ${escapeHtml(r.hook || r.fastener || '-')}</div>
+                            <div class="text-[10px] font-mono text-slate-500 mt-1">ID ${escapeHtml(r.id || r.orderId || '-')} • MP ${escapeHtml(r.mp || '-')} • Resi ${escapeHtml(r.resi || r.tracking || '-')}</div>
+                            <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold ${r.source === 'ARCHIVE' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'}">${r.source === 'ARCHIVE' ? 'ARSIP' : 'ANTREAN AKTIF'}</span>
+                        </div>
+                        <button type="button" onclick="useHistorySearchResult(${i})" class="shrink-0 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-[10px] font-bold">Pakai</button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.log('Old data search error:', err);
+                box.innerHTML = '<div class="p-5 text-center text-xs text-red-500">Gagal membaca backend. Cek deployment Apps Script.</div>';
+            }
+        }
+
+        function useHistorySearchResult(index) {
+            const r = historySearchResultsData[index];
+            if (!r) return;
+            closeModal('historySearchModal');
+            openModal('singleModal');
+            document.getElementById('singleName').value = r.name || '';
+            document.getElementById('singleNip').value = r.nip || '';
+            if (r.model && [...document.getElementById('singleModel').options].some(o => o.value === r.model)) document.getElementById('singleModel').value = r.model;
+            const hook = r.hook || r.fastener || '';
+            if (hook && [...document.getElementById('singleHook').options].some(o => o.value === hook)) document.getElementById('singleHook').value = hook;
+            document.getElementById('singleLogo').value = r.logo || '';
+            document.getElementById('singleMp').value = '';
+            document.getElementById('singleResi').value = '';
+            document.getElementById('singleNotes').value = r.notes || r.customNote || '';
+            lastReusableOldData = { name:r.name||'', nip:r.nip||'', model:r.model||'', fastener:hook, logo:r.logo||'', customNote:r.notes||r.customNote||'' };
+            showToast('✅ Data lama dimasukkan ke form. MP & Resi dikosongkan untuk pesanan baru.');
+        }
+
+        function archiveOrdersToSheet(items) {
+            if (!gasUrl || !Array.isArray(items) || !items.length) return;
+            try {
+                fetch(gasUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'archiveOrders', orders: items })
+                });
+            } catch (err) {
+                console.log('Archive sync error:', err);
+            }
         }
 
         function playBeep(type = 'success') {
@@ -1489,6 +1700,8 @@
             renderOrders();
             closeModal('singleModal');
             document.getElementById('singleOrderForm').reset();
+            lastReusableOldData = null;
+            document.getElementById('oldDataPanel')?.classList.add('hidden');
             showToast('✅ Pesanan berhasil ditambahkan!');
         }
 
@@ -1772,6 +1985,11 @@
             const now = new Date();
             const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
 
+            const archivePayload = shippedOrders.map(o => ({
+                ...o,
+                archiveStatus: 'Dalam Pengiriman'
+            }));
+
             shippedOrders.forEach(o => {
                 archivedOrders.unshift({
                     ...o,
@@ -1783,6 +2001,7 @@
                 });
             });
 
+            archiveOrdersToSheet(archivePayload);
             orders = orders.filter(o => o.currentStep < 7);
             saveData();
             renderOrders();
