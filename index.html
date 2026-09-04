@@ -273,6 +273,12 @@
                     <option value="6">6. Packing & Kirim</option>
                     <option value="7">7. Dalam Pengiriman</option>
                 </select>
+
+                <div class="flex items-center gap-1.5">
+                    <input type="date" id="dateFilterInput" onchange="renderOrders()" class="py-2 px-2.5 rounded-xl border border-slate-200 text-xs font-bold bg-slate-50 text-slate-700 focus:ring-2 focus:ring-amber-400 focus:outline-none transition">
+                    <button type="button" onclick="setTodayFilter()" class="py-2 px-2.5 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-extrabold whitespace-nowrap">Hari Ini</button>
+                    <button type="button" onclick="clearDateFilter()" class="py-2 px-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 text-[11px] font-bold whitespace-nowrap" title="Tampilkan semua tanggal">Semua</button>
+                </div>
             </div>
 
             <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 shrink-0 self-center md:self-auto w-full md:w-auto justify-center">
@@ -964,6 +970,13 @@
             loadArchivedOrdersFromSheet();
             loadLogoMaster();
             initNavbarPcScroll();
+
+            // Default operasional: tampilkan pesanan hari ini
+            const dateInput = document.getElementById('dateFilterInput');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = getTodayDateKey();
+                renderOrders();
+            }
 
             // Background polling every 10 seconds for real-time sync across devices
             setInterval(() => {
@@ -2151,18 +2164,55 @@
             showToast('✅ File Rekap Excel/CSV berhasil diunduh!');
         }
 
+        function toDateKey(dateValue) {
+            if (!dateValue) return '';
+            const raw = String(dateValue).trim();
+            const m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if (m) return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
+            const d = new Date(raw);
+            if (!isNaN(d.getTime())) {
+                const y = d.getFullYear();
+                const mo = String(d.getMonth()+1).padStart(2,'0');
+                const da = String(d.getDate()).padStart(2,'0');
+                return `${y}-${mo}-${da}`;
+            }
+            return '';
+        }
+
+        function getTodayDateKey() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+
+        function setTodayFilter() {
+            const input = document.getElementById('dateFilterInput');
+            if (input) input.value = getTodayDateKey();
+            renderOrders();
+        }
+
+        function clearDateFilter() {
+            const input = document.getElementById('dateFilterInput');
+            if (input) input.value = '';
+            renderOrders();
+        }
+
         function renderOrders() {
             const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase();
             const filterStage = document.getElementById('stageFilterSelect')?.value || 'ALL';
+            const dateFilter = document.getElementById('dateFilterInput')?.value || '';
 
-            let countTotal = orders.length;
-            let countS1 = orders.filter(o => o.currentStep === 1).length;
-            let countS2 = orders.filter(o => o.currentStep === 2).length;
-            let countS3 = orders.filter(o => o.currentStep === 3).length;
-            let countS4 = orders.filter(o => o.currentStep === 4).length;
-            let countS5 = orders.filter(o => o.currentStep === 5).length;
-            let countS6 = orders.filter(o => o.currentStep === 6).length;
-            let countS7 = orders.filter(o => o.currentStep === 7).length;
+            const dateScopedOrders = dateFilter
+                ? orders.filter(o => toDateKey(o.createdAt) === dateFilter)
+                : orders;
+
+            let countTotal = dateScopedOrders.length;
+            let countS1 = dateScopedOrders.filter(o => o.currentStep === 1).length;
+            let countS2 = dateScopedOrders.filter(o => o.currentStep === 2).length;
+            let countS3 = dateScopedOrders.filter(o => o.currentStep === 3).length;
+            let countS4 = dateScopedOrders.filter(o => o.currentStep === 4).length;
+            let countS5 = dateScopedOrders.filter(o => o.currentStep === 5).length;
+            let countS6 = dateScopedOrders.filter(o => o.currentStep === 6).length;
+            let countS7 = dateScopedOrders.filter(o => o.currentStep === 7).length;
 
             document.getElementById('statTotal').textContent = countTotal;
             document.getElementById('statStep1').textContent = countS1;
@@ -2186,6 +2236,7 @@
                                       (o.createdAt && o.createdAt.toLowerCase().includes(searchVal));
                 
                 if (!matchesSearch) return false;
+                if (dateFilter && toDateKey(o.createdAt) !== dateFilter) return false;
                 if (filterStage === 'REJECT') return o.isReject;
                 if (filterStage !== 'ALL') return o.currentStep === parseInt(filterStage);
                 return true;
