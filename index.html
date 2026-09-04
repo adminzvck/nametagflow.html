@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nametag Production Monitor - John Store</title>
+    <!-- NametagFlow FINAL v2.5 -->
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -118,6 +119,16 @@
                     <button onclick="openModal('historySearchModal')" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-white border border-slate-700 transition flex items-center gap-1.5 shrink-0" title="Cari data nametag yang pernah diproduksi">
                         <i class="fa-solid fa-clock-rotate-left text-violet-400 text-xs"></i>
                         <span class="text-[11px] sm:text-xs">Data Lama</span>
+                    </button>
+
+                    <button onclick="openOwnerDashboard()" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-white border border-slate-700 transition flex items-center gap-1.5 shrink-0" title="Dashboard ringkas untuk owner">
+                        <i class="fa-solid fa-chart-line text-amber-400 text-xs"></i>
+                        <span class="text-[11px] sm:text-xs">Owner</span>
+                    </button>
+
+                    <button onclick="openAuditLog()" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 active:bg-slate-800 text-white border border-slate-700 transition flex items-center gap-1.5 shrink-0" title="Lihat log perubahan">
+                        <i class="fa-solid fa-list-ul text-sky-400 text-xs"></i>
+                        <span class="text-[11px] sm:text-xs">Log</span>
                     </button>
 
                     <button onclick="openModal('batchModal')" class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-extrabold bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 shadow-md transition flex items-center gap-1.5 shrink-0">
@@ -259,9 +270,10 @@
             <div>
                 <div class="text-xs font-black text-amber-900 flex items-center gap-1.5">
                     <i class="fa-solid fa-calendar-day"></i> Filter Tanggal Produksi
-                    <span class="ml-1 px-1.5 py-0.5 rounded bg-slate-900 text-white text-[9px]">v2.2</span>
+                    <span class="ml-1 px-1.5 py-0.5 rounded bg-slate-900 text-white text-[9px]">v2.5</span>
                 </div>
-                <p class="text-[10px] text-amber-700 mt-0.5">Angka Total dan semua tahap di atas mengikuti tanggal yang dipilih.</p>
+                <p class="text-[10px] text-amber-700 mt-0.5">Angka tahap di atas mengikuti tanggal yang dipilih.<br><span class="font-semibold text-emerald-700">Input baru otomatis memakai tanggal yang sedang dipilih.</span></p>
+                <p id="dateSummaryText" class="text-[10px] text-slate-600 mt-1 font-bold">Ringkasan tanggal: -</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <button type="button" onclick="setTodayFilter()" class="py-2 px-3 rounded-xl border border-amber-300 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-black whitespace-nowrap">
@@ -437,6 +449,12 @@
                     <input type="url" id="gasUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-emerald-400 focus:outline-none">
                 </div>
 
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Operator / Karyawan</label>
+                    <input type="text" id="operatorNameInput" placeholder="Contoh: Faras / Candra / Admin" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-400 focus:outline-none">
+                    <p class="text-[10px] text-slate-400 mt-1">Dipakai hanya untuk mencatat siapa yang melakukan perubahan di Log Perubahan.</p>
+                </div>
+
                 <div id="sheetSyncStatus" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] font-mono space-y-1">
                     <div>Status: <span id="syncStateText" class="font-bold text-slate-500">Belum Terhubung</span></div>
                     <div id="syncTimeText" class="text-slate-400">Terakhir Sinkron: -</div>
@@ -516,10 +534,10 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Logo</label>
-                        <input type="text" id="singleLogo" list="logoMasterList" placeholder="Ketik / pilih logo atau instansi..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                        <input type="text" id="singleLogo" list="logoMasterList" placeholder="Logo / instansi..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
                         <datalist id="logoMasterList"></datalist>
                     </div>
                     <div>
@@ -529,6 +547,10 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">No. Resi</label>
                         <input type="text" id="singleResi" placeholder="JP889021..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">SKU Toko</label>
+                        <input type="text" id="singleSku" placeholder="JS11 / SKU..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none">
                     </div>
                 </div>
 
@@ -594,10 +616,10 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Logo</label>
-                        <input type="text" id="editLogo" placeholder="Tut Wuri / Korpri..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                        <input type="text" id="editLogo" list="logoMasterList" placeholder="Logo / instansi..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">No. MP</label>
@@ -606,6 +628,10 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">No. Resi</label>
                         <input type="text" id="editResi" placeholder="JP889021..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">SKU Toko</label>
+                        <input type="text" id="editSku" placeholder="JS11 / SKU..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:ring-2 focus:ring-amber-400 focus:outline-none">
                     </div>
                 </div>
 
@@ -842,7 +868,13 @@
             </div>
 
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex items-center gap-1.5">
+                        <label class="text-xs font-bold text-slate-600">Tanggal:</label>
+                        <input type="date" id="archiveExactDateFilter" onchange="renderArchives()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
+                        <button type="button" onclick="clearArchiveExactDate()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-[10px] font-bold bg-white hover:bg-slate-100">Semua</button>
+                    </div>
+
                     <div class="flex items-center gap-1.5">
                         <label class="text-xs font-bold text-slate-600">Bulan:</label>
                         <select id="archiveMonthFilter" onchange="renderArchives()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
@@ -951,6 +983,86 @@
         </div>
     </div>
 
+
+    <!-- MODAL: OWNER DASHBOARD -->
+    <div id="ownerModal" onclick="handleBackdropClick(event, 'ownerModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                    <h3 class="font-black text-slate-900 text-sm flex items-center gap-2"><i class="fa-solid fa-chart-line text-amber-500"></i> Dashboard Owner</h3>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Ringkasan operasional NametagFlow berdasarkan tanggal input.</p>
+                </div>
+                <button onclick="closeModal('ownerModal')" class="text-slate-400 hover:text-slate-600 p-1 text-lg leading-none"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <label class="text-xs font-bold text-slate-600">Tanggal:</label>
+                <input type="date" id="ownerDateFilter" onchange="renderOwnerDashboard()" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                <button type="button" onclick="setOwnerToday()" class="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black">Hari Ini</button>
+            </div>
+
+            <div id="ownerSummaryCards" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5"></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="rounded-2xl border border-slate-200 overflow-hidden">
+                    <div class="px-3 py-2.5 bg-slate-900 text-white text-xs font-black">Posisi Antrean Aktif</div>
+                    <div id="ownerStageBreakdown" class="p-3 grid grid-cols-2 gap-2"></div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 overflow-hidden">
+                    <div class="px-3 py-2.5 bg-slate-900 text-white text-xs font-black">Perhatian Owner</div>
+                    <div id="ownerAttention" class="p-3 space-y-2 text-xs"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2 border-t border-slate-100">
+                <button type="button" onclick="closeModal('ownerModal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: LOG PERUBAHAN -->
+    <div id="auditLogModal" onclick="handleBackdropClick(event, 'auditLogModal')" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-100 p-4 sm:p-5 space-y-4 modal-scrollable">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                    <h3 class="font-black text-slate-900 text-sm flex items-center gap-2"><i class="fa-solid fa-list-ul text-sky-500"></i> Log Perubahan</h3>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Riwayat perubahan yang tercatat di tab Log Perubahan.</p>
+                </div>
+                <button onclick="closeModal('auditLogModal')" class="text-slate-400 hover:text-slate-600 p-1 text-lg leading-none"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2">
+                <input id="auditSearchInput" oninput="renderAuditLog()" placeholder="Cari ID, field, operator, nilai..." class="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50">
+                <input type="date" id="auditDateFilter" onchange="renderAuditLog()" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                <button type="button" onclick="clearAuditFilters()" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold bg-white hover:bg-slate-100">Reset Filter</button>
+                <button type="button" onclick="loadAuditLogs(true)" class="px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-xs min-w-[900px]">
+                    <thead class="bg-slate-100 text-slate-700 uppercase text-[10px] font-black">
+                        <tr>
+                            <th class="p-3">Waktu</th>
+                            <th class="p-3">ID</th>
+                            <th class="p-3">Field</th>
+                            <th class="p-3">Nilai Lama</th>
+                            <th class="p-3">Nilai Baru</th>
+                            <th class="p-3">Operator</th>
+                            <th class="p-3">Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditLogBody" class="divide-y divide-slate-100 bg-white"></tbody>
+                </table>
+            </div>
+            <div id="auditLogEmpty" class="hidden p-5 text-center text-xs text-slate-400">Belum ada log yang cocok.</div>
+
+            <div class="flex justify-end pt-2 border-t border-slate-100">
+                <button type="button" onclick="closeModal('auditLogModal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white">Tutup</button>
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST NOTIFICATION -->
     <div id="toast" class="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2.5 transition-all duration-300 opacity-0 translate-y-5 pointer-events-none max-w-[90vw]">
         <i class="fa-solid fa-circle-check text-emerald-400 text-base shrink-0"></i>
@@ -976,6 +1088,7 @@
         let historyLookupTimer = null;
         let lastReusableOldData = null;
         let historySearchResultsData = [];
+        let auditLogs = [];
 
         window.onload = function() {
             loadSavedData();
@@ -1093,6 +1206,9 @@
 
                 const gasInput = document.getElementById('gasUrlInput');
                 if (gasInput) gasInput.value = gasUrl;
+
+                const operatorInput = document.getElementById('operatorNameInput');
+                if (operatorInput) operatorInput.value = localStorage.getItem('nametag_operator') || '';
             } catch(e) {}
         }
 
@@ -1138,13 +1254,28 @@
 
         async function loadArchivedOrdersFromSheet() {
             if (!gasUrl) return;
+            const localSnapshot = Array.isArray(archivedOrders) ? [...archivedOrders] : [];
+
             try {
                 const res = await fetch(gasUrl + '?action=getArchives&_=' + Date.now());
                 const data = await res.json();
+
                 if (data && data.status === 'success' && Array.isArray(data.archives)) {
-                    const localMap = new Map((archivedOrders || []).map(a => [a.id, a]));
-                    archivedOrders = data.archives.map(a => ({ ...localMap.get(a.id), ...a }));
+                    const serverArchives = data.archives;
+                    const serverIds = new Set(serverArchives.map(a => a.id).filter(Boolean));
+                    const localOnly = localSnapshot.filter(a => a && a.id && !serverIds.has(a.id));
+
+                    // Gabungkan dulu agar arsip lama di browser tidak hilang.
+                    archivedOrders = [...serverArchives, ...localOnly]
+                        .sort((a, b) => (b.archiveTimestamp || 0) - (a.archiveTimestamp || 0));
+
                     saveLocalOnly();
+                    renderOrders();
+
+                    // Migrasi arsip lama browser ke Sheet secara otomatis.
+                    if (localOnly.length) {
+                        archiveOrdersToSheet(localOnly);
+                    }
                 }
             } catch (err) {
                 console.log('Archive fetch error:', err);
@@ -1225,6 +1356,7 @@
             if (d.model && [...document.getElementById('singleModel').options].some(o => o.value === d.model)) document.getElementById('singleModel').value = d.model;
             if (d.fastener && [...document.getElementById('singleHook').options].some(o => o.value === d.fastener)) document.getElementById('singleHook').value = d.fastener;
             if (d.logo) document.getElementById('singleLogo').value = d.logo;
+            if (d.sku) document.getElementById('singleSku').value = d.sku;
             if (d.customNote && !document.getElementById('singleNotes').value.trim()) document.getElementById('singleNotes').value = d.customNote;
             showToast('✅ Data lama dipakai. No. MP dan Resi tetap untuk pesanan baru.');
         }
@@ -1282,8 +1414,9 @@
             document.getElementById('singleLogo').value = r.logo || '';
             document.getElementById('singleMp').value = '';
             document.getElementById('singleResi').value = '';
+            document.getElementById('singleSku').value = r.sku || '';
             document.getElementById('singleNotes').value = r.notes || r.customNote || '';
-            lastReusableOldData = { name:r.name||'', nip:r.nip||'', model:r.model||'', fastener:hook, logo:r.logo||'', customNote:r.notes||r.customNote||'' };
+            lastReusableOldData = { name:r.name||'', nip:r.nip||'', model:r.model||'', fastener:hook, logo:r.logo||'', sku:r.sku||'', customNote:r.notes||r.customNote||'' };
             showToast('✅ Data lama dimasukkan ke form. MP & Resi dikosongkan untuk pesanan baru.');
         }
 
@@ -1299,6 +1432,237 @@
             } catch (err) {
                 console.log('Archive sync error:', err);
             }
+        }
+
+        function dailyResetToSheet(items) {
+            if (!gasUrl || !Array.isArray(items) || !items.length) return;
+            try {
+                fetch(gasUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'dailyReset', orders: items })
+                });
+            } catch (err) {
+                console.log('Daily reset sync error:', err);
+            }
+        }
+
+        function updateArchiveStatusOnSheet(archiveId, status) {
+            if (!gasUrl || !archiveId) return;
+            try {
+                fetch(gasUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'updateArchiveStatus', archiveId, status })
+                });
+            } catch (err) {
+                console.log('Archive status sync error:', err);
+            }
+        }
+
+        function deleteOrderFromSheet(orderId) {
+            if (!gasUrl || !orderId) return;
+            try {
+                fetch(gasUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'deleteOrder', orderId })
+                });
+            } catch (err) {
+                console.log('Delete sync error:', err);
+            }
+        }
+
+        function generateOrderId() {
+            const d = new Date();
+            const stamp = [
+                d.getFullYear(),
+                String(d.getMonth() + 1).padStart(2, '0'),
+                String(d.getDate()).padStart(2, '0'),
+                String(d.getHours()).padStart(2, '0'),
+                String(d.getMinutes()).padStart(2, '0'),
+                String(d.getSeconds()).padStart(2, '0')
+            ].join('');
+            const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+            return `NT-${stamp}-${rand}`;
+        }
+
+        function touchOrder(order) {
+            if (order) order.updatedAt = new Date().toISOString();
+        }
+
+
+        function getOperatorName() {
+            return localStorage.getItem('nametag_operator') || 'NametagFlow App';
+        }
+
+        function sendAuditLog(orderId, field, oldValue, newValue, note = '') {
+            if (!gasUrl) return;
+            try {
+                fetch(gasUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'logChange',
+                        orderId: orderId || '',
+                        field: field || '',
+                        oldValue: oldValue == null ? '' : String(oldValue),
+                        newValue: newValue == null ? '' : String(newValue),
+                        changedBy: getOperatorName(),
+                        source: 'NametagFlow',
+                        note: note || ''
+                    })
+                });
+            } catch (err) {
+                console.log('Audit log error:', err);
+            }
+        }
+
+        async function loadAuditLogs(showNotification = false) {
+            if (!gasUrl) return;
+            try {
+                const res = await fetch(gasUrl + '?action=getLogs&limit=300&_=' + Date.now());
+                const payload = await res.json();
+                auditLogs = payload && payload.ok && Array.isArray(payload.data) ? payload.data : [];
+                renderAuditLog();
+                if (showNotification) showToast(`✅ ${auditLogs.length} log terbaru dimuat.`);
+            } catch (err) {
+                console.log('Get logs error:', err);
+                auditLogs = [];
+                renderAuditLog();
+            }
+        }
+
+        function openAuditLog() {
+            openModal('auditLogModal');
+            loadAuditLogs(false);
+        }
+
+        function clearAuditFilters() {
+            const s = document.getElementById('auditSearchInput');
+            const d = document.getElementById('auditDateFilter');
+            if (s) s.value = '';
+            if (d) d.value = '';
+            renderAuditLog();
+        }
+
+        function renderAuditLog() {
+            const body = document.getElementById('auditLogBody');
+            const empty = document.getElementById('auditLogEmpty');
+            if (!body) return;
+
+            const q = (document.getElementById('auditSearchInput')?.value || '').toLowerCase().trim();
+            const date = document.getElementById('auditDateFilter')?.value || '';
+            const filtered = auditLogs.filter(x => {
+                const hay = [x.orderId, x.field, x.oldValue, x.newValue, x.changedBy, x.source, x.note].join(' ').toLowerCase();
+                if (q && !hay.includes(q)) return false;
+                if (date && toDateKey(x.time) !== date) return false;
+                return true;
+            });
+
+            body.innerHTML = filtered.map(x => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 whitespace-nowrap font-mono text-[10px]">${escapeHtml(formatDateClean(x.time))}</td>
+                    <td class="p-3 font-mono text-[10px]">${escapeHtml(x.orderId || '-')}</td>
+                    <td class="p-3 font-bold text-slate-700">${escapeHtml(x.field || '-')}</td>
+                    <td class="p-3 text-slate-500 max-w-[180px] truncate" title="${escapeHtml(x.oldValue || '')}">${escapeHtml(x.oldValue || '-')}</td>
+                    <td class="p-3 text-slate-800 max-w-[180px] truncate" title="${escapeHtml(x.newValue || '')}">${escapeHtml(x.newValue || '-')}</td>
+                    <td class="p-3 font-bold text-sky-700">${escapeHtml(x.changedBy || '-')}</td>
+                    <td class="p-3 text-slate-500">${escapeHtml(x.note || '-')}</td>
+                </tr>
+            `).join('');
+
+            if (empty) empty.classList.toggle('hidden', filtered.length !== 0);
+        }
+
+        function setOwnerToday() {
+            const input = document.getElementById('ownerDateFilter');
+            if (input) input.value = getTodayDateKey();
+            renderOwnerDashboard();
+        }
+
+        function openOwnerDashboard() {
+            const input = document.getElementById('ownerDateFilter');
+            if (input && !input.value) {
+                input.value = document.getElementById('dateFilterInput')?.value || getTodayDateKey();
+            }
+            renderOwnerDashboard();
+            openModal('ownerModal');
+        }
+
+        function renderOwnerDashboard() {
+            const date = document.getElementById('ownerDateFilter')?.value || getTodayDateKey();
+            const active = orders.filter(o => toDateKey(o.createdAt) === date);
+            const archived = archivedOrders.filter(o => toDateKey(o.createdAt) === date);
+            const all = [...active, ...archived];
+
+            const total = all.length;
+            const reprints = all.filter(o => Number(o.printCount || 1) > 1 || o.isReject).length;
+            const returned = archived.filter(o => o.archiveStatus === 'Kendala / Retur').length;
+            const done = archived.filter(o => o.archiveStatus === 'Selesai Transaksi').length;
+
+            const cards = [
+                ['Total Input', total, 'fa-layer-group', 'text-slate-900'],
+                ['Masih Aktif', active.length, 'fa-hourglass-half', 'text-sky-700'],
+                ['Sudah Arsip', archived.length, 'fa-box-archive', 'text-emerald-700'],
+                ['Cetak Ulang', reprints, 'fa-print', 'text-red-600'],
+                ['Selesai', done, 'fa-circle-check', 'text-emerald-700'],
+                ['Kendala/Retur', returned, 'fa-triangle-exclamation', 'text-amber-700']
+            ];
+            const cardBox = document.getElementById('ownerSummaryCards');
+            if (cardBox) {
+                cardBox.innerHTML = cards.map(c => `
+                    <div class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase">${c[0]}</div>
+                        <div class="mt-1 flex items-center justify-between">
+                            <span class="text-2xl font-black ${c[3]}">${c[1]}</span>
+                            <i class="fa-solid ${c[2]} text-slate-300"></i>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const stageNames = ['Cetak', 'Laminasi', 'Akrilik', 'Resin', 'Pengait', 'Packing', 'Pengiriman'];
+            const stageBox = document.getElementById('ownerStageBreakdown');
+            if (stageBox) {
+                stageBox.innerHTML = stageNames.map((name, i) => {
+                    const count = active.filter(o => Number(o.currentStep) === i + 1).length;
+                    return `<div class="p-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-slate-600">${i+1}. ${name}</span>
+                        <span class="px-2 py-0.5 rounded-full bg-white border border-slate-200 text-xs font-black text-slate-900">${count}</span>
+                    </div>`;
+                }).join('');
+            }
+
+            const stageCounts = stageNames.map((name, i) => ({name, count: active.filter(o => Number(o.currentStep) === i + 1).length}));
+            const topStage = stageCounts.sort((a,b) => b.count - a.count)[0];
+            const attention = document.getElementById('ownerAttention');
+            if (attention) {
+                attention.innerHTML = `
+                    <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                        <div class="font-black text-amber-900">Tahap dengan antrean terbanyak</div>
+                        <div class="text-amber-700 mt-0.5">${topStage && topStage.count ? `${escapeHtml(topStage.name)}: ${topStage.count} nametag` : 'Tidak ada antrean aktif pada tanggal ini.'}</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-red-50 border border-red-200">
+                        <div class="font-black text-red-900">Perlu perhatian</div>
+                        <div class="text-red-700 mt-0.5">${reprints} cetak ulang • ${returned} kendala/retur</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                        <div class="font-black text-emerald-900">Penyelesaian</div>
+                        <div class="text-emerald-700 mt-0.5">${done} transaksi selesai dari ${archived.length} yang sudah diarsipkan.</div>
+                    </div>
+                `;
+            }
+        }
+
+        function clearArchiveExactDate() {
+            const input = document.getElementById('archiveExactDateFilter');
+            if (input) input.value = '';
+            renderArchives();
         }
 
         function playBeep(type = 'success') {
@@ -1396,6 +1760,7 @@
                     if (o.currentStep < 7) {
                         o.currentStep = 7;
                         o.isReject = false;
+                        touchOrder(o);
                         updatedCount++;
                         namesProcessed.push(o.name);
 
@@ -1518,6 +1883,8 @@
             if (!input) return;
             gasUrl = input.value.trim();
             localStorage.setItem('nametag_gas_url', gasUrl);
+            const operatorName = document.getElementById('operatorNameInput')?.value.trim() || '';
+            localStorage.setItem('nametag_operator', operatorName);
             updateGasBadge();
             closeModal('sheetModal');
             showToast('URL Google Apps Script disimpan!');
@@ -1701,12 +2068,13 @@
             const logo = document.getElementById('singleLogo').value.trim();
             const mp = document.getElementById('singleMp').value.trim();
             const resi = document.getElementById('singleResi').value.trim();
+            const sku = document.getElementById('singleSku').value.trim();
             const notes = document.getElementById('singleNotes').value.trim();
 
             if (!name) return;
 
             const newOrder = {
-                id: 'NT-' + Math.floor(1000 + Math.random() * 9000),
+                id: generateOrderId(),
                 name: name,
                 nip: nip,
                 model: model,
@@ -1714,16 +2082,18 @@
                 logo: logo,
                 mp: mp || ('MP-' + Math.floor(100000 + Math.random() * 900000)),
                 resi: resi,
-                sku: 'NT-AKR-' + (hook === 'Magnet' ? 'MAG' : 'PEN'),
+                sku: sku || ('NT-AKR-' + (hook === 'Magnet' ? 'MAG' : (hook.includes('Peniti') ? 'PEN' : 'PIN'))),
                 printCount: 1,
                 currentStep: 1,
                 isReject: false,
                 rejectReason: '',
-                createdAt: formatDateClean(''),
+                createdAt: getInputDateTime(),
+                updatedAt: new Date().toISOString(),
                 notes: notes
             };
 
             orders.push(newOrder);
+            sendAuditLog(newOrder.id, 'Pesanan Baru', '', `${newOrder.name} | ${newOrder.model} | ${newOrder.hook}`, 'Input Single');
             saveData();
             renderOrders();
             closeModal('singleModal');
@@ -1745,6 +2115,7 @@
             document.getElementById('editLogo').value = order.logo || '';
             document.getElementById('editMp').value = order.mp || '';
             document.getElementById('editResi').value = order.resi || '';
+            document.getElementById('editSku').value = order.sku || '';
             document.getElementById('editNotes').value = order.notes || '';
             document.getElementById('editApplyAllMp').checked = true;
 
@@ -1765,10 +2136,15 @@
             const newLogo = document.getElementById('editLogo').value.trim();
             const newMp = document.getElementById('editMp').value.trim();
             const newResi = document.getElementById('editResi').value.trim();
+            const newSku = document.getElementById('editSku').value.trim();
             const newNotes = document.getElementById('editNotes').value.trim();
             const applyAllMp = document.getElementById('editApplyAllMp').checked;
 
             const oldMp = order.mp;
+            const beforeEdit = {
+                name: order.name || '', nip: order.nip || '', model: order.model || '', hook: order.hook || '',
+                logo: order.logo || '', mp: order.mp || '', resi: order.resi || '', sku: order.sku || '', notes: order.notes || ''
+            };
 
             order.name = newName;
             order.nip = newNip;
@@ -1777,7 +2153,9 @@
             order.logo = newLogo;
             order.mp = newMp;
             order.resi = newResi;
+            order.sku = newSku;
             order.notes = newNotes;
+            touchOrder(order);
 
             let updatedBulkCount = 1;
 
@@ -1786,10 +2164,18 @@
                     if (o.id !== pendingEditId && o.mp === oldMp) {
                         o.resi = newResi;
                         if (newMp) o.mp = newMp;
+                        touchOrder(o);
                         updatedBulkCount++;
                     }
                 });
             }
+
+            const afterEdit = {name:newName, nip:newNip, model:newModel, hook:newHook, logo:newLogo, mp:newMp, resi:newResi, sku:newSku, notes:newNotes};
+            Object.keys(beforeEdit).forEach(k => {
+                if (String(beforeEdit[k] ?? '') !== String(afterEdit[k] ?? '')) {
+                    sendAuditLog(order.id, k, beforeEdit[k], afterEdit[k], order.name || '');
+                }
+            });
 
             saveData();
             renderOrders();
@@ -1891,7 +2277,7 @@
 
                 if (name) {
                     orders.push({
-                        id: 'NT-' + Math.floor(1000 + Math.random() * 9000),
+                        id: generateOrderId(),
                         name: name,
                         nip: nip,
                         model: model,
@@ -1904,7 +2290,8 @@
                         currentStep: 1,
                         isReject: false,
                         rejectReason: '',
-                        createdAt: formatDateClean(''),
+                        createdAt: getInputDateTime(),
+                        updatedAt: new Date().toISOString(),
                         notes: notes
                     });
                     addedCount++;
@@ -1912,6 +2299,7 @@
             });
 
             if (addedCount > 0) {
+                sendAuditLog('', 'Import Massal', '', `${addedCount} pesanan`, `Tanggal input: ${getInputDateTime()}`);
                 saveData();
                 renderOrders();
                 closeModal('batchModal');
@@ -1923,7 +2311,10 @@
         function setOrderStep(id, step) {
             const order = orders.find(o => o.id === id);
             if (order) {
+                const oldStep = order.currentStep;
                 order.currentStep = step;
+                touchOrder(order);
+                if (Number(oldStep) !== Number(step)) sendAuditLog(order.id, 'Tahap Ke-', oldStep, step, order.name || '');
                 if (step > 1 && order.isReject) {
                     order.isReject = false;
                 }
@@ -1961,7 +2352,9 @@
                     order.rejectReason = newReason || 'Cacat produksi, perlu cetak ulang';
                 }
 
+                touchOrder(order);
                 orders.push(order);
+                sendAuditLog(order.id, 'Cetak Ulang', order.printCount - 1, order.printCount, order.rejectReason || '');
 
                 saveData();
                 renderOrders();
@@ -1977,18 +2370,33 @@
 
         function confirmDeleteSubmit() {
             if (!pendingDeleteId) return;
-            orders = orders.filter(o => o.id !== pendingDeleteId);
-            saveData();
+            const deletedId = pendingDeleteId;
+            const deletedOrder = orders.find(o => o.id === deletedId);
+            orders = orders.filter(o => o.id !== deletedId);
+            sendAuditLog(deletedId, 'Hapus Pesanan', deletedOrder?.name || '', 'DIHAPUS', deletedOrder?.mp || '');
+            deleteOrderFromSheet(deletedId);
+            saveLocalOnly();
             renderOrders();
             closeModal('deleteModal');
+            pendingDeleteId = null;
             showToast('🗑️ Pesanan telah dihapus.');
         }
 
         function completeCurrentStageAll() {
+            const targets = orders.filter(o => o.currentStep === activeStationTab);
+            if (!targets.length) {
+                showToast('Tidak ada pesanan di stasiun ini.');
+                return;
+            }
+            if (!window.confirm(`Yakin memindahkan ${targets.length} pesanan dari Tahap ${activeStationTab} ke tahap berikutnya?`)) return;
+
             let count = 0;
             orders.forEach(o => {
                 if (o.currentStep === activeStationTab) {
+                    const oldStep = o.currentStep;
                     o.currentStep += 1;
+                    touchOrder(o);
+                    sendAuditLog(o.id, 'Tahap Ke-', oldStep, o.currentStep, 'Selesaikan semua stasiun');
                     count++;
                 }
             });
@@ -2010,6 +2418,8 @@
                 return;
             }
 
+            if (!window.confirm(`Yakin memindahkan ${shippedOrders.length} pesanan Tahap 7 ke Riwayat Arsip?`)) return;
+
             const now = new Date();
             const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
 
@@ -2029,9 +2439,10 @@
                 });
             });
 
-            archiveOrdersToSheet(archivePayload);
+            archivePayload.forEach(o => sendAuditLog(o.id, 'Reset Harian', 'Tahap 7', 'Arsip Produksi', o.name || ''));
+            dailyResetToSheet(archivePayload);
             orders = orders.filter(o => o.currentStep < 7);
-            saveData();
+            saveLocalOnly();
             renderOrders();
             showToast(`✅ ${shippedOrders.length} pesanan berhasil dipindahkan ke Riwayat Arsip!`);
         }
@@ -2039,13 +2450,17 @@
         function updateArchiveStatus(archiveId, newStatus) {
             const item = archivedOrders.find(a => a.id === archiveId);
             if (item) {
+                const oldStatus = item.archiveStatus || '';
                 item.archiveStatus = newStatus;
+                updateArchiveStatusOnSheet(archiveId, newStatus);
+                sendAuditLog(archiveId, 'Status Arsip', oldStatus, newStatus, item.name || '');
                 saveLocalOnly();
                 showToast(`Status arsip diubah ke: ${newStatus}`);
             }
         }
 
         function renderArchives() {
+            const exactDateFilter = document.getElementById('archiveExactDateFilter')?.value || '';
             const monthFilter = document.getElementById('archiveMonthFilter')?.value || 'ALL';
             const yearFilter = parseInt(document.getElementById('archiveYearFilter')?.value || '2026');
             const container = document.getElementById('archiveGroupList');
@@ -2054,8 +2469,9 @@
             container.innerHTML = '';
 
             let filtered = archivedOrders.filter(a => {
-                if (a.archiveYear && a.archiveYear !== yearFilter) return false;
-                if (monthFilter !== 'ALL' && a.archiveMonth && a.archiveMonth !== parseInt(monthFilter)) return false;
+                if (exactDateFilter && toDateKey(a.archiveTimestamp || a.archiveDate) !== exactDateFilter) return false;
+                if (!exactDateFilter && a.archiveYear && a.archiveYear !== yearFilter) return false;
+                if (!exactDateFilter && monthFilter !== 'ALL' && a.archiveMonth && a.archiveMonth !== parseInt(monthFilter)) return false;
                 return true;
             });
 
@@ -2184,7 +2600,7 @@
             const raw = String(dateValue).trim();
             const m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
             if (m) return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
-            const d = new Date(raw);
+            const d = (typeof dateValue === 'number') ? new Date(dateValue) : new Date(raw);
             if (!isNaN(d.getTime())) {
                 const y = d.getFullYear();
                 const mo = String(d.getMonth()+1).padStart(2,'0');
@@ -2197,6 +2613,22 @@
         function getTodayDateKey() {
             const d = new Date();
             return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+
+        function getInputDateTime() {
+            const selected = document.getElementById('dateFilterInput')?.value || getTodayDateKey();
+            const now = new Date();
+            const parts = selected.split('-');
+
+            if (parts.length !== 3) return formatDateClean('');
+
+            const y = parts[0];
+            const m = parts[1];
+            const d = parts[2];
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+
+            return `${d}/${m}/${y} ${hh}:${mm}`;
         }
 
         function setTodayFilter() {
@@ -2219,6 +2651,18 @@
             const dateScopedOrders = dateFilter
                 ? orders.filter(o => toDateKey(o.createdAt) === dateFilter)
                 : orders;
+
+            const dateScopedArchives = dateFilter
+                ? archivedOrders.filter(a => toDateKey(a.createdAt || a.archiveTimestamp) === dateFilter)
+                : archivedOrders;
+
+            const summaryEl = document.getElementById('dateSummaryText');
+            if (summaryEl) {
+                const totalRecorded = dateScopedOrders.length + dateScopedArchives.length;
+                summaryEl.textContent = dateFilter
+                    ? `Tanggal ${dateFilter.split('-').reverse().join('/')}: ${totalRecorded} data • ${dateScopedOrders.length} masih aktif • ${dateScopedArchives.length} sudah diarsipkan`
+                    : `Semua tanggal: ${totalRecorded} data • ${dateScopedOrders.length} masih aktif • ${dateScopedArchives.length} sudah diarsipkan`;
+            }
 
             let countTotal = dateScopedOrders.length;
             let countS1 = dateScopedOrders.filter(o => o.currentStep === 1).length;
