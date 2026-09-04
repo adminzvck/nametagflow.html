@@ -254,6 +254,26 @@
             </div>
         </section>
 
+        <!-- FILTER TANGGAL PRODUKSI -->
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+            <div>
+                <div class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                    <i class="fa-solid fa-calendar-day"></i> Filter Tanggal Produksi
+                    <span class="ml-1 px-1.5 py-0.5 rounded bg-slate-900 text-white text-[9px]">v2.2</span>
+                </div>
+                <p class="text-[10px] text-amber-700 mt-0.5">Angka Total dan semua tahap di atas mengikuti tanggal yang dipilih.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="setTodayFilter()" class="py-2 px-3 rounded-xl border border-amber-300 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-black whitespace-nowrap">
+                    <i class="fa-solid fa-calendar-check mr-1"></i> Hari Ini
+                </button>
+                <input type="date" id="dateFilterInput" onchange="renderOrders()" class="py-2 px-3 rounded-xl border border-amber-300 text-xs font-bold bg-white text-slate-700 focus:ring-2 focus:ring-amber-400 focus:outline-none transition">
+                <button type="button" onclick="clearDateFilter()" class="py-2 px-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-[11px] font-bold whitespace-nowrap">
+                    Semua Tanggal
+                </button>
+            </div>
+        </div>
+
         <!-- SEARCH AND CONTROL BAR -->
         <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
@@ -274,11 +294,6 @@
                     <option value="7">7. Dalam Pengiriman</option>
                 </select>
 
-                <div class="flex items-center gap-1.5">
-                    <input type="date" id="dateFilterInput" onchange="renderOrders()" class="py-2 px-2.5 rounded-xl border border-slate-200 text-xs font-bold bg-slate-50 text-slate-700 focus:ring-2 focus:ring-amber-400 focus:outline-none transition">
-                    <button type="button" onclick="setTodayFilter()" class="py-2 px-2.5 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-extrabold whitespace-nowrap">Hari Ini</button>
-                    <button type="button" onclick="clearDateFilter()" class="py-2 px-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 text-[11px] font-bold whitespace-nowrap" title="Tampilkan semua tanggal">Semua</button>
-                </div>
             </div>
 
             <div class="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 shrink-0 self-center md:self-auto w-full md:w-auto justify-center">
