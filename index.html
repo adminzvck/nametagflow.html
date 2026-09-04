@@ -270,9 +270,9 @@
             <div>
                 <div class="text-xs font-black text-amber-900 flex items-center gap-1.5">
                     <i class="fa-solid fa-calendar-day"></i> Filter Tanggal Produksi
-                    <span class="ml-1 px-1.5 py-0.5 rounded bg-slate-900 text-white text-[9px]">v2.5</span>
+                    <span class="ml-1 px-1.5 py-0.5 rounded bg-slate-900 text-white text-[9px]">v2.6</span>
                 </div>
-                <p class="text-[10px] text-amber-700 mt-0.5">Angka tahap di atas mengikuti tanggal yang dipilih.<br><span class="font-semibold text-emerald-700">Input baru otomatis memakai tanggal yang sedang dipilih.</span></p>
+                <p class="text-[10px] text-amber-700 mt-0.5">Angka tahap di atas mengikuti tanggal yang dipilih.<br><span class="font-semibold text-emerald-700">Filter tanggal hanya untuk melihat data. Input baru selalu memakai tanggal & waktu sebenarnya saat diinput.</span></p>
                 <p id="dateSummaryText" class="text-[10px] text-slate-600 mt-1 font-bold">Ringkasan tanggal: -</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
@@ -2616,15 +2616,12 @@
         }
 
         function getInputDateTime() {
-            const selected = document.getElementById('dateFilterInput')?.value || getTodayDateKey();
+            // Tanggal input selalu memakai waktu sebenarnya saat data dibuat.
+            // Filter tanggal hanya untuk melihat data, bukan menentukan tanggal input.
             const now = new Date();
-            const parts = selected.split('-');
-
-            if (parts.length !== 3) return formatDateClean('');
-
-            const y = parts[0];
-            const m = parts[1];
-            const d = parts[2];
+            const d = String(now.getDate()).padStart(2, '0');
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const y = now.getFullYear();
             const hh = String(now.getHours()).padStart(2, '0');
             const mm = String(now.getMinutes()).padStart(2, '0');
 
