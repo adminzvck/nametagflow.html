@@ -43,24 +43,7 @@ function parsePayload(raw){
  items=items.map(x=>{if(!x||typeof x!=='object')throw new Error('Item harus berupa objek.');const y={provided:[]};Object.entries(aliases).forEach(([k,a])=>{const found=a.find(f=>Object.hasOwn(x,f));if(found){y[k]=text(x[found]);y.provided.push(k);}});if(!y.name)throw new Error('Ada item tanpa nama.');return y;});
  return{mp,resi,sku,model:text(obj.model),hook:text(obj.hook??obj.pengait),qty,items};
 }
-function normalizeModel(v){
- const s=text(v).toLowerCase().replace(/[^0-9]/g,'');
- return s&&Number(s)>=1&&Number(s)<=10?`Model ${Number(s)}`:text(v);
-}
-function normalizeHook(v){
- const s=text(v).toLowerCase();
- if(['m','mag','magnet'].includes(s))return 'Magnet';
- if(['p','pen','peniti'].includes(s))return 'Peniti';
- return text(v);
-}
-function parseBulkLine(line){
- const a=String(line||'').split(/[|\t;]/).map(x=>text(x));
- return {mp:a[0]||'',name:a[1]||'',nip:a[2]||'',model:normalizeModel(a[3]),hook:normalizeHook(a[4]),logo:a[5]||'',resi:a[6]||'',sku:a[7]||'',notes:a[8]||''};
-}
 function inferHook(sku){const s=text(sku).toUpperCase();return /(?:^|[_-])PEN$/.test(s)?'Peniti':/(?:^|[_-])MAG$/.test(s)?'Magnet':/(?:^|[_-])PIN$/.test(s)?'Paku / Pin':'';}
-root.NFCore.IMPORT_MASSAL_V14=true;
-root.NFCore={ENDPOINT,key,text,uid,esc,request,retryable,validEndpoint,fields,overlay,orderMatch,inferModel,parsePayload,inferHook,normalizeModel,normalizeHook,parseBulkLine};
+root.NFCore={ENDPOINT,key,text,uid,esc,request,retryable,validEndpoint,fields,overlay,orderMatch,inferModel,parsePayload,inferHook};
 if(typeof module!=='undefined')module.exports=root.NFCore;
 })(typeof globalThis!=='undefined'?globalThis:this);
-
-// IMPORT_MASSAL_V14: parser accepts MP|Nama|NIP|Model|Pengait|Logo|Resi|SKU|Catatan

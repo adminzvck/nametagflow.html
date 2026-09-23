@@ -156,5 +156,3 @@ function previewBackup(backup){
  if($('restoreChoices'))$('restoreChoices').onclick=async()=>{try{const picks=[...document.querySelectorAll('.restore-choice:checked')].map(x=>candidates[Number(x.value)]);if(!picks.length)throw new Error('Pilih minimal satu draf.');if(!confirm('Terapkan '+picks.length+' draf pilihan? Versi lokal dapat mengganti detail pesanan pusat.'))return;await enqueue(picks.map(o=>({kind:'upsert',id:o.id,expectedRevision:remote.get(o.id)?.revision||null,data:{...C.fields(o),createdAt:C.fields(o).createdAt||new Date().toISOString()}})));modalDirty=false;closeModal();go('queue');}catch(e){$('backupError').textContent=errorMessage(e);}};
 }
 $('exportBtn').textContent='Backup & draf';$('exportBtn').onclick=dataModal;
-
-/* NametagFlow v14 import massal update */
