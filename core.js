@@ -58,6 +58,9 @@ function parseBulkLine(line){
  return {mp:a[0]||'',name:a[1]||'',nip:a[2]||'',model:normalizeModel(a[3]),hook:normalizeHook(a[4]),logo:a[5]||'',resi:a[6]||'',sku:a[7]||'',notes:a[8]||''};
 }
 function inferHook(sku){const s=text(sku).toUpperCase();return /(?:^|[_-])PEN$/.test(s)?'Peniti':/(?:^|[_-])MAG$/.test(s)?'Magnet':/(?:^|[_-])PIN$/.test(s)?'Paku / Pin':'';}
+root.NFCore.IMPORT_MASSAL_V14=true;
 root.NFCore={ENDPOINT,key,text,uid,esc,request,retryable,validEndpoint,fields,overlay,orderMatch,inferModel,parsePayload,inferHook,normalizeModel,normalizeHook,parseBulkLine};
 if(typeof module!=='undefined')module.exports=root.NFCore;
 })(typeof globalThis!=='undefined'?globalThis:this);
+
+// IMPORT_MASSAL_V14: parser accepts MP|Nama|NIP|Model|Pengait|Logo|Resi|SKU|Catatan
