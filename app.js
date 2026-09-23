@@ -109,12 +109,96 @@ async function checkOp(opId){
  await editState(s=>{s.pending=s.pending.filter(x=>x.operation.opId!==opId);s.snapshot=fresh;s.pending.push({operation:{...op,opId:C.uid(),expectedRevision:remote.revision},status:'queued',createdAt:new Date().toISOString(),operator});});closeModal();sync();}catch(e){$('opError').textContent=errorMessage(e);}};
 }
 function batchModal(){
- if(!S.snapshot)return authModal();modal('Impor massal',`<p class="form-help">Tempel baris dengan pemisah TAB (dari Excel) atau |. Format: <b>MP | Resi | SKU | Nama | NIP | Logo | Pengait | Model | Catatan</b>. Maksimal 100 baris. Semua baris diperiksa sebelum masuk antrean.</p><form id="batchForm"><label class="field">Data pesanan<textarea id="batchText" rows="10" required placeholder="MP001 | RESI001 | SKU_PEN | NAMA | | | Peniti | Model 1 (Lis + Nama) |"></textarea></label><p id="batchError" class="form-error"></p><div class="form-actions"><button class="btn primary">Periksa dan masukkan antrean</button></div></form>`);
- $('batchForm').onsubmit=async e=>{e.preventDefault();try{const lines=$('batchText').value.split(/\r?\n/).filter(x=>x.trim());if(lines.length>100)throw new Error('Maksimal 100 baris sekali impor.');const settings=S.snapshot.settings;
- const ops=lines.map((line,i)=>{const p=line.split(line.includes('\t')?'\t':'|').map(x=>x.trim());if(p.length<8)throw new Error('Baris '+(i+1)+' belum memiliki 8 kolom wajib.');let model=p[7];const number=model.match(/^(?:model\s*)?(\d{1,2})(?:\s|\(|$)/i);if(number)model=settings.models.find(m=>new RegExp('^Model\\s+'+number[1]+'(?:\\s|\\(|$)','i').test(m))||model;
- if(!p[0]||!p[3])throw new Error('MP/nama kosong di baris '+(i+1));if(!settings.skus.includes(p[2])||!settings.hooks.includes(p[6])||!settings.models.includes(model))throw new Error('SKU, pengait, atau model baris '+(i+1)+' tidak sesuai Pengaturan.');
- C.orderMatch(S.snapshot,{mp:p[0],resi:p[1]});return{kind:'upsert',id:C.uid('NT-'),expectedRevision:null,data:{mp:p[0],resi:p[1],sku:p[2],name:p[3],nip:p[4],logo:p[5],hook:p[6],model,notes:p.slice(8).join(' | '),currentStep:1,printCount:1,isReject:false,createdAt:new Date().toISOString()}};});
- if(!confirm('Tambahkan '+ops.length+' nametag sebagai item baru? Impor ulang akan membuat item tambahan.'))return;await enqueue(ops);modalDirty=false;closeModal();}catch(err){$('batchError').textContent=errorMessage(err);}};
+ if(!S.snapshot)return authModal();
+ modal('Impor massal',`
+ <p class="form-help">
+ Template cepat: <b>MP | Nama | NIP | Model | Pengait | Logo | Resi | SKU | Catatan</b><br>
+ Bisa pakai model angka (contoh: 10) dan pengait M/P. Sistem akan menyesuaikan otomatis.
+ <br><button type="button" class="text-btn" id="copyImportTemplate">Salin template harian</button>
+ </p>
+ <form id="batchForm">
+ <label class="field">Data pesanan<textarea id="batchText" rows="10" required placeholder="586207583104304159 | IIS NURAISYAH | - | 10 | M | - | - | SKU_MAG |"></textarea></label>
+ <p id="batchError" class="form-error"></p>
+ <div class="form-actions"><button class="btn primary">Periksa dan masukkan antrean</button></div>
+ </form>`);
+
+ const template=`MP | NAMA | NIP | MODEL | PENGAIT | LOGO | RESI | SKU | CATATAN`;
+ $('copyImportTemplate').onclick=async()=>{
+   try{
+    await navigator.clipboard.writeText(template);
+    $('batchError').textContent='Template tersalin. Tempel setiap hari lalu isi data.';
+   }catch(e){}
+ };
+
+ $('batchForm').onsubmit=async e=>{
+  e.preventDefault();
+  try{
+   const lines=$('batchText').value.split(/\r?\n/).filter(x=>x.trim());
+   if(lines.length>100)throw new Error('Maksimal 100 baris sekali impor.');
+   const settings=S.snapshot.settings;
+
+   function normalizeHook(v){
+    const x=String(v||'').trim().toLowerCase();
+    if(x==='m'||x.includes('mag')) return settings.hooks.find(h=>h.toLowerCase().includes('mag'))||'Magnet';
+    if(x==='p'||x.includes('pen')) return settings.hooks.find(h=>h.toLowerCase().includes('pen'))||'Peniti';
+    return v;
+   }
+
+   function normalizeModel(v){
+    const raw=String(v||'').trim();
+    const m=raw.match(/(\d{1,2})/);
+    if(m){
+      return settings.models.find(x=>new RegExp('\\b'+m[1]+'\\b|Model\\s+'+m[1],'i').test(x))||raw;
+    }
+    return raw;
+   }
+
+   const ops=lines.map((line,i)=>{
+    let p=line.split(line.includes('\t')?'\t':'|').map(x=>x.trim());
+
+    // format baru: MP | Nama | NIP | Model | Pengait | Logo | Resi | SKU | Catatan
+    // format lama tetap diterima: MP | Resi | SKU | Nama | NIP | Logo | Pengait | Model | Catatan
+    let mp,resi,sku,name,nip,logo,hook,model,notes;
+
+    if(p.length>=8 && p[2] && p[3] && settings.skus.includes(p[2])){
+      mp=p[0]; resi=p[1]; sku=p[2]; name=p[3]; nip=p[4]; logo=p[5]; hook=p[6]; model=p[7]; notes=p.slice(8).join(' | ');
+    }else{
+      mp=p[0]; name=p[1]; nip=p[2]; model=p[3]; hook=p[4]; logo=p[5]; resi=p[6]; sku=p[7]; notes=p.slice(8).join(' | ');
+    }
+
+    hook=normalizeHook(hook);
+    model=normalizeModel(model);
+
+    if(!mp||!name)throw new Error('Baris '+(i+1)+' MP/Nama kosong.');
+
+    if(sku && !settings.skus.includes(sku)) throw new Error('SKU baris '+(i+1)+' belum terdaftar.');
+    if(hook && !settings.hooks.includes(hook)) throw new Error('Pengait baris '+(i+1)+' tidak sesuai Pengaturan.');
+    if(model && !settings.models.includes(model)) throw new Error('Model baris '+(i+1)+' tidak sesuai Pengaturan.');
+
+    C.orderMatch(S.snapshot,{mp,resi});
+    return {
+      kind:'upsert',
+      id:C.uid('NT-'),
+      expectedRevision:null,
+      data:{
+        mp,resi,sku,name,nip,logo,
+        hook:model?hook:hook,
+        model,
+        notes,
+        currentStep:1,
+        printCount:1,
+        isReject:false,
+        createdAt:new Date().toISOString()
+      }
+    };
+   });
+
+   if(!confirm('Tambahkan '+ops.length+' nametag ke antrean?'))return;
+   await enqueue(ops);
+   modalDirty=false;
+   closeModal();
+  }catch(err){$('batchError').textContent=errorMessage(err);}
+ };
 }
 async function restore(id){const r=S.snapshot?.recycle.find(x=>x.id===id)||S.snapshot?.archives.find(x=>x.id===id);if(!r||!confirm('Pulihkan pesanan ini ke antrean aktif?'))return;await enqueue([{kind:'restore',id,expectedRevision:r.revision}]);}
 function archiveStatus(id){const o=viewArchives().find(x=>x.id===id);if(!o||o._pending)return;modal('Status arsip',`<form id="archiveForm"><p class="form-help">${C.esc(o.name)} · ${C.esc(o.mp)}</p><label class="field">Status<select id="archiveValue">${options(['Dalam Pengiriman','Selesai Transaksi','Kendala / Retur'],o.archiveStatus)}</select></label><div class="form-actions"><button class="btn primary">Simpan status</button></div></form>`);$('archiveForm').onsubmit=async e=>{e.preventDefault();await enqueue([{kind:'archiveStatus',id,expectedRevision:o.revision,status:$('archiveValue').value}]);modalDirty=false;closeModal();};}
