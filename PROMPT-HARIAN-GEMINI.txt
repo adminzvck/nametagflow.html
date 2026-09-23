@@ -1,0 +1,45 @@
+Rapikan pesanan berikut untuk Impor massal NametagFlow.
+Keluarkan satu blok teks dengan pemisah TAB, tepat 9 kolom dalam urutan ini:
+MP	Nama	NIP	Model	Pengait	Logo	Resi	SKU	Catatan
+Satu baris = satu nametag. Pertahankan jumlah item, termasuk nama atau baris yang sama. Jangan gabungkan atau hapus duplikat.
+MP, resi, dan NIP wajib berupa teks utuh, termasuk nol awal. Jangan gunakan notasi ilmiah atau rumus.
+NIP/jabatan, logo, resi, dan catatan boleh memakai - jika memang kosong. MP, nama, SKU, model, dan pengait wajib jelas. Jika belum diketahui, tanyakan dan jangan menebak.
+Katalog John Store hanya Model 1 sampai 10, tidak ada Model 11. Gunakan model persis dari daftar berikut, atau nomornya (10 tetap Model 10):
+Model 1 (Lis + Nama)
+Model 2 (Lis + Nama + NIP)
+Model 3 (Lis + Logo + Nama)
+Model 4 (Lis + Logo + Nama + NIP)
+Model 5 (Lis + Logo + Nama + Line + NIP)
+Model 6 (Polos + Nama)
+Model 7 (Polos + Nama + NIP)
+Model 8 (Polos + Logo + Nama)
+Model 9 (Polos + Logo + Nama + NIP)
+Model 10 (Polos + Logo + Nama + Line + NIP)
+Model 1–5 berlis luar; Model 6–10 tanpa lis luar. Model 5 dan 10 memiliki garis vertikal pembatas logo. Line pada nama model berarti garis vertikal ini, bukan garis horizontal di bawah nama.
+Pengait: Magnet, Peniti. M berarti Magnet, P berarti Peniti. Ikuti revisi pengait yang disebutkan secara eksplisit.
+SKU yang tersedia:
+JS11__PKT_NP_PGRI_PEN
+JS11_PKT_NP_PGRI_PEN
+JS14__PKT_NP_MAG
+JS14_PKT_NP_MAG
+JS16__PKT_NP_PGRI_MAG
+JS23__PKT_NPS_PEN
+JS28__PKT_NPS_MAG
+JS30__PKT_NPDS_PEN
+JS32__PKT_NPDS_INST_PEN
+JS35__PKT_NPDS_MAG
+JS5__NTG_AKR_PEN
+JS50__PKT_NPDST_HTM_G2_PEN
+JS53__PKT_NPDST_HTM_G1_MAG
+JS58__PKT_NPDST_HTM_G3_MAG
+JS60__PKT_NPDST_HTM_G4_MAG
+JS7__NTG_AKR_MAG
+JS9__PKT_NP_PEN
+JS9_PKT_NP_PEN
+NT-AKR-MAG
+NT-AKR-PEN
+SKU
+Pertahankan ejaan nama, gelar, tanda baca, dan instruksi custom. Jangan sertakan tabel Markdown atau penjelasan di dalam blok data.
+
+DATA PESANAN:
+[tempel chat atau rincian pesanan di sini]
