@@ -22,3 +22,15 @@ body.locked .shell main{visibility:hidden}body.locked .sidebar nav{pointer-event
 @media(max-width:800px){.bulk-submit .btn{width:100%;white-space:normal}.bulk-tools .btn{flex:1 1 140px}#modal.bulk-modal #modalBody{padding:16px}}
 
 .model-guide{margin:14px 0;line-height:1.7}.model-guide summary{cursor:pointer;color:#1a6654;font-weight:600}.model-guide img{display:block;width:100%;max-width:754px;height:auto;margin:12px auto}.model-guide p{color:#4d6357}
+
+/* Use the unchanged catalog as a sprite, so all ten samples match the reference. */
+.model-sample{display:block;width:176px;max-width:100%;aspect-ratio:196/54;background-image:var(--catalog-image);background-size:384.69387755% 1094.44444444%;background-repeat:no-repeat;background-color:white}
+.model-sample.large{width:392px}
+.model-thumb{display:flex;flex-direction:column;align-items:flex-start;gap:6px;border:0;border-radius:6px;padding:0;background:transparent;color:var(--ink);text-align:left;font-size:11px;white-space:nowrap}
+.model-thumb:hover{color:var(--green)}.model-thumb:hover .model-sample{outline:2px solid #90bda8;outline-offset:2px}
+.model-example{font-size:10px;color:#63746a}.model-chosen{margin:16px 0;padding:16px;background:#f6f9f6;border:1px solid var(--line);border-radius:10px}
+.model-chosen p{font-size:11px;line-height:1.6;color:#65786d;margin:10px 0 0}.model-description{line-height:1.7}.model-missing{font-size:12px;color:#65786d}
+.selection-bar{flex-wrap:wrap;gap:12px 18px;border-top:1px solid #d9e8dc;padding-top:14px;padding-bottom:14px}
+.selection-summary{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.selection-summary .text-btn{font-size:11px;text-decoration:underline}
+.selection-target{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.selection-target label{font-size:11px}.selection-target select{font-size:12px;padding:8px 10px;background:white;max-width:230px}
+@media(max-width:800px){.selection-bar{padding:14px 16px}.selection-summary{width:100%}.selection-target{width:100%}.selection-target label{width:100%}.selection-target select{flex:1}.model-thumb .model-sample{width:154px;min-width:154px}}

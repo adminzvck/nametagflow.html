@@ -1,100 +1,86 @@
-NAMETAGFLOW V13.1 - PERBAIKAN IMPOR DAN KATALOG 10 MODEL
+NAMETAGFLOW V13.2 · JOHN STORE
+Pindah tahap massal, simpan berkelompok, dan visual 10 model
 
-CARA PASANG
-1. Ekstrak ZIP ini.
-2. Buka repository adminzvck/nametagflow.html di GitHub.
-3. Pilih Add file > Upload files, lalu unggah ke folder yang sama:
-   index.html, styles.css, core.js, app.js.
-   Pilih keempat file sekaligus. Nama wajib core.js, bukan core(1).js.
-4. Commit changes. Tunggu deployment GitHub Pages selesai.
-5. Buka https://adminzvck.github.io/nametagflow.html/ dan tekan Ctrl+Shift+R.
-   Tulisan versi pada sidebar menjadi V13.1.
-6. Masuk dengan kode akses yang biasa dipakai, lalu klik Muat ulang.
+PAKET INI SIAP DIPASANG. Belum diterapkan ke website atau Apps Script aktif.
 
-Paket ini menggunakan backend v13 yang sama. Tidak perlu mengganti URL,
-merotasi kode akses, atau menjalankan setup Apps Script ulang.
-Jangan membersihkan data browser jika masih ada Antrean simpan.
+YANG BERUBAH
+1. Centang beberapa pesanan, pilih tahap tujuan 1–7, lalu klik Pindahkan.
+   Bisa langsung dari Cetak vinyl ke Pengiriman, termasuk pilihan lintas halaman.
+2. Pengiriman simpan berkelompok, maksimal 10 perubahan per permintaan.
+   Draf yang belum pernah dikirim dapat digabung jika pesanan yang sama diubah lagi.
+   Setiap pesanan tetap harus dikonfirmasi pusat sebelum keluar dari antrean simpan.
+3. Gambar contoh Model 1–10 tampil langsung di tabel. Klik gambar untuk memperbesar.
+   Contoh juga tampil di formulir dan mengikuti model yang dipilih.
+   Gambar berasal dari katalog asli John Store. Nama/logo contoh bukan hasil cetak pesanan.
 
-YANG SUDAH DIUBAH DI GOOGLE SHEETS ASLI
-- Pengaturan!A2:A11: katalog tetap Model 1 sampai 10 sesuai gambar pengguna.
-  Sebelumnya A2 berupa formula yang mengumpulkan model dari pesanan,
-  sehingga Model 7, 9, dan 10 yang belum pernah dipakai tidak tersedia.
-- Import Massal!D2:D1000: dropdown mengacu ke Pengaturan!A2:A11.
-- Kedua perubahan sudah dibaca ulang dan sesuai.
-- Tidak ada baris pesanan, arsip, log, operasi, atau pemulihan yang dihapus.
-- Nama model lama dipertahankan agar kompatibel dengan backend.
+PASANG BAGIAN A: APPS SCRIPT
+Perubahan kecepatan simpan memerlukan Code.gs baru, bukan hanya file website.
 
-ACUAN MODEL
-1: Lis luar + Nama
-2: Lis luar + Nama + NIP/jabatan
-3: Lis luar + Logo + Nama
-4: Lis luar + Logo + Nama + NIP/jabatan
-5: Lis luar + Logo + Nama + garis vertikal pembatas logo + NIP/jabatan
-6: Tanpa lis luar + Nama
-7: Tanpa lis luar + Nama + NIP/jabatan
-8: Tanpa lis luar + Logo + Nama
-9: Tanpa lis luar + Logo + Nama + NIP/jabatan
-10: Tanpa lis luar + Logo + Nama + garis vertikal pembatas logo + NIP/jabatan
-Tidak ada Model 11. Gambar asli katalog disertakan di dalam core.js dan
-bisa dibuka melalui "Lihat gambar acuan 10 model" pada formulir dan impor.
-Istilah Line pada nama Model 5/10 berarti pembatas VERTIKAL di sisi logo.
-Garis horizontal di bawah nama pada Model 2/4/7/9 tidak berarti Model 5/10.
+1. Buka proyek Apps Script yang sekarang digunakan NametagFlow.
+   Gunakan proyek yang sama, dengan deployment /exec yang saat ini dipakai website.
+2. Buka file Code.gs. Ganti seluruh isinya dengan isi backend/Code.gs dari ZIP ini.
+   Simpan perubahan.
+3. Buka Deploy / Terapkan > Manage deployments / Kelola deployment.
+4. Pilih deployment web app yang aktif, klik ikon pensil / Edit.
+5. Pilih New version / Versi baru, lalu Deploy / Terapkan.
+   Mengedit deployment yang sama mempertahankan URL /exec yang sudah dipakai.
+6. File backend/appsscript.json disertakan sebagai acuan konfigurasi yang sama:
+   Asia/Jakarta, V8, executeAs USER_DEPLOYING, access ANYONE_ANONYMOUS.
+   Jika konfigurasi aktif sudah sama, biarkan manifest yang sudah ada.
 
-CARA IMPOR DI WEBSITE
-Urutan baru 9 kolom:
-MP | Nama | NIP | Model | Pengait | Logo | Resi | SKU | Catatan
+Tidak perlu menjalankan setupNametagFlow atau rotateAccessCodes untuk pembaruan ini.
+Pertahankan kode akses, Script Properties, semua tab produksi, arsip, dan jurnal.
+Paket ini tidak memerlukan migrasi atau pengosongan data.
 
-Satu baris adalah satu nametag. Gunakan TAB dari Excel/Sheets atau |.
-Nama kembar tetap dua item jika jumlah pesanan memang dua.
-Model boleh 4, 04, Model 4, atau nama model lengkap yang terdaftar.
-M/MAG = Magnet; P/PEN = Peniti.
-Kolom NIP/jabatan, Logo, Resi, dan Catatan boleh kosong atau -.
-MP, Nama, Model, Pengait, dan SKU wajib diisi dengan jelas.
-Nomor MP, NIP dan Resi harus teks utuh, termasuk nol awal. Jika memakai
-Excel, format kolom nomor sebagai Text sebelum mengisinya.
-Nomor yang sudah dibulatkan atau berubah menjadi notasi ilmiah harus
-salin ulang dari sumber asli. Aplikasi tidak menebak angka yang hilang.
+PASANG BAGIAN B: WEBSITE GITHUB
+1. Buka repositori adminzvck/nametagflow.html, cabang main.
+2. Unggah dan ganti EMPAT file di folder utama yang sekarang dipakai:
+   index.html
+   styles.css
+   core.js
+   app.js
+3. Commit perubahan, tunggu penerbitan GitHub Pages selesai.
+4. Buka https://adminzvck.github.io/nametagflow.html/ lalu tekan Ctrl+Shift+R.
+5. Pastikan tulisan versi di sidebar menjadi V13.2. Masuk seperti biasa.
 
-Langkah: Impor massal > tempel data > Periksa pratinjau > periksa jumlah,
-model, pengait, dan pesan per baris > masukkan ke antrean simpan.
-Baris identik perlu dicentang sebagai item tambahan yang disengaja.
-Seluruh baris harus valid sebelum batch dimasukkan. Antrean disimpan
-per item; jika pusat menolak item tertentu, periksa Antrean simpan,
-jangan mengimpor ulang semua baris karena item lain mungkin sudah diterima.
+Gunakan keempat file dari paket yang sama. Nama file harus core.js, bukan core(1).js.
+Folder backend tidak perlu diunggah sebagai bagian pemasangan website.
+Gunakan browser dan profil yang sama agar draf lokal tetap dapat dilanjutkan.
+Jangan bersihkan data situs saat masih ada perubahan yang menunggu simpan.
 
-Format lama tetap tersedia melalui pilihan urutan kolom:
-MP | Resi | SKU | Nama | NIP | Logo | Pengait | Model | Catatan
-Jika menyertakan judul 9 kolom, pemetaan judul dikenali otomatis.
-Format 9 kolom ini untuk menu website. Susunan 11 kolom tab Import Massal
-pada spreadsheet tidak diubah.
+CARA PINDAH BANYAK PESANAN LANGSUNG KE TAHAP 7
+1. Atur pencarian, tanggal, atau filter tahap sesuai pesanan yang ingin dipindah.
+2. Centang pesanan. Checkbox pada kepala tabel memilih halaman tersebut, maksimal 25.
+3. Untuk seluruh halaman yang cocok, klik Pilih semua [jumlah] hasil filter.
+4. Pada Pindah langsung ke, pilih 7 · Pengiriman.
+5. Klik Pindahkan, periksa jumlah pesanan pada konfirmasi, lalu setujui.
 
-Tombol Unduh template TSV menghasilkan header kosong siap diisi.
-Salin prompt Gemini menyalin aturan harian beserta Model/SKU dari pusat.
-PROMPT-HARIAN-GEMINI.txt adalah salinan aturan saat paket dibuat.
+Pesanan yang sudah berada di tahap tujuan dilewati. Perpindahan langsung hanya
+mengubah tahap; nama, NIP, catatan, jumlah cetak, dan penanda cacat dipertahankan.
+Tahap 7 tidak otomatis mengarsipkan pesanan. Arsipkan tahap 7 tetap tersedia terpisah.
+Pesanan dengan konflik atau pemindahan arsip yang tertunda perlu diselesaikan dahulu.
+Tombol Lanjut 1 tahap tetap tersedia untuk alur bertahap yang lama.
 
-PERBAIKAN LAIN
-- Nomor Model 10 tidak berubah menjadi Model 1; Model 11 ditolak.
-- Resi yang dipakai MP lain, MP yang sudah diarsip, SKU tidak terdaftar,
-  rumus, serta jumlah kolom salah ditandai sebelum antrean dibuat.
-- Pencarian mendukung ID lengkap serta MP/resi yang dinormalisasi.
-- Hasil pratinjau dicek lagi terhadap data perangkat sebelum diantrekan.
-- Pembacaan backup v13 menggunakan snapshot, meski daftar legacy kosong.
-- Versi core.js diperiksa sebelum app.js dijalankan. Kegagalan memuat
-  file memberi petunjuk nama file yang benar.
-- Draf, kode akses sesi, konflik revisi, dan ID pengiriman v13 dipertahankan.
+ANTREAN SIMPAN
+Tampilan dan jumlah tahap berubah setelah draf tersimpan di perangkat. Label
+Menunggu simpan tetap muncul sampai pusat mengonfirmasi. Pekerjaan dapat dilanjutkan.
+Jika koneksi putus atau balasan hilang, pengiriman ulang memakai ID perubahan yang sama.
+Konflik data ditahan untuk diperiksa, bukan menimpa perubahan operator lain.
+Jika backend lama belum diperbarui, website tetap memakai pengiriman satu per satu.
 
-HASIL PENGUJIAN
-40 tes otomatis lulus. Meliputi normalisasi 10 model, kedua format impor,
-nomor panjang, kolom opsional kosong, duplikat, resi bentrok, data arsip,
-validasi ulang saat simpan, kehilangan respons, konflik revisi, dan backup.
-Pengujian penyimpanan menggunakan simulasi backend Apps Script dari paket
-v13. Tidak ada pesanan uji yang dimasukkan ke spreadsheet produksi.
-Sintaks JavaScript dan urutan pemuatan file diperiksa.
-Uji visual/browser belum dilakukan: browser uji tidak tersedia, dan
-unduhan browser tidak menghasilkan arsip yang dapat dijalankan.
-Deployment backend aktif belum diuji dengan kode akses pengguna.
+VERIFIKASI
+68 pengujian simulasi lulus: pindah langsung, lintas halaman, filter, draf offline,
+balasan hilang, retry tanpa duplikat, konflik, arsip, autentikasi, backend lama,
+impor massal, dan pemetaan visual Model 1–10. Sintaks dan ID kontrol HTML diperiksa.
 
-STATUS PUBLIKASI
-Perubahan Google Sheets sudah diterapkan. File website belum diunggah
-ke GitHub karena akses repository pada sesi ini hanya baca. Website
-publik mendapat fitur baru setelah empat file di atas diunggah.
+Pada simulasi 25 perubahan berbeda: 3 permintaan simpan (10 + 10 + 5), sebelumnya 25.
+Pada simulasi backend untuk 10 perubahan tahap: pembacaan rentang 60 menjadi 31;
+pemformatan rentang teks 120 menjadi 10. Penulisan jurnal tetap dipertahankan.
+Angka ini adalah jumlah panggilan, bukan jaminan waktu selesai pada koneksi nyata.
+Backend bisa memecah kelompok lebih kecil bila pemrosesan sedang lambat.
+
+Belum diuji secara visual di browser atau dengan transaksi produksi langsung.
+Data pesanan aktif tidak digunakan untuk percobaan mutasi.
+
+Acuan resmi pembaruan deployment:
+https://developers.google.com/apps-script/concepts/deployments#edit_a_versioned_deployment
