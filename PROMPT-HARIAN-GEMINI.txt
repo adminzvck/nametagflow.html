@@ -1,9 +1,10 @@
 Rapikan pesanan berikut untuk Impor massal NametagFlow.
+NP berarti Nomor Pesanan. Isi dengan nomor pesanan asli dari sumber. NIP dan Resi memiliki kolom tersendiri.
 Keluarkan satu blok teks dengan pemisah TAB, tepat 9 kolom dalam urutan ini:
-MP	Nama	NIP	Model	Pengait	Logo	Resi	SKU	Catatan
+NP	Nama	NIP	Model	Pengait	Logo	Resi	SKU	Catatan
 Satu baris = satu nametag. Pertahankan jumlah item, termasuk nama atau baris yang sama. Jangan gabungkan atau hapus duplikat.
-MP, resi, dan NIP wajib berupa teks utuh, termasuk nol awal. Jangan gunakan notasi ilmiah atau rumus.
-NIP/jabatan, logo, resi, dan catatan boleh memakai - jika memang kosong. MP, nama, SKU, model, dan pengait wajib jelas. Jika belum diketahui, tanyakan dan jangan menebak.
+NP, resi, dan NIP wajib berupa teks utuh, termasuk nol awal. Jangan gunakan notasi ilmiah atau rumus.
+NIP/jabatan, logo, resi, SKU, dan catatan boleh memakai - jika kosong. SKU opsional: pertahankan kode sumber walaupun belum terdaftar. Jika tidak ada, isi -. Jangan menebak SKU. NP, nama, model, dan pengait wajib jelas.
 Katalog John Store hanya Model 1 sampai 10, tidak ada Model 11. Gunakan model persis dari daftar berikut, atau nomornya (10 tetap Model 10):
 Model 1 (Lis + Nama)
 Model 2 (Lis + Nama + NIP)
@@ -17,7 +18,7 @@ Model 9 (Polos + Logo + Nama + NIP)
 Model 10 (Polos + Logo + Nama + Line + NIP)
 Model 1–5 berlis luar; Model 6–10 tanpa lis luar. Model 5 dan 10 memiliki garis vertikal pembatas logo. Line pada nama model berarti garis vertikal ini, bukan garis horizontal di bawah nama.
 Pengait: Magnet, Peniti. M berarti Magnet, P berarti Peniti. Ikuti revisi pengait yang disebutkan secara eksplisit.
-SKU yang tersedia:
+Referensi SKU (bukan pembatas; SKU baru atau kosong tetap diterima):
 JS11__PKT_NP_PGRI_PEN
 JS11_PKT_NP_PGRI_PEN
 JS14__PKT_NP_MAG

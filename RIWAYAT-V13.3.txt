@@ -1,0 +1,145 @@
+NAMETAGFLOW V13.3.1 · JOHN STORE
+Simpan berkelompok di Sheet + pratinjau nametag langsung
+
+STATUS PAKET
+Siap dipasang. File ini belum diterapkan ke website atau Apps Script aktif.
+Akses repositori yang tersedia hanya baca; editor Apps Script tidak tersedia.
+Data pesanan produksi tidak diubah untuk pengujian.
+
+REVISI V13.3.1: NP = NOMOR PESANAN
+Impor massal, judul kolom, template TAB, prompt Gemini, dan label website
+sekarang memakai NP / Nomor Pesanan. Judul NP, NP (Nomor Pesanan), No. NP,
+Nomor Pesanan, serta judul lama MP / No. MP tetap dikenali oleh impor.
+Urutan kolom tetap: NP, Nama, NIP, Model, Pengait, Logo, Resi, SKU, Catatan.
+Nomor pesanan dan data tersimpan yang lama tetap kompatibel.
+Perubahan istilah ini ada di website dan prompt; Code.gs sama dengan v13.3.
+Jika backend v13.3 sudah terpasang, cukup ganti empat file website.
+Jika belum, ikuti pemasangan dua bagian di bawah agar simpan cepat aktif.
+
+YANG DIPERBAIKI
+1. Pindah banyak pesanan langsung ke tahap 1–7, termasuk Pengiriman.
+   Pilih semua hasil filter berlaku lintas halaman. Tombol tindakan menetap
+   di bawah layar agar tidak perlu menggulir kembali.
+2. Simpan cepat: maksimal 25 perubahan berbeda dalam satu pengiriman.
+   Apps Script juga menulis ke Sheet secara berkelompok. Ini menggantikan
+   proses v13.2 yang masih menulis setiap nametag satu per satu.
+   Website tidak memuat ulang seluruh data setelah setiap simpan biasa.
+   Kegagalan sementara dicoba kembali otomatis mulai sekitar 2 detik,
+   dengan jeda bertambah sampai 30 detik jika koneksi terus bermasalah.
+3. Tahap produksi tetap terlihat saat menunggu simpan. Keterangan Menyimpan,
+   Menunggu simpan, dan Perlu diperiksa tampil terpisah dari tahap.
+   Ringkasan menampilkan jumlah perubahan dan waktu konfirmasi terakhir.
+4. Pratinjau NAMETAG AKTUAL memakai nama dan NIP/jabatan isian pesanan.
+   Pratinjau berubah saat mengetik dan saat memilih model. Masing-masing
+   nama dalam satu NP memiliki pratinjau sendiri. Tabel, impor massal,
+   pembesaran, dan pemeriksaan packing juga menampilkan teks pesanan.
+   Sepuluh kartu model dapat diklik; katalog asli tetap tersedia.
+5. Nama dan teks pendukung lebih besar, warna lebih jelas, serta ID pesanan
+   dapat dibuka jika diperlukan agar daftar lebih mudah dibaca.
+6. Filter model dan pengait, serta pilihan Kelompok per NP. Setiap nametag
+   fisik tetap item tersendiri, termasuk nama identik. Kelompok NP tidak
+   dipotong di pergantian halaman; mode biasa tetap 25 item per halaman.
+7. Periksa packing menampilkan seluruh isi NP aktif, termasuk item yang
+   tersembunyi oleh filter, jumlah per model/pengait, dan catatan custom.
+   Checklist mencakup nama, NIP/jabatan, model/logo, pengait, dan catatan.
+   Checklist tersimpan di perangkat/browser ini, bukan dibagikan antaroperator.
+   Perubahan detail membatalkan hasil cek lama untuk nametag tersebut.
+   Setelah lengkap, tombol memilih seluruh NP dengan tujuan tahap 7;
+   perpindahan tetap dijalankan lewat tombol Pindahkan dan konfirmasinya.
+
+PRATINJAU 10 MODEL
+Model 1  : lis luar + nama
+Model 2  : lis luar + nama + garis horizontal + NIP/jabatan
+Model 3  : lis luar + logo kiri + nama
+Model 4  : lis luar + logo kiri + nama + garis horizontal + NIP/jabatan
+Model 5  : lis luar + logo kiri + garis vertikal + nama + garis horizontal + NIP/jabatan
+Model 6  : tanpa lis + nama
+Model 7  : tanpa lis + nama + garis horizontal + NIP/jabatan
+Model 8  : tanpa lis + logo kiri + nama
+Model 9  : tanpa lis + logo kiri + nama + garis horizontal + NIP/jabatan
+Model 10 : tanpa lis + logo kiri + garis vertikal + nama + garis horizontal + NIP/jabatan
+
+Sesuai permintaan, logo cukup berupa penanda posisi bertuliskan LOGO.
+Nama/logo pesanan tetap disimpan dalam data; logo tidak diganti dalam Sheet.
+Pratinjau adalah acuan susunan, bukan file cetak dengan ukuran/font final.
+Model 1, 3, 6, dan 8 tidak menampilkan baris NIP. Jika kolom NIP diisi,
+formulir memberi keterangan dan tetap menyimpan nilainya tanpa mengubah model.
+Nama panjang dipadatkan agar tetap masuk ke area teks. Angka NIP tetap teks,
+termasuk digit awal nol. Jabatan ditampilkan sebagaimana isian.
+Buka PRATINJAU-MODEL.html setelah mengekstrak ZIP untuk mencoba nama dan NIP.
+
+PEMASANGAN WAJIB DUA BAGIAN
+Perbaikan antrean simpan memerlukan backend/Code.gs baru. Mengganti file
+website saja belum mengaktifkan penulisan Sheet berkelompok.
+
+A. APPS SCRIPT — PERBARUI PROYEK YANG SUDAH DIPAKAI
+1. Buka proyek Apps Script yang deployment /exec-nya sedang dipakai website.
+2. Ganti seluruh isi Code.gs dengan backend/Code.gs dalam paket ini. Simpan.
+3. Buka Deploy / Terapkan > Manage deployments / Kelola deployment.
+4. Pilih deployment web app yang aktif, lalu ikon pensil / Edit.
+5. Pilih New version / Versi baru, kemudian Deploy / Terapkan.
+   Mengedit deployment yang sama mempertahankan URL /exec yang sudah dipakai.
+6. backend/appsscript.json disertakan sebagai acuan konfigurasi yang sama.
+   Jika manifest aktif sudah sesuai, biarkan manifest yang sekarang.
+
+Tidak perlu menjalankan setupNametagFlow atau rotateAccessCodes lagi.
+Pertahankan kode akses, Script Properties, tab produksi, arsip, dan jurnal.
+Tidak ada migrasi kolom bisnis atau pengosongan data pada pembaruan ini.
+
+B. WEBSITE GITHUB
+1. Buka repositori adminzvck/nametagflow.html, cabang main.
+2. Ganti empat file di folder utama dengan file dari paket yang sama:
+   index.html, styles.css, core.js, app.js.
+   Nama file harus core.js, bukan core(1).js.
+3. Commit dan tunggu GitHub Pages selesai menerbitkan perubahan.
+4. Buka https://adminzvck.github.io/nametagflow.html/ lalu Ctrl+Shift+R.
+5. Pastikan sidebar menampilkan V13.3.1. Masuk menggunakan kode akses yang sama.
+6. Klik Muat ulang. Ringkasan daftar harus menampilkan Simpan cepat aktif.
+   Jika masih Pusat masih v13.2, periksa langkah deployment Apps Script dan
+   alamat backend pada Pengaturan akses. Jangan membuat deployment baru
+   jika ingin mempertahankan URL /exec yang sekarang.
+
+Hanya empat file website di atas yang diperlukan untuk pemasangan website.
+PRATINJAU-MODEL.html dan gambar contoh adalah berkas pendamping opsional.
+Gunakan browser/profil yang sama untuk melanjutkan draf lokal yang ada.
+Jangan bersihkan data situs selama ada perubahan yang belum dikonfirmasi.
+
+PEMINDAHAN LANGSUNG KE TAHAP 7
+Atur pencarian/filter, centang item atau pilih semua hasil filter,
+pilih 7 · Pengiriman pada panel bawah, lalu klik Pindahkan.
+Pesanan yang sudah berada di tujuan dilewati. Perpindahan langsung hanya
+mengubah tahap; identitas, catatan, jumlah cetak, dan tanda cacat dipertahankan.
+Tahap 7 tidak otomatis mengarsipkan pesanan.
+
+KEAMANAN DRAF
+Perubahan tetap tersimpan di perangkat sampai pusat mengonfirmasi hasilnya.
+Balasan hilang dicoba lagi dengan ID perubahan yang sama agar tidak menduplikasi.
+Konflik ditahan untuk diperiksa; data operator lain tidak ditimpa secara otomatis.
+Pemindahan arsip/hapus/pemulihan memakai alur pemulihan jurnal yang sudah ada.
+Website tetap kompatibel dengan backend v13.0/v13.2, tetapi mode cepat penuh
+memerlukan backend v13.3.
+
+HASIL VERIFIKASI
+Versi dasar v13.3 lulus 88 pengujian simulasi, termasuk draf offline, retry, konflik, balasan
+hilang, tiga fase simpan terputus, baris tidak berurutan, pergeseran baris,
+pilih lintas halaman, filter, grouping NP, checklist packing, dan teks aktual
+pada 10 model. Sintaks JS/backend dan ID kontrol HTML juga diperiksa.
+Revisi NP diuji untuk header baru/lama, kolom acak, duplikat judul,
+nomor panjang dan nol awal, pesan validasi, serta kesesuaian prompt/template.
+Pratinjau 10 model dirender dan diperiksa secara visual pada v13.3.
+Tampilan aplikasi lengkap belum diuji di browser; tidak ada mutasi produksi
+langsung untuk pengujian. Waktu penyimpanan nyata belum diukur.
+
+Perbandingan simulasi 25 perubahan tahap pada baris BERURUTAN:
+                         v13.2       v13.3
+Permintaan simpan         3           1
+Panggilan baca rentang     78          5
+Panggilan tulis            100         4 (termasuk log tampilan)
+Flush simpan              75          3
+
+Untuk baris yang berjauhan, penulisan dibagi per rentang agar baris lain tetap
+utuh. Angka di atas adalah jumlah panggilan pada simulasi, bukan jaminan durasi
+atau persentase kecepatan di koneksi nyata. Jurnal dan konfirmasi tetap dijaga.
+
+Acuan deployment:
+https://developers.google.com/apps-script/concepts/deployments#edit_a_versioned_deployment
