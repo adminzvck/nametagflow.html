@@ -1,5 +1,6 @@
-PETUNJUK TERBARU: V13.8.8
+PETUNJUK TERBARU: V13.8.9
 
-Ikuti 00-BACA-DULU.txt dan PETUNJUK.txt pada paket ini.
-Untuk memperbaiki error [object Blob], unggah file website v13.8.8.
+Ikuti 00-BACA-DULU.txt dan PETUNJUK.txt.
+Untuk menghubungkan font: Cetak Produksi > Kelola font.
+Keterangan font ada di atas pratinjau lembar baru.
 Backend tetap v13.8.6.

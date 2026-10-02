@@ -1,6 +1,6 @@
-NAMETAGFLOW V13.8.8 — DAFTAR FILE
+NAMETAGFLOW V13.8.9 — DAFTAR FILE
 
-Total 71 file. Seluruh file paket v13.8.7 tetap disertakan.
+Total 74 file. Seluruh isi paket v13.8.8 tetap disertakan.
 
 00-BACA-DULU.txt
 COBA-CETAK.html
@@ -23,10 +23,12 @@ PERUBAHAN-V13.8.5.txt
 PERUBAHAN-V13.8.6.txt
 PERUBAHAN-V13.8.7.txt
 PERUBAHAN-V13.8.8.txt
+PERUBAHAN-V13.8.9.txt
 PERUBAHAN-V13.8.txt
 PETUNJUK-GITHUB-V13.8.6.txt
 PETUNJUK-GITHUB-V13.8.7.txt
 PETUNJUK-GITHUB-V13.8.8.txt
+PETUNJUK-GITHUB-V13.8.9.txt
 PETUNJUK.txt
 PROMPT-HARIAN-GEMINI.txt
 Pratinjau-10-Model-v13.8.2.png
@@ -65,6 +67,7 @@ tests/HASIL-UJI-V13.8.4.txt
 tests/HASIL-UJI-V13.8.6.txt
 tests/HASIL-UJI-V13.8.7.txt
 tests/HASIL-UJI-V13.8.8.txt
+tests/HASIL-UJI-V13.8.9.txt
 tests/HASIL-UJI.txt
 tests/fixtures/logo-demo.png
 tests/fixtures/logo-lowres.png

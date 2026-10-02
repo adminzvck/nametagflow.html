@@ -1,4 +1,4 @@
-# NametagFlow v13.8.8
+# NametagFlow v13.8.9
 
 Paket lengkap untuk memperbarui repository NametagFlow yang sudah dipakai.
 Mulai dari **00-BACA-DULU.txt**, lalu ikuti **PETUNJUK.txt**.
@@ -15,3 +15,8 @@ Baca `CONTOH-LAMA.txt` sebelum memakai PDF/PNG/SVG arsip. Contoh hasil font asli
 terbaru perlu dibuat di PC yang memiliki font tersebut.
 
 Verifikasi lokal: `node tests/run-tests.cjs` dan `node tests/local-font-tests.cjs`.
+
+**Font:** buka Cetak Produksi → Kelola font. Keterangan font yang benar-benar
+ dipakai terlihat pada panel **Font pada lembar ini**, tepat di atas pratinjau.
+Lembar baru menggunakan Arial Regular/Swis721 BT Regular asli sesuai model.
+Arsip lama tetap memakai profil lamanya; buat lembar baru untuk font terbaru.

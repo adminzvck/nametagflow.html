@@ -1,0 +1,29 @@
+NAMETAGFLOW V13.8.9 — KETERANGAN FONT DAN KELOLA FONT
+
+1. Keterangan Font pada lembar ini tampil di atas pratinjau, baik ketika
+   membuat lembar baru maupun membuka riwayat. Label diambil dari hasil
+   mesin gambar yang sama dengan PDF, bukan teks tetap yang mengaku Arial.
+2. Tombol Kelola font ada di Cetak Produksi/Riwayat, Buat lembar cetak,
+   dan lembar yang telah disimpan. Tetap bisa dibuka ketika font sudah siap.
+3. Pengaturan ukuran, pilihan logo, dan posisi nametag dipertahankan saat
+   kembali dari Kelola font. Pemeriksaan sebelum PDF perlu dicentang ulang.
+4. Identitas font divalidasi dari metadata dalam TTF: Arial standar Regular,
+   dan Swis721 BT Regular/Roman. Arial Nova, Arial Unicode MS, Arimo, Nimbus
+   Sans, serta varian Bold/Italic/Narrow/Condensed dan lainnya ditolak.
+5. Semua sepuluh model diperiksa: nama tanpa NIP memakai Arial Regular asli;
+   nama dengan NIP dan baris NIP/jabatan memakai Swis721 BT Regular asli.
+   Pembuatan PDF baru meminta kedua font asli siap sebelum dilanjutkan.
+6. Arsip lama mempertahankan font mesin lamanya; label menunjukkan nama
+   font arsip sebenarnya. Untuk memakai font asli terbaru, buat lembar baru
+   dari pesanan. Kelola font bukan dropdown untuk mengganti model ke font lain.
+7. Perbaikan [object Blob] v13.8.8 tetap berlaku. Backend tetap v13.8.6.
+
+LOKASI MENU
+Dari halaman utama klik Cetak Produksi > Kelola font.
+Pada halaman Buat lembar cetak, Kelola font ada di bagian atas, dekat Riwayat
+cetak. Keterangan Font pada lembar ini berada tepat di atas gambar kertas.
+
+BATAS UJI
+Pengujian menggunakan Node dan simulasi DOM/font/storage. Font asli dari PC
+pengguna, browser penuh, CorelDRAW dan printer fisik belum diuji langsung.
+Pastikan label asli terlihat pada lembar baru dan uji satu lembar 100%.
