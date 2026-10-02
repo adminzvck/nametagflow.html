@@ -54,3 +54,4 @@ dialog.print-modal{width:min(1240px,96vw)}.print-intro{display:flex;justify-cont
 
 /* v13.5: reprint scheduling */
 .reprint-items{display:grid;gap:8px;max-height:260px;overflow:auto;margin:16px 0}.reprint-items article{padding:12px 14px;border:1px solid #d8e2db;border-radius:9px;background:#f6f9f6}.reprint-items span,.reprint-items small{display:block;margin-top:5px;color:#526659}.reprint-reason{color:#946515!important}.reprint-action{border-color:#c6a567;background:#fff8e9}#reprintForm .field{margin-bottom:14px}.selection-bar{flex-wrap:wrap}@media(max-width:800px){.has-selection main{padding-bottom:270px}}
+.font-status{border:1px solid #d7e4da;background:#f5f9f5;border-radius:10px;padding:12px 14px;margin:14px 0}.font-status p{margin:5px 0;font-size:13px;color:#294f3d}.font-connect{display:grid;gap:12px;margin:14px 0}.font-connect .field{display:grid;gap:6px}.font-connect input[type=file]{font-size:12px;background:#fff}

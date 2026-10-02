@@ -1,15 +1,16 @@
 /* NametagFlow print geometry. Units are millimetres; preview and PDF share paths. */
 (function(root){
 'use strict';
-const C=root.NFCore,F=root.NFPrintFont,BUILD='13.8.3',MM=72/25.4;
+const C=root.NFCore,F=root.NFPrintFont,L=root.NFLocalFonts,BUILD='13.8.6',MM=72/25.4;
 const LEGACY_DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:8,gapX:3,gapY:2,nameHeight:7.5,nameNipHeight:5.4,nipHeight:3.1,shortSpacing:.8,condense:.62,cropMarks:true,layoutMode:'grid',designVersion:'13.6'};
 const V13_7_DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:7.5,nameNipHeight:5.4,nipHeight:3.1,shortSpacing:2.4,condense:.86,cropMarks:false,layoutMode:'corel29',designVersion:'13.7'};
-const DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:6.771,nameNipHeight:5.294,nipHeight:3.290,shortSpacing:2.734,condense:1,cropMarks:false,layoutMode:'corel29',designVersion:'13.8.2'};
+const V13_8_DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:6.771,nameNipHeight:5.294,nipHeight:3.290,shortSpacing:2.734,condense:1,cropMarks:false,layoutMode:'corel29',designVersion:'13.8.2'};
+const DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:9.8414,nameNipHeight:7.3812,nipHeight:4.5861,shortSpacing:2.734,condense:1,cropMarks:false,layoutMode:'corel29',designVersion:'13.8.6'};
 const clone=v=>JSON.parse(JSON.stringify(v)),round=v=>Math.round(v*100000)/100000;
 const ranges={pageWidth:[100,1000],pageHeight:[100,1000],tagWidth:[40,150],tagHeight:[16,40],margin:[0,50],gapX:[0,20],gapY:[0,20],nameHeight:[2,12],nameNipHeight:[2,9],nipHeight:[1.5,5],shortSpacing:[0,4],condense:[.4,1.2]};
 function engineProfile(engine=BUILD){const v=String(engine||BUILD).split('.').map(Number),major=v[0]||0,minor=v[1]||0;if(major<13||(major===13&&minor<7))return 'legacy';if(major===13&&minor<8)return 'v13_7';return 'current';}
 function legacyEngine(engine){return engineProfile(engine)==='legacy';}
-function settings(input={},engine=BUILD){const profile=engineProfile(engine),base=profile==='legacy'?LEGACY_DEFAULTS:profile==='v13_7'?V13_7_DEFAULTS:DEFAULTS,s={...base,...input};s.layoutMode=profile==='legacy'?'grid':(s.layoutMode==='grid'?'grid':'corel29');s.designVersion=base.designVersion;for(const [key,[min,max]] of Object.entries(ranges)){s[key]=Number(s[key]);if(!Number.isFinite(s[key])||s[key]<min||s[key]>max)throw new Error('Ukuran '+key+' harus '+min+'–'+max+(key==='condense'?'':' mm')+'.');}s.cropMarks=!!s.cropMarks;grid(s);return s;}
+function settings(input={},engine=BUILD){const profile=engineProfile(engine),base=profile==='legacy'?LEGACY_DEFAULTS:profile==='v13_7'?V13_7_DEFAULTS:nativeFontEngine(engine)?DEFAULTS:V13_8_DEFAULTS,s={...base,...input};s.layoutMode=profile==='legacy'?'grid':(s.layoutMode==='grid'?'grid':'corel29');s.designVersion=base.designVersion;for(const [key,[min,max]] of Object.entries(ranges)){s[key]=Number(s[key]);if(!Number.isFinite(s[key])||s[key]<min||s[key]>max)throw new Error('Ukuran '+key+' harus '+min+'–'+max+(key==='condense'?'':' mm')+'.');}s.cropMarks=!!s.cropMarks;grid(s);return s;}
 function currentSettings(input={}){if(!input||!Object.keys(input).length)return settings(DEFAULTS);const migrated={...input,designVersion:DEFAULTS.designVersion},oldDesign=input.designVersion!==DEFAULTS.designVersion;for(const key of Object.keys(DEFAULTS)){if(key==='designVersion')continue;const value=input[key];if(value===undefined)continue;if(oldDesign&&(value===V13_7_DEFAULTS[key]||value===LEGACY_DEFAULTS[key]))migrated[key]=DEFAULTS[key];}/* Typography is reference-locked for new jobs: stale/custom values from older builds must not make names look larger than the Corel source. */if(oldDesign)Object.assign(migrated,{nameHeight:DEFAULTS.nameHeight,nameNipHeight:DEFAULTS.nameNipHeight,nipHeight:DEFAULTS.nipHeight,shortSpacing:DEFAULTS.shortSpacing,condense:DEFAULTS.condense});if(!Object.prototype.hasOwnProperty.call(input,'layoutMode'))Object.assign(migrated,{layoutMode:DEFAULTS.layoutMode,margin:DEFAULTS.margin,gapX:DEFAULTS.gapX,gapY:DEFAULTS.gapY});return settings(migrated);}
 function grid(s){if(s.layoutMode==='corel29'){const cols=2,rows=Math.floor((s.pageHeight-s.margin+s.gapY+1e-8)/(s.tagHeight+s.gapY)),mainWidth=cols*s.tagWidth+s.gapX,center=(s.pageWidth-mainWidth)/2,shift=Math.max(0,s.tagHeight/2-.2),left=center+shift,sideLeft=left-s.tagHeight-.4,sideTop=s.margin+26.55,sideGap=.18,sideCount=sideLeft>=0?Math.max(0,Math.floor((s.pageHeight-sideTop+sideGap+1e-8)/(s.tagWidth+sideGap))):0;if(rows<1||left<0||left+mainWidth>s.pageWidth)throw new Error('Nametag tidak muat pada layout Corel. Periksa ukuran kertas dan nametag.');return{mode:'corel29',cols,rows,capacity:cols*rows+sideCount,left,top:s.margin,sideLeft,sideTop,sideGap,sideCount};}const cols=Math.floor((s.pageWidth-2*s.margin+s.gapX+1e-8)/(s.tagWidth+s.gapX)),rows=Math.floor((s.pageHeight-2*s.margin+s.gapY+1e-8)/(s.tagHeight+s.gapY));if(cols<1||rows<1)throw new Error('Nametag tidak muat. Periksa ukuran kertas, margin, dan jarak.');return{mode:'grid',cols,rows,capacity:cols*rows,left:(s.pageWidth-(cols*s.tagWidth+(cols-1)*s.gapX))/2,top:s.margin,sideCount:0};}
 function logoKey(o){const name=C.text(o.logo).normalize('NFC').toUpperCase().replace(/\s+/g,' ');return name?'LOGO:'+name:'ORDER:'+o.id;}
@@ -44,19 +45,21 @@ function checkLogoPixels(pixels){
 function signature(o){return JSON.stringify([...['name','nip','model','logo','notes','mp'].map(k=>C.text(o[k])),Number(o.printCount)||1,C.text(o.printCycleId)]);}
 function sameCycle(a,b){return (Number(a.printCount)||1)===(Number(b.printCount)||1)&&C.text(a.printCycleId)===C.text(b.printCycleId);}
 function printableText(value){return C.text(value).normalize('NFC');}
-function fontFor(engine=BUILD){const profile=engineProfile(engine);return profile==='legacy'&&F.legacy?F.legacy:profile==='v13_7'&&F.v13_7?F.v13_7:F;}
-function fitText(value,box,height,spacing=0,condense=.86,font=F){
+function nativeFontEngine(engine=BUILD){const v=String(engine||BUILD).split('.').map(Number);return (v[0]||0)>13||((v[0]||0)===13&&((v[1]||0)>8||((v[1]||0)===8&&(v[2]||0)>=6)));}
+function fontFor(engine=BUILD,chars=''){const profile=engineProfile(engine);if(nativeFontEngine(engine)&&L){const local=L.get('arial',chars);if(local)return local;}return profile==='legacy'&&F.legacy?F.legacy:profile==='v13_7'&&F.v13_7?F.v13_7:F;}
+function fitText(value,box,height,spacing=0,condense=.86,font=F,proportional=false){
  const str=printableText(value),chars=Array.from(str),glyphs=chars.map(c=>{const g=font.glyphs[c];if(!g)throw new Error('Karakter “'+c+'” belum didukung font cetak. Periksa isian sebelum mencetak.');return g;});
  if(!chars.length)return{paths:[],width:0,compression:1,spacing:0,text:str};
  const drawn=glyphs.filter(g=>g.d),minY=Math.min(0,...drawn.map(g=>g.b[1])),maxY=Math.max(0,...drawn.map(g=>g.b[3])),sy=Math.min(height,box.h/Math.max(.01,maxY-minY));
  let advance=0,minX=Infinity,maxX=-Infinity;const positions=[];
- glyphs.forEach((g,i)=>{positions.push(advance);if(g.d){minX=Math.min(minX,advance+g.b[0]*sy*condense);maxX=Math.max(maxX,advance+g.b[2]*sy*condense);}advance+=g.a*sy*condense+(i<chars.length-1?spacing:0);});
+ glyphs.forEach((g,i)=>{if(i&&font.kernPairs){const k=font.kernPairs[chars[i-1]+chars[i]]||0;advance+=k*sy*condense;}positions.push(advance);if(g.d){minX=Math.min(minX,advance+g.b[0]*sy*condense);maxX=Math.max(maxX,advance+g.b[2]*sy*condense);}advance+=g.a*sy*condense+(i<chars.length-1?spacing:0);});
  if(!Number.isFinite(minX))return{paths:[],width:0,compression:1,spacing,text:str};
- const natural=maxX-minX,compression=Math.min(1,box.w/Math.max(.001,natural)),width=natural*compression,baseX=box.x+(box.w-width)/2-minX*compression,baseY=box.y+(box.h-(maxY-minY)*sy)/2-minY*sy;
- return{paths:glyphs.map((g,i)=>({d:g.d,x:baseX+positions[i]*compression,y:baseY,sx:sy*condense*compression,sy})).filter(g=>g.d),width,compression,spacing:spacing*compression,text:str};
+ const natural=maxX-minX,compression=Math.min(1,box.w/Math.max(.001,natural)),width=natural*compression,finalSy=sy*(proportional?compression:1),baseX=box.x+(box.w-width)/2-minX*compression,baseY=box.y+(box.h-(maxY-minY)*finalSy)/2-minY*finalSy;
+ return{paths:glyphs.map((g,i)=>({d:g.d,x:baseX+positions[i]*compression,y:baseY,sx:sy*condense*compression,sy:finalSy})).filter(g=>g.d),width,compression,spacing:spacing*compression,text:str};
 }
+function proportionalFitEngine(engine=BUILD){const v=String(engine||BUILD).split('.').map(Number);return (v[0]||0)===13&&(v[1]||0)===8&&(v[2]||0)===4;}
 function artwork(order,input=DEFAULTS,assets={},preview=false,engine=BUILD){
- const profile=engineProfile(engine),legacy=profile==='legacy',v137=profile==='v13_7',s=settings(input,engine),font=fontFor(engine),m=C.modelLayout(order.model);if(!m)throw new Error('Pilih model 1–10 untuk '+(order.name||'nametag')+'.');
+ const profile=engineProfile(engine),legacy=profile==='legacy',v137=profile==='v13_7',native=nativeFontEngine(engine),s=settings(input,engine),font=fontFor(engine,C.text(order.name)+C.text(order.nip)+'LOGO'),m=C.modelLayout(order.model);if(!m)throw new Error('Pilih model 1–10 untuk '+(order.name||'nametag')+'.');
  if(!C.text(order.name))throw new Error('Nama nametag belum diisi.');
  C.validateIdentifiers(order);
  const w=s.tagWidth,h=s.tagHeight,inset=m.border?2.075:0,b={x:inset,y:inset,w:w-2*inset,h:h-2*inset},shapes=[],warnings=[];
@@ -77,16 +80,18 @@ function artwork(order,input=DEFAULTS,assets={},preview=false,engine=BUILD){
   if(m.divider)shapes.push({type:'line',x:b.x+logoW+1,y:b.y,x2:b.x+logoW+1,y2:b.y+b.h,line:legacy ? .32 : .75,stroke:'#ffffff'});
  }
  const rawName=printableText(order.name),letters=Array.from(rawName).filter(c=>/\p{L}/u.test(c)).length,tracking=letters>0&&letters<8&&(profile!=='current'||!/(?:\s)/u.test(rawName.trim()))?s.shortSpacing:0,lineY=b.y+b.h*(profile==='current'?.56:.58);
- const nameBox={x:textX,y:b.y+.85,w:nameW,h:m.nip?lineY-b.y-1.65:b.h-1.7},nameFont=profile==='current'&&m.nip&&F.swis?F.swis:font,nameCondense=s.condense*(profile==='current'&&m.nip?.8:1);
- const name=fitText(order.name,nameBox,m.nip?s.nameNipHeight:s.nameHeight,tracking,nameCondense,nameFont);
+ const nameBox={x:textX,y:b.y+.85,w:nameW,h:m.nip?lineY-b.y-1.65:b.h-1.7},nameFont=profile==='current'&&m.nip?(native&&L&&L.get('swis',C.text(order.name)+C.text(order.nip))||F.swis||font):font,nameCondense=s.condense;
+ const name=fitText(order.name,nameBox,m.nip?s.nameNipHeight:s.nameHeight,tracking,nameCondense,nameFont,proportionalFitEngine(engine));
  shapes.push(...name.paths.map(p=>({type:'path',...p,fill:'#ffffff'})));
+ let nipFont=null;
  if(name.compression<.55)warnings.push('Nama sangat panjang; periksa keterbacaan.');
  if(m.nip){shapes.push({type:'line',x:textLeft,y:lineY,x2:right,y2:lineY,line:legacy ? .3 : .75,stroke:'#ffffff'});let raw=printableText(order.nip);if(/^\d[\d .-]*$/.test(raw))raw='NIP. '+raw;
-  const nipFont=profile==='current'&&F.swis?F.swis:font,nipCondense=s.condense*(profile==='current'?.8:1),nip=fitText(raw,{x:textLeft,y:lineY+.85,w:available,h:b.y+b.h-lineY-1.55},s.nipHeight,0,nipCondense,nipFont);
+  nipFont=profile==='current'?(native&&L&&L.get('swis',raw)||F.swis||font):font;const nipCondense=s.condense,nip=fitText(raw,{x:textLeft,y:lineY+.85,w:available,h:b.y+b.h-lineY-1.55},s.nipHeight,0,nipCondense,nipFont,proportionalFitEngine(engine));
   shapes.push(...nip.paths.map(p=>({type:'path',...p,fill:'#ffffff'})));if(!raw)warnings.push('Baris NIP / jabatan kosong.');if(nip.compression<.55)warnings.push('NIP / jabatan sangat panjang; periksa keterbacaan.');
  }else if(C.text(order.nip))warnings.push('Model ini tidak menampilkan NIP / jabatan.');
  if(C.text(order.notes))warnings.push('Catatan custom: '+order.notes);
- return{width:w,height:h,shapes,warnings,nameWidth:name.width,nameCompression:name.compression,nameSpacing:name.spacing,model:m,font:nameFont.name,nipFont:m.nip?(profile==='current'&&F.swis?F.swis.name:font.name):''};
+ if(native&&(!L||!L.status().ready))warnings.unshift('Preview sementara memakai font pengganti. Hubungkan Arial Regular dan Swis721 BT Regular asli sebelum PDF dibuat.');
+ return{width:w,height:h,shapes,warnings,nameWidth:name.width,nameCompression:name.compression,nameSpacing:name.spacing,model:m,font:nameFont.name,nipFont:m.nip?nipFont.name:'',nativeFonts:native&&L?L.status():null};
 }
 function svgShapes(shapes){return shapes.map(p=>{
  if(p.type==='rect')return`<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" fill="${p.fill}"${p.stroke?` stroke="${p.stroke}" stroke-width="${p.line}"`:''}/>`;
@@ -102,6 +107,7 @@ function plan(orders,input,assets={},preview=false,engine=BUILD){
 function crops(x,y,w,h){const gap=.4,len=1;return[[x-gap-len,y,x-gap,y],[x,y-gap-len,x,y-gap],[x+w+gap,y,x+w+gap+len,y],[x+w,y-gap-len,x+w,y-gap],[x-gap-len,y+h,x-gap,y+h],[x,y+h+gap,x,y+h+gap+len],[x+w+gap,y+h,x+w+gap+len,y+h],[x+w,y+h+gap,x+w,y+h+gap+len]];}
 function sheetSvg(layout,pageIndex=0){const s=layout.settings,items=layout.pages[pageIndex];return`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${s.pageWidth} ${s.pageHeight}" class="print-sheet" role="img" aria-label="Lembar ${pageIndex+1}"><rect width="${s.pageWidth}" height="${s.pageHeight}" fill="white"/>${items.map(v=>{const group=v.rotation===90?`<g transform="matrix(0 1 -1 0 ${v.x+s.tagHeight} ${v.y})">${svgShapes(v.art.shapes)}</g>`:`<g transform="translate(${v.x} ${v.y})">${svgShapes(v.art.shapes)}</g>`,cw=v.rotation===90?s.tagHeight:s.tagWidth,ch=v.rotation===90?s.tagWidth:s.tagHeight;return group+(s.cropMarks?crops(v.x,v.y,cw,ch).map(([x,y,x2,y2])=>`<path d="M${x},${y}L${x2},${y2}" stroke="#666" stroke-width=".1"/>`).join(''):'');}).join('')}</svg>`;}
 async function pdf(job){
+ if(nativeFontEngine(job.engine||BUILD)){if(!L)throw new Error('Modul font lokal belum dimuat. Muat ulang aplikasi.');L.requireReady(job.orders||[]);}
  const lib=root.PDFLib;if(!lib)throw new Error('Mesin PDF belum termuat. Muat ulang halaman.');const layout=plan(job.orders,job.settings,jobAssets(job),false,job.engine||BUILD),doc=await lib.PDFDocument.create();
  doc.setTitle('NametagFlow '+job.id);doc.setSubject('Cetak ukuran asli 100%. '+layout.settings.tagWidth+' x '+layout.settings.tagHeight+' mm. Layout '+layout.settings.layoutMode+'.');doc.setCreator('NametagFlow '+(job.engine||BUILD));doc.setCreationDate(new Date(job.createdAt));doc.setModificationDate(new Date(job.createdAt));
  const color=hex=>hex==='#000000'?lib.grayscale(0):hex==='#ffffff'?lib.grayscale(1):lib.rgb(parseInt(hex.slice(1,3),16)/255,parseInt(hex.slice(3,5),16)/255,parseInt(hex.slice(5,7),16)/255),images=new Map();
@@ -118,6 +124,7 @@ async function pdf(job){
  return doc.save({useObjectStreams:false});
 }
 function createJob(orders,input,assets={},operator=''){
+ if(nativeFontEngine(BUILD)){if(!L)throw new Error('Modul font lokal belum dimuat. Muat ulang aplikasi.');L.requireReady(orders);}
  if(new Set(orders.map(o=>o.id)).size!==orders.length||orders.some(o=>!C.text(o.id)))throw new Error('ID nametag harus unik dan terisi. Nama yang sama tetap boleh memakai ID berbeda.');
  const used={};for(const o of orders)if(C.modelLayout(o.model)?.logo&&assets[logoKey(o)])used[logoKey(o)]=clone(assets[logoKey(o)]);
  const job={version:1,engine:BUILD,id:C.uid('CT-'),createdAt:new Date().toISOString(),operator,orders:orders.map(o=>({id:o.id,revision:o.revision,...C.fields(o)})),settings:settings(input),assets:used};plan(job.orders,job.settings,job.assets);return job;
@@ -191,6 +198,6 @@ function restoreBackup(main,prints,backup,includePending=false){
 }
 function acknowledge(state,op,result){if(!result?.committed)return;state.printReceipts??={};if(state.printReceipts[op.opId]||op.printJobId)state.printReceipts[op.opId]={jobId:op.printJobId,...state.printReceipts[op.opId],confirmed:true,confirmedAt:new Date().toISOString()};}
 function jobStatus(j,state){if(j.completedAt)return 'Cetak dikonfirmasi';if(j.finishSubmittedAt){const moves=(j.moves||[]).map(m=>moveState(m,state)),left=moves.filter(m=>!m.confirmed&&!m.cancelled);if(!left.length)return moves.some(m=>m.cancelled&&!m.confirmed)?'Cetak dikonfirmasi · perpindahan dibatalkan':'Cetak dikonfirmasi';return left.some(m=>!state.pending.some(p=>p.operation.opId===m.activeOpId&&p.status!=='blocked'))?'Periksa perpindahan di antrean simpan':'Cetak dikonfirmasi · menunggu '+left.length+' penyimpanan';}return j.downloadedAt?'PDF diunduh · belum dikonfirmasi cetak':'Siap diunduh';}
-root.NFPrint={BUILD,DEFAULTS,V13_7_DEFAULTS,LEGACY_DEFAULTS,settings,currentSettings,grid,engineProfile,legacyEngine,fontFor,logoKey,jobAssets,logoImageInfo,checkLogoPixels,signature,sameCycle,fitText,artwork,tagSvg,plan,sheetSvg,pdf,createJob,finishJob,acknowledge,relinkOperation,rebaseData,cancelOperations,moveState,exportMoves,restoreBackup,jobStatus};
+root.NFPrint={BUILD,DEFAULTS,V13_8_DEFAULTS,V13_7_DEFAULTS,LEGACY_DEFAULTS,settings,currentSettings,grid,engineProfile,legacyEngine,nativeFontEngine,fontFor,logoKey,jobAssets,logoImageInfo,checkLogoPixels,signature,sameCycle,fitText,proportionalFitEngine,artwork,tagSvg,plan,sheetSvg,pdf,createJob,finishJob,acknowledge,relinkOperation,rebaseData,cancelOperations,moveState,exportMoves,restoreBackup,jobStatus};
 if(typeof module!=='undefined')module.exports=root.NFPrint;
 })(globalThis);

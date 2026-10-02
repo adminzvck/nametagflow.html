@@ -1,13 +1,13 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#123c3a"><title>NametagFlow · John Store</title><link rel="stylesheet" href="styles.css?v=13.8.3">
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#123c3a"><title>NametagFlow · John Store</title><link rel="stylesheet" href="styles.css?v=13.8.6">
 <script>
 'use strict';
 window.addEventListener('DOMContentLoaded',async()=>{
- const build='13.8.3',box=document.getElementById('startupMessage');
+ const build='13.8.6',box=document.getElementById('startupMessage');
  function load(file){return new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=file+'?v='+build;script.onload=resolve;script.onerror=()=>reject(new Error(file+' gagal dimuat.'));document.head.appendChild(script);});}
  try{
   await load('core.js');
   if(!window.NFCore||window.NFCore.WEB_BUILD!==build)throw new Error('Versi core.js belum cocok.');
-  await Promise.all([load('vendor/pdf-lib.min.js'),load('print-font.js')]);
+  await Promise.all([load('vendor/pdf-lib.min.js'),load('print-font.js'),load('local-font.js')]);
   await load('print-engine.js');
   await load('print-ui.js');
   if(window.NFPrintFont?.version!==build||window.NFPrint?.BUILD!==build||window.NFPrintUI?.BUILD!==build)throw new Error('Versi modul cetak belum cocok.');
@@ -23,7 +23,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
 </script></head>
 <body>
 <div id="startupMessage" class="notice" role="status">Memuat NametagFlow…</div>
-<aside class="sidebar"><a class="brand" href="#"><span class="brandmark">n.</span><span>nametag<span class="brandlight">flow</span><small>JOHN STORE · RUANG PRODUKSI</small></span></a><div class="workspace"><span class="avatar">JS</span><div>John Store<small>Nametag akrilik & resin</small></div><span class="dot"></span></div><p class="nav-label">WORKSPACE</p><nav id="nav"><button data-page="active" class="selected"><span>▦</span>Antrean produksi<b id="navActive">0</b></button><button data-page="archives"><span>▤</span>Arsip pesanan</button><button data-page="history"><span>⌕</span>Cari data lama</button><button data-page="queue"><span>↻</span>Antrean simpan<b id="navQueue">0</b></button><button data-page="recycle" class="admin-only"><span>↶</span>Pemulihan</button><button data-page="logs" class="admin-only"><span>≡</span>Log perubahan</button></nav><div class="sidebar-bottom"><div class="local-note">Setiap perubahan punya jejak.<small>Draf tetap ada saat koneksi terputus.</small></div><button class="sidebar-setting" id="settingsBtn">⚙ Pengaturan akses</button><small class="version">NAMETAGFLOW / V13.8.3</small></div></aside>
+<aside class="sidebar"><a class="brand" href="#"><span class="brandmark">n.</span><span>nametag<span class="brandlight">flow</span><small>JOHN STORE · RUANG PRODUKSI</small></span></a><div class="workspace"><span class="avatar">JS</span><div>John Store<small>Nametag akrilik & resin</small></div><span class="dot"></span></div><p class="nav-label">WORKSPACE</p><nav id="nav"><button data-page="active" class="selected"><span>▦</span>Antrean produksi<b id="navActive">0</b></button><button data-page="archives"><span>▤</span>Arsip pesanan</button><button data-page="history"><span>⌕</span>Cari data lama</button><button data-page="queue"><span>↻</span>Antrean simpan<b id="navQueue">0</b></button><button data-page="recycle" class="admin-only"><span>↶</span>Pemulihan</button><button data-page="logs" class="admin-only"><span>≡</span>Log perubahan</button></nav><div class="sidebar-bottom"><div class="local-note">Setiap perubahan punya jejak.<small>Draf tetap ada saat koneksi terputus.</small></div><button class="sidebar-setting" id="settingsBtn">⚙ Pengaturan akses</button><small class="version">NAMETAGFLOW / V13.8.6</small></div></aside>
 <div class="shell"><header class="topbar"><span class="breadcrumb">Workspace <span>/</span> <b id="breadcrumb">Antrean produksi</b></span><div class="top-actions"><button id="connection" class="connection"><span class="dot"></span><span id="connectionText">Belum terhubung</span></button><span id="operatorBadge" class="operator-badge">Operator</span></div></header>
 <main><div id="notice" class="notice hidden" role="status"></div><div class="page-heading"><div><div class="eyebrow" id="eyebrow">PRODUCTION OVERVIEW</div><h1 id="pageTitle">Alur rapi. Pesanan selesai.</h1><p id="pageSub">Pantau setiap nametag, dari cetak hingga pengiriman.</p></div><div class="heading-actions" id="activeActions"><button class="btn" id="printJobsBtn">▤ Cetak Produksi</button><button class="btn" id="scanBtn">▣ Scan resi</button><button class="btn primary" id="addBtn">＋ Pesanan baru</button></div></div>
 <section id="metrics" class="metrics"></section>

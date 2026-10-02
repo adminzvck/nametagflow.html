@@ -1,0 +1,16 @@
+NAMETAGFLOW V13.8.6 — UPLOAD GITHUB
+
+Upload isi ZIP ini ke root GitHub Pages/repository aplikasi, pertahankan folder vendor/ dan licenses/.
+File baru penting: local-font.js.
+Jangan menambahkan file Arial/Swis721 BT (.ttf/.otf) ke repository.
+
+Cara pertama kali di setiap PC produksi:
+1. Buka NametagFlow di Chrome.
+2. Pilih pesanan > Buat lembar cetak.
+3. Aplikasi mencoba mendeteksi Arial Regular + Swis721 BT Regular yang terpasang.
+4. Jika tidak terdeteksi, pilih TTF Regular secara lokal pada layar Hubungkan font Corel asli.
+5. Setelah berhasil, font disimpan di browser PC itu saja dan digunakan otomatis pada cetak berikutnya.
+6. PDF dibuat dari outline/vector glyph font lokal. Font tidak dikirim ke GitHub/backend.
+
+Catatan: menghapus data situs/browser akan menghapus salinan font lokal NametagFlow sehingga perlu dihubungkan lagi.
+Perubahan font ini tidak memerlukan perubahan Apps Script bila backend NametagFlow v13 yang sudah dipakai tetap berfungsi.
