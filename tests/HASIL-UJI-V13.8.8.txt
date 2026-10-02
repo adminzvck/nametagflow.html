@@ -1,0 +1,102 @@
+NAMETAGFLOW V13.8.8 — HASIL UJI
+
+PASS All browser print modules carry the same v13.8.8 build number
+PASS Legacy pending form saved after acknowledgment becomes ready
+PASS Unknown orphan pending revision becomes inspectable instead of waiting
+PASS Changed remote version is not silently overwritten during dependency repair
+PASS Queued dependencies release after predecessor acknowledgment
+PASS Unsaved edits to the same draft still coalesce
+PASS All 10 models retain 55/73 mm name limits
+PASS Current long-name fitting matches Corel horizontal compression while v13.8.4 archives stay proportional
+PASS Corel layout fits 29 tags and paginates the 30th; PDF keeps actual paper size
+PASS Reference typography uses Arial-compatible regular metrics and Corel short-name tracking
+PASS v13.8.5 archive still uses bundled substitute while v13.8.6 new jobs use local original fonts
+PASS v13.8.6 uses the exact Corel source font sizes for original local fonts
+PASS Swis721 substitute keeps native horizontal metrics until it actually needs fitting
+PASS Reference border, NIP and divider strokes match measured CDR geometry
+PASS Reference logo boxes are smaller and remain inside the reserved logo column
+PASS Legacy v13.6 jobs retain the old font and geometry when redownloaded
+PASS Saved v13.7 jobs retain Arimo Bold and v13.7 border geometry
+PASS Old saved print settings migrate to the v13.8 Corel reference defaults for new jobs
+PASS Missing logo and unsupported font glyph block production PDF
+PASS Gemini prompt prioritizes newest chat name, capitalization exceptions and Model 1 default
+PASS Optional SKU, leading zero identifiers and identical names survive import
+PASS Scientific NIP is rejected by import, order validation and print engine
+PASS Backend independently rejects scientific NIP
+PASS Finish print is idempotent and clears reprint flag after successful print
+PASS Old PDF cannot complete a later print cycle
+PASS Changed printed name blocks completion
+PASS Print status follows a rebased operation and its acknowledgment
+PASS Repeated rebases and exported print backups preserve operation linkage
+PASS Discarded print move is clearly cancelled without a phantom pending item
+PASS Print conflict resolution cannot overwrite a new cycle or move a later stage backwards
+PASS Production day uses original date before scheduling and new date afterwards
+PASS Pending reprint overlay appears today without changing original date or ID
+PASS Schema upgrade appends metadata and preserves legacy 16-column revisions
+PASS Schema refuses to overwrite a custom Q header or existing Q contents
+PASS Active reprint keeps ID and original date, increments count once, schedules today
+PASS A second request using the old revision cannot double-increment reprint
+PASS Reprint requires a reason and valid date and enforces maximum count
+PASS Editing and advancing a reprint preserves its production date and original date
+PASS Owner can reprint from archive without duplicating active or archived orders
+PASS Reprint acknowledgment removes source archive in the frontend
+PASS Interrupted reprint resumes safely at every durable phase
+PASS Interrupted archive reprint resumes safely without losing the order
+PASS Pending journal reserves tracking number and blocks a different NP
+PASS Recovery rechecks tracking identity even after an external Sheet edit
+PASS 25-item fast batch remains idempotent with the new column
+PASS Legacy 16-column PENDING operation recovers after upgrade
+PASS Nonadjacent batch edits preserve intervening rows and original dates
+PASS Actual reprint form enqueues once on double-submit and opens today filter
+PASS Actual reprint form refuses changed data and pending orders
+PASS Actual archive reprint UI respects owner permission
+PASS v13.8.2 print-cycle-only blocked upserts are safely requeued for the fixed backend
+PASS Print count is server-owned and cannot be reduced or raised through single or batch edits
+PASS Server creates immutable cycles and ordinary edits adopt current server cycle metadata
+PASS Immutable cycle rejects an old PDF even if Sheet print count was changed back
+PASS Backend checks print artwork signature independently of client receipts
+PASS A dependent draft adopts only its confirmed creation cycle
+PASS Midnight form submission uses the new local production day
+PASS Archive and restore preserve production day, original date and print cycle
+PASS Legacy v13.5 archive recovers production metadata from its matching recycle snapshot
+PASS New schema columns reject collisions in active R and archive O/P
+PASS Restoring legacy print moves reconstructs receipts and protects a new cycle
+PASS Cycle guard still blocks backup rebase when all print receipts are missing
+PASS Print-only backups restore links without adding operations to the save queue
+PASS Restoring backup twice preserves operation IDs and later local acknowledgments
+PASS Logo keys distinguish spacing and separate unnamed logos by order
+PASS PNG and JPEG logos retain aspect ratio, fit the tag and embed in PDFs
+PASS Low-resolution and falsified logo dimensions block production
+PASS Transparent or invisible dark upload is rejected; white/color pixels accepted
+PASS Legacy jobs keep their embedded logo despite the new cache keys
+PASS Actual app restores main queue and print records in one transaction, including rollback
+PASS Actual print builder does not carry an omitted logo into a new sheet
+PASS Failed logo replacement clears old asset and keeps export disabled
+PASS Recovery refuses a legacy journal plan that rolls back print count
+PASS Native history restores cached fonts before rendering after reload
+PASS Native history asks for missing fonts before drawing a substitute
+PASS Legacy history remains accessible without connecting new local fonts
+PASS Demo loads the real font bridge before print modules and uses current settings
+77/77 tests passed. No network or live data used.
+
+PASS Parses TrueType table structure and vector outlines
+PASS Rejects wrong family and Bold without activating a font
+PASS Failed FontFace load cannot mark a missing font ready
+PASS Failed replacement preserves the last valid loaded font
+PASS Stores both fonts and restores them in a new session
+PASS Reports session-only availability on storage quota failure
+PASS Measures pair kerning from the activated browser face
+PASS Clear removes saved fonts and registered FontFaces
+PASS Unsupported TTC collection cannot activate a font
+PASS FontFace receives binary data for file selection, detection and restore
+10/10 local-font tests passed (synthetic data only).
+
+PASS 87/87 pengujian (77 regresi + 10 font lokal).
+PASS Kegagalan Blob direproduksi dengan pemeriksaan sumber FontFace yang ketat.
+PASS File selection, detection, restore menerima ArrayBuffer yang didukung.
+PASS Semua file v13.8.7 dipertahankan; seluruh JS/CJS dan JSON valid.
+PASS Semua dependensi halaman tersedia. Backend identik dengan v13.8.7/v13.8.6.
+
+Batas: Node dengan DOM/font/storage simulasi. Browser penuh, font asli PC,
+CorelDRAW dan printer fisik belum diuji. Uji satu lembar pada PC produksi.
+Tidak ada perubahan ke repository, deployment atau data pusat aktif.

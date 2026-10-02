@@ -1,5 +1,5 @@
-PETUNJUK V13.8.6 DIGANTIKAN PADA PAKET V13.8.7
+PETUNJUK TERBARU: V13.8.8
 
-Untuk pemasangan sekarang, ikuti 00-BACA-DULU.txt dan PETUNJUK.txt.
-Backend tetap v13.8.6; website v13.8.7 memakai font lokal dari PC.
-Nama file ini dipertahankan agar file petunjuk lama di GitHub terbarui.
+Ikuti 00-BACA-DULU.txt dan PETUNJUK.txt pada paket ini.
+Untuk memperbaiki error [object Blob], unggah file website v13.8.8.
+Backend tetap v13.8.6.

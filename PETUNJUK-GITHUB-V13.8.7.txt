@@ -1,24 +1,5 @@
-NAMETAGFLOW V13.8.7 — YANG HARUS KAMU LAKUKAN
+PETUNJUK TERBARU: V13.8.8
 
-1. Backup & draf pada aplikasi lama; tunggu Antrean simpan selesai.
-2. Ekstrak ZIP ini.
-3. GitHub: Add file > Upload files. Seret SEMUA ISI folder hasil ekstrak ke
-   folder index.html yang sekarang. Folder vendor/licenses/tests/backend ikut.
-   Jangan upload ZIP-nya; jangan membuat folder pembungkus baru.
-4. Commit changes, tunggu GitHub Pages selesai, lalu Ctrl+Shift+R di situs.
-   Pastikan sidebar V13.8.7.
-5. Apps Script tidak perlu diganti jika pusat sekarang sudah mendukung cetak.
-   Jika muncul permintaan Perbarui Apps Script, ikuti PETUNJUK.txt.
-6. Buka alamat-situs/COBA-CETAK.html > Coba 10 model.
-7. Hubungkan Arial Regular dan Swis721 BT Regular dari PC. Klik Deteksi font
-   yang terpasang; jika gagal, pilih kedua file TTF Regular secara lokal.
-8. Periksa hasil, unduh PDF, cetak 100%/Actual size. Ukur bingkai 80,4 x 20,4 mm.
-   Jika cocok dengan Corel, lanjut cetak pesanan produksi.
-
-FONT TTF TIDAK DIUPLOAD KE GITHUB.
-File PDF/PNG/SVG bawaan merupakan arsip versi lama; contoh font terbaru dibuat
-langsung melalui COBA-CETAK.html pada PC produksi.
-NametagFlow.txt lama di GitHub boleh tetap ada; file aslinya tidak tersedia
-di paket sumber, jadi tidak ditimpa dengan isi buatan.
-
-Rincian: PETUNJUK.txt. Daftar isi: DAFTAR-FILE.txt.
+Ikuti 00-BACA-DULU.txt dan PETUNJUK.txt pada paket ini.
+Untuk memperbaiki error [object Blob], unggah file website v13.8.8.
+Backend tetap v13.8.6.

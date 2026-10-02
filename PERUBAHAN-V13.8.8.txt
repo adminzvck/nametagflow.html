@@ -1,0 +1,28 @@
+NAMETAGFLOW V13.8.8 — PERBAIKAN FONTFACE BLOB
+
+MASALAH YANG DIPERBAIKI
+Foto pengguna menunjukkan pesan: The source provided ('[object Blob]') could
+not be parsed as a value list. Deteksi font dan pemilihan file mencapai pembaca
+TTF, tetapi FontFace menerima Blob yang diperlakukan sebagai string CSS.
+
+PERBAIKAN
+local-font.js sekarang memberikan ArrayBuffer font langsung ke FontFace,
+sesuai CSS Font Loading API. Perbaikan berlaku untuk deteksi font terpasang,
+pemilihan TTF, dan pemulihan font tersimpan. Font tetap diproses hanya di PC.
+
+UJIAN REGRESI
+Simulasi FontFace yang menolak Blob mereproduksi kegagalan v13.8.7. Sesudah
+perbaikan, skenario pemilihan file, deteksi otomatis, dan restore semuanya lolos.
+Uji lama tetap dijalankan. Backend tidak diubah dari v13.8.6.
+
+PEMASANGAN
+Ekstrak ZIP dan upload seluruh isi ke lokasi index.html lama di GitHub.
+Commit, tunggu GitHub Pages selesai, lalu Ctrl+Shift+R. Sidebar V13.8.8.
+Klik Buat lembar cetak > Deteksi font yang terpasang > Izinkan.
+Jika dua font siap, klik Lanjut cetak. Tidak perlu mencari file TTF bila deteksi
+berhasil. Jika font tetap belum terdeteksi, lihat pesan yang muncul; itu dapat
+berarti browser tidak mengizinkan akses atau font belum terpasang di Windows.
+Tidak perlu mengubah Apps Script untuk perbaikan ini.
+
+REFERENSI
+https://www.w3.org/TR/css-font-loading/#fontface-constructor
