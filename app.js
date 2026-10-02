@@ -8,6 +8,13 @@ const PACK_FIELDS=[['name','Nama'],['nip','NIP / jabatan'],['model','Model & log
 if(document.documentElement?.style)document.documentElement.style.setProperty('--catalog-image','url("'+C.CATALOG_IMAGE+'")');
 function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open('nametagflow-v13',1);r.onupgradeneeded=()=>r.result.createObjectStore('workspaces');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
 function storage(change,key=endpoint){return new Promise((resolve,reject)=>{const tx=db.transaction('workspaces',change?'readwrite':'readonly'),store=tx.objectStore('workspaces'),req=store.get(key);let value;req.onsuccess=()=>{try{value=req.result||(key.endsWith('::print')?{}:{snapshot:null,pending:[],lastSync:''});if(change){change(value);store.put(value,key);}}catch(e){tx.abort();reject(e);}};tx.oncomplete=()=>resolve(value);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('Penyimpanan lokal gagal. Jangan tutup draf ini.'));});}
+function repairPrintCycleBlocks(state){
+ let repaired=0;
+ for(const p of state.pending||[]){
+  if(p.status==='blocked'&&p.code==='PRINT_CYCLE_CHANGED'&&p.operation?.kind==='upsert'&&!p.operation.printJobId){p.status='queued';p.error='';delete p.code;repaired++;}
+ }
+ return repaired;
+}
 async function editState(fn){S=await storage(fn);channel?.postMessage({endpoint});render();return S;}
 // Print artwork is a separate record: normal save acknowledgments never rewrite logos/history.
 async function editPrintState(fn){printCache=await storage(fn,endpoint+'::print');channel?.postMessage({endpoint});render();return printCache;}
@@ -348,7 +355,7 @@ $('reprintSelected').onclick=()=>reprintModal([...selected]);
 $('clearSelection').onclick=()=>{selected.clear();$('targetStage').value='';render();};$('advanceSelected').onclick=async()=>{const rows=filterRows(viewOrders()).filter(o=>selected.has(o.id)&&o.currentStep<7&&!o._action);if(!rows.length)return;if(!confirm('Lanjutkan tahap '+rows.length+' nametag yang dipilih?'))return;await enqueue(rows.map(o=>({kind:'upsert',id:o.id,expectedRevision:o.revision,data:{...C.fields(o),currentStep:o.currentStep+1,isReject:false}})));selected.clear();render();};$('archiveSelected').onclick=async()=>{const rows=filterRows(viewOrders()).filter(o=>selected.has(o.id)&&o.currentStep===7&&!o._action);if(!rows.length){toast('Pilih pesanan tahap Pengiriman terlebih dahulu.');return;}if(!confirm('Arsipkan '+rows.length+' nametag yang dipilih?'))return;await enqueue(rows.map(o=>({kind:'archive',id:o.id,expectedRevision:o.revision})));selected.clear();render();};
 $('addBtn').onclick=()=>openOrder();$('batchBtn').onclick=batchModal;$('scanBtn').onclick=scanModal;$('settingsBtn').onclick=authModal;$('connection').onclick=()=>token?sync(true):authModal();$('refreshBtn').onclick=()=>page==='logs'?loadLogs():sync(true);$('exportBtn').onclick=()=>download('nametagflow-backup-'+today()+'.json',{version:13,exportedAt:new Date().toISOString(),snapshot:S.snapshot,pending:S.pending,operationReceipts:S.operationReceipts,print:{settings:printCache.printSettings,assets:printCache.printAssets,jobs:printCache.printJobs?.map(j=>({...j,moves:NFPrint.exportMoves(j,S)})),receipts:S.printReceipts},packingChecks:S.packingChecks,legacy:{orders:JSON.parse(localStorage.getItem('nametag_orders')||'[]'),archives:JSON.parse(localStorage.getItem('nametag_archives')||'[]')}});
 window.addEventListener('online',sync);window.addEventListener('offline',()=>updateConnection('Koneksi terputus','warn'));channel?.addEventListener('message',async e=>{if(e.data.endpoint===endpoint&&db){S=await storage();printCache=await storage(null,endpoint+'::print');render();}});
-(async()=>{try{db=await openDB();S=await storage();printCache=await storage(null,endpoint+'::print');render();if(token)sync();else authModal();setInterval(()=>{if(!document.hidden)sync(true);},60000);}catch(e){$('notice').className='notice error';$('notice').textContent='Penyimpanan perangkat tidak tersedia: '+errorMessage(e)+'. Jangan input pesanan sebelum masalah ini selesai.';}})();
+(async()=>{try{db=await openDB();S=await storage(s=>repairPrintCycleBlocks(s));printCache=await storage(null,endpoint+'::print');render();if(token)sync();else authModal();setInterval(()=>{if(!document.hidden)sync(true);},60000);}catch(e){$('notice').className='notice error';$('notice').textContent='Penyimpanan perangkat tidak tersedia: '+errorMessage(e)+'. Jangan input pesanan sebelum masalah ini selesai.';}})();
 
 function safeLegacy(key){try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[];}catch(e){return [];}}
 async function finishPrintJob(id){
@@ -389,4 +396,4 @@ function previewBackup(backup){
 }
 $('exportBtn').textContent='Backup & draf';$('exportBtn').onclick=dataModal;
 NFPrintUI.init({state:()=>({...S,...printCache,pending:S.pending,printReceipts:S.printReceipts}),save:editPrintState,restore:restoreWorkspace,context:()=>endpoint+'|'+authGeneration,endpoint:()=>endpoint,operator:()=>operator,selectedOrders:()=>selectionRows().filter(o=>selected.has(o.id)),modal,toast,dirty:v=>modalDirty=v,isDirty:()=>modalDirty,editOrder:openOrder,finish:finishPrintJob});
-window.NFAppReady='13.8.1';
+window.NFAppReady='13.8.3';

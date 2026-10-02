@@ -1,0 +1,12 @@
+NAMETAGFLOW V13.8.3 — PERBAIKAN ANTREAN SIMPAN
+
+1. printCount dan printCycleId diperlakukan sebagai data milik pusat/backend.
+   Edit biasa tidak lagi ditolak hanya karena draf lokal membawa nomor/siklus cetak lama.
+2. Perlindungan konflik tetap aktif melalui expectedRevision. Jika nama, NIP, model,
+   tahap, atau data pusat benar-benar berubah di perangkat lain, draf tetap diblokir
+   untuk diperiksa dan tidak menimpa pusat secara diam-diam.
+3. Draf upsert v13.8.2 yang terblokir khusus dengan kode PRINT_CYCLE_CHANGED akan
+   dimasukkan kembali ke antrean secara otomatis setelah upgrade. Jika revisinya masih
+   cocok, backend menyimpannya. Jika revisinya memang sudah berubah, status konflik
+   yang benar akan muncul dan harus diperiksa.
+4. Mesin desain/font/ukuran/garis tidak berubah dari v13.8.2.

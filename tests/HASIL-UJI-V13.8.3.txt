@@ -44,8 +44,9 @@ PASS Nonadjacent batch edits preserve intervening rows and original dates
 PASS Actual reprint form enqueues once on double-submit and opens today filter
 PASS Actual reprint form refuses changed data and pending orders
 PASS Actual archive reprint UI respects owner permission
-PASS Print count cannot be reduced or raised through single or batch edits
-PASS Server creates immutable cycles and rejects stale or missing cycle metadata
+PASS v13.8.2 print-cycle-only blocked upserts are safely requeued for the fixed backend
+PASS Print count is server-owned and cannot be reduced or raised through single or batch edits
+PASS Server creates immutable cycles and ordinary edits adopt current server cycle metadata
 PASS Immutable cycle rejects an old PDF even if Sheet print count was changed back
 PASS Backend checks print artwork signature independently of client receipts
 PASS A dependent draft adopts only its confirmed creation cycle
@@ -66,4 +67,4 @@ PASS Actual app restores main queue and print records in one transaction, includ
 PASS Actual print builder does not carry an omitted logo into a new sheet
 PASS Failed logo replacement clears old asset and keeps export disabled
 PASS Recovery refuses a legacy journal plan that rolls back print count
-68/68 tests passed. No network or live data used.
+69/69 tests passed. No network or live data used.

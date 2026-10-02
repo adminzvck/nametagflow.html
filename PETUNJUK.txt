@@ -1,4 +1,4 @@
-NAMETAGFLOW V13.8.1 · JOHN STORE
+NAMETAGFLOW V13.8.2 · JOHN STORE
 Cetak ulang, pemulihan backup, dan validasi logo
 
 STATUS PAKET
@@ -91,7 +91,7 @@ Unggah/ganti file berikut dari paket yang sama dengan nama dan folder tepat:
    licenses/Arimo.txt
    licenses/pdf-lib.txt
 Tunggu penerbitan selesai, buka website, lalu Ctrl+Shift+R. Sidebar harus
-V13.8.1. Masuk dengan kode akses yang sama lalu Muat ulang. Fitur cetak ulang
+V13.8.2. Masuk dengan kode akses yang sama lalu Muat ulang. Fitur cetak ulang
 memerlukan backend baru; aplikasi akan memberi pesan jika pusat masih lama.
 Folder tests dan berkas contoh tidak wajib diunggah untuk produksi.
 

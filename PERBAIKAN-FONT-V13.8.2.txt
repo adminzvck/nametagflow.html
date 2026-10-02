@@ -1,0 +1,26 @@
+NAMETAGFLOW V13.8.2 — KALIBRASI FONT REFERENSI COREL
+
+Sumber: 15 SEPTEMBER 02.cdr (CorelDRAW X7).
+
+Ukuran sumber yang terbaca langsung dari data CDR:
+- Arial Regular: 9,8414 mm -> tinggi huruf kapital ekuivalen 6,7708 mm.
+- Swis721 BT Regular: 7,3812 mm -> tinggi kapital ekuivalen 5,2944 mm.
+- Swis721 BT NIP: 4,5861 mm -> tinggi kapital ekuivalen 3,2895 mm.
+- Spasi Arial pada ukuran sumber: ±2,7343 mm.
+
+Nilai mesin v13.8.2:
+- Nama tanpa NIP: 6,771 mm.
+- Nama dengan NIP: 5,294 mm.
+- NIP/jabatan: 3,290 mm.
+- Nama pendek: 2,734 mm antar karakter.
+- Lebar maksimum: 73 mm tanpa logo; 55 mm dengan logo.
+- Font: Regular, bukan Bold.
+- Lis luar: 0,10 mm.
+- Outline bidang hitam: 0,20 mm.
+- Garis NIP/divider: 0,75 mm.
+- Inset lis: 2,075 mm.
+
+PENTING
+Arial dan Swis721 BT asli adalah font proprietary. Paket tidak mendistribusikan file font tersebut. PDF memakai outline Arimo Regular dan Nimbus Sans Regular yang dikalibrasi ke geometri sumber. Karena itu ukuran/geometri dapat disamakan, tetapi bentuk node glyph tidak diklaim 100% identik dengan font proprietary asli.
+
+Perubahan v13.8.2 juga memaksa setting tipografi lama di browser dimigrasikan ke nilai referensi di atas untuk job BARU. Job PDF v13.6/v13.7/v13.8 yang sudah tersimpan tetap memakai mesin desain versinya masing-masing.

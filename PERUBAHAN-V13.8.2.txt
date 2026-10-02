@@ -1,0 +1,16 @@
+NAMETAGFLOW V13.8.2 — FONT REFERENCE LOCK
+
+Perbaikan dari v13.8.1:
+1. Ukuran tipografi tidak lagi memakai angka pembulatan kasar. Nilai dikunci dari ukuran yang terbaca langsung di file CDR referensi.
+2. Nama tanpa NIP: 6,771 mm (ekuivalen Arial Regular 9,8414 mm di CDR).
+3. Nama dengan NIP: 5,294 mm (ekuivalen Swis721 BT Regular 7,3812 mm).
+4. NIP/jabatan: 3,290 mm (ekuivalen Swis721 BT 4,5861 mm).
+5. Spasi otomatis nama pendek: 2,734 mm, mengikuti lebar spasi Arial pada ukuran sumber.
+6. Setting tipografi lama dari browser otomatis dimigrasikan ke profil referensi untuk JOB BARU agar ukuran lama/custom tidak membuat nama terlihat kebesaran.
+7. Batas lebar tetap 73 mm tanpa logo dan 55 mm dengan logo.
+8. Garis/lis tidak berubah: outer 0,10 mm; bidang hitam 0,20 mm; NIP/divider 0,75 mm; inset 2,075 mm.
+9. Prompt Gemini tetap memuat aturan nama terbaru menang, lowercase-all menjadi uppercase kecuali diminta jangan diubah, dan nama saja tanpa request = Model 1.
+10. Job lama tetap memakai setting yang tersimpan pada job tersebut.
+
+Catatan font:
+Paket tidak menyertakan file font proprietary Arial/Swis721 BT. Outline Arimo Regular/Nimbus Sans Regular digunakan sebagai pengganti yang dikalibrasi. Karena itu ukuran/geometri dikunci ke CDR, tetapi bentuk node glyph tidak diklaim 100% identik dengan font proprietary asli.
