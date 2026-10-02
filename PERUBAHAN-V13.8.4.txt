@@ -1,0 +1,9 @@
+NAMETAGFLOW V13.8.4 — PROPORSI NAMA PANJANG
+
+1. Batas lebar nama tetap 73 mm tanpa logo dan 55 mm dengan logo.
+2. Nama yang melewati batas sekarang dikecilkan secara PROPORSIONAL: tinggi dan lebar turun bersama-sama.
+3. Tidak lagi memipihkan lebar huruf sambil mempertahankan tinggi penuh.
+4. Nama pendek yang sudah muat tidak berubah; tracking nama pendek tetap mengikuti referensi Corel.
+5. Kapitalisasi tetap mengikuti input customer sesuai aturan Gemini: input yang sudah memiliki kapitalisasi sendiri dipertahankan; lowercase semua menjadi uppercase kecuali ada instruksi eksplisit untuk tidak mengubah.
+6. Job PDF lama v13.8.3 tetap memakai algoritma lama ketika diunduh ulang agar reproduksi arsip tidak berubah.
+7. Font, ukuran dasar referensi, garis, inset, logo, layout 29 posisi, dan perbaikan antrean v13.8.3 tetap dipertahankan.

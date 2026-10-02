@@ -1,0 +1,8 @@
+NAMETAGFLOW V13.8.5 — COREL TEXT MATCH
+
+1. Nama panjang kembali mengikuti perilaku referensi Corel: tinggi huruf dipertahankan, lebar dikompres hanya bila melewati batas 73 mm (tanpa logo) / 55 mm (dengan logo).
+2. Job v13.8.4 tetap dirender dengan metode proporsional v13.8.4 agar arsip lama tidak berubah.
+3. Swis721 BT substitute (Nimbus Sans Regular) tidak lagi dipersempit 80% secara permanen. Ukuran 21 pt-equivalent untuk nama dan 13 pt-equivalent untuk NIP dipertahankan; kompresi hanya terjadi bila benar-benar tidak muat.
+4. Arial substitute tetap Arimo Regular pada 28 pt-equivalent/cap-height 6.771 mm.
+5. Spasi nama pendek tetap 2.734 mm, setara spasi referensi Corel.
+6. Geometri nametag, garis, inset, layout 29 posisi, perbaikan antrean simpan, dan prompt Gemini tidak diubah.

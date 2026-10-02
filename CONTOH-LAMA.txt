@@ -1,0 +1,13 @@
+FILE CONTOH YANG DIPULIHKAN
+
+12 file PDF/PNG/SVG dipulihkan utuh dari NametagFlow-v13.8.5-COREL-TEXT-MATCH.zip.
+File tersebut dipertahankan untuk melengkapi arsip repository, bukan diganti
+namanya seolah dibuat dengan font asli v13.8.7.
+
+Contoh-Cetak-10-Model.pdf dan Contoh-Cetak-10-Model-v13.8.2.pdf adalah contoh lama.
+Preview-Hasil-v13.8.4.* dan Preview-Hasil-v13.8.5.* mengikuti versi pada namanya.
+Pratinjau-10-Model* serta VERIFIKASI-Layout-Corel-29.* juga arsip paket lama.
+Jangan menjadikannya tolok ukur font Arial/Swis721 BT asli terbaru.
+
+Untuk contoh terbaru: buka COBA-CETAK.html pada situs yang sudah diperbarui,
+hubungkan font asli PC, lalu Simpan & unduh PDF.

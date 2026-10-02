@@ -1,0 +1,34 @@
+'use strict';
+// Synthetic square glyphs built in memory, never real Arial/Swis font data.
+// Node 18+, no installation, network or production data.
+const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
+const code=fs.readFileSync(path.join(__dirname,'../local-font.js'),'utf8');
+function fixture(family='Arial',style='Regular'){
+ const tables={},head=Buffer.alloc(54),maxp=Buffer.alloc(6),hhea=Buffer.alloc(36),hmtx=Buffer.alloc(8),loca=Buffer.alloc(6),glyf=Buffer.alloc(34);
+ head.writeUInt16BE(1000,18);maxp.writeUInt16BE(2,4);hhea.writeUInt16BE(2,34);hmtx.writeUInt16BE(600,4);loca.writeUInt16BE(17,4);
+ glyf.writeInt16BE(1,0);glyf.writeInt16BE(600,6);glyf.writeInt16BE(700,8);glyf.writeUInt16BE(3,10);[1,1,1,1].forEach((v,i)=>glyf[i+14]=v);
+ [0,600,0,-600,0,0,700,0].forEach((v,i)=>glyf.writeInt16BE(v,18+2*i));
+ const cps=Array.from({length:95},(_,i)=>i+32),cmap=Buffer.alloc(28+cps.length*12);cmap.writeUInt16BE(1,2);cmap.writeUInt16BE(3,4);cmap.writeUInt16BE(10,6);cmap.writeUInt32BE(12,8);cmap.writeUInt16BE(12,12);cmap.writeUInt32BE(cmap.length-12,16);cmap.writeUInt32BE(cps.length,24);
+ cps.forEach((cp,i)=>{const o=28+i*12;cmap.writeUInt32BE(cp,o);cmap.writeUInt32BE(cp,o+4);cmap.writeUInt32BE(cp===32?0:1,o+8)});
+ const names=[[1,family],[2,style],[4,family+' '+style],[6,family.replace(/\s/g,'')+'-'+style]],strings=names.map(([,s])=>{const b=Buffer.from(s,'utf16le');b.swap16();return b}),name=Buffer.alloc(6+12*names.length+strings.reduce((n,b)=>n+b.length,0));name.writeUInt16BE(names.length,2);name.writeUInt16BE(6+12*names.length,4);let at=0;
+ names.forEach(([id],i)=>{const o=6+i*12;name.writeUInt16BE(3,o);name.writeUInt16BE(1,o+2);name.writeUInt16BE(id,o+6);name.writeUInt16BE(strings[i].length,o+8);name.writeUInt16BE(at,o+10);strings[i].copy(name,6+12*names.length+at);at+=strings[i].length});
+ Object.assign(tables,{head,maxp,hhea,hmtx,loca,glyf,cmap,name});let offset=12+Object.keys(tables).length*16;const out=Buffer.alloc(offset+Object.values(tables).reduce((n,b)=>n+Math.ceil(b.length/4)*4,0));out.writeUInt32BE(0x10000,0);out.writeUInt16BE(Object.keys(tables).length,4);
+ Object.entries(tables).forEach(([tag,b],i)=>{const o=12+i*16;out.write(tag,o,4,'ascii');out.writeUInt32BE(offset,o+8);out.writeUInt32BE(b.length,o+12);b.copy(out,offset);offset+=Math.ceil(b.length/4)*4});return out.buffer.slice(out.byteOffset,out.byteOffset+out.byteLength);
+}
+function harness({store=new Map(),quota=false,faceFailure=false}={}){
+ let failFace=faceFailure;const faces=new Set();
+ const db={objectStoreNames:{contains:()=>true},close(){},transaction(){const tx={error:new Error('QUOTA'),objectStore:()=>({put(row){if(quota)queueMicrotask(()=>tx.onerror());else{store.set(row.key,row);queueMicrotask(()=>tx.oncomplete())}},delete(key){store.delete(key);queueMicrotask(()=>tx.oncomplete())},getAll(){const req={};queueMicrotask(()=>{req.result=[...store.values()];req.onsuccess()});return req}})};return tx}};
+ const context=vm.createContext({Blob,Set,Map,Date,Math,Promise,DataView,ArrayBuffer,console,indexedDB:{open(){const req={result:db};queueMicrotask(()=>req.onsuccess());return req}},document:{fonts:{add:f=>faces.add(f),delete:f=>faces.delete(f)},createElement:()=>({getContext:()=>({measureText:s=>({width:s.length*600-(s==='AV'?80:0)})})})},FontFace:class{async load(){if(failFace)throw new Error('FACE_LOAD_FAILED');return this}}});vm.runInContext(code,context);return{L:context.NFLocalFonts,store,faces,failFace:v=>failFace=v};
+}
+const file=(family='Arial',style='Regular')=>({name:'synthetic-test.ttf',size:1000,arrayBuffer:async()=>fixture(family,style)});
+const cases=[];const test=(n,f)=>cases.push([n,f]);
+test('Parses TrueType table structure and vector outlines',()=>{const h=harness(),p=h.L._parseForTest(fixture(),'Synthetic');assert.equal(p.unitsPerEm,1000);assert.equal(p.names.family,'Arial');assert.equal(p.glyph('A').a,.6);assert.deepEqual(Array.from(p.glyph('A').b),[0,-.7,.6,0]);assert.match(p.glyph('A').d,/^M0 0L0\.6 0/);assert.throws(()=>p.glyph('é'),/tidak memiliki karakter/)});
+test('Rejects wrong family and Bold without activating a font',async()=>{const h=harness();await assert.rejects(h.L.loadFile('arial',file('Other'),'AV'),/bukan Arial/);await assert.rejects(h.L.loadFile('swis',file('Swis721 BT','Bold'),'AV'),/Regular/);await assert.rejects(h.L.loadFile('arial',file('Arial Narrow'),'AV'),/Regular/);assert.equal(h.L.status().ready,false);assert.equal(h.faces.size,0)});
+test('Failed FontFace load cannot mark a missing font ready',async()=>{const h=harness({faceFailure:true});await assert.rejects(h.L.loadFile('arial',file(),'AV'),/FACE_LOAD_FAILED/);assert.equal(h.L.status().arial,false);assert.equal(h.store.size,0)});
+test('Failed replacement preserves the last valid loaded font',async()=>{const h=harness();await h.L.loadFile('arial',file(),'AV');const original=h.L.get('arial');h.failFace(true);await assert.rejects(h.L.loadFile('arial',file(),'AV'),/FACE_LOAD_FAILED/);assert.equal(h.L.get('arial'),original);assert.equal(h.faces.size,1)});
+test('Stores both fonts and restores them in a new session',async()=>{const store=new Map(),h=harness({store});await h.L.loadFile('arial',file(),'AV');await h.L.loadFile('swis',file('Swis721 BT'),'AV');assert.equal(h.L.status().ready,true);assert.match(h.L.status().arialSource,/tersimpan lokal/);const reload=harness({store});await reload.L.restore('AV');assert.equal(reload.L.status().ready,true);assert.match(reload.L.get('swis').glyphs.A.d,/M/)});
+test('Reports session-only availability on storage quota failure',async()=>{const h=harness({quota:true});await h.L.loadFile('arial',file(),'AV');assert.equal(h.L.status().arial,true);assert.match(h.L.status().arialSource,/hanya sesi ini/);assert.doesNotMatch(h.L.status().arialSource,/tersimpan lokal/);assert.equal(h.store.size,0)});
+test('Measures pair kerning from the activated browser face',async()=>{const h=harness();await h.L.loadFile('arial',file(),'AV');assert.equal(h.L.get('arial','AV').kernPairs.AV,-.08)});
+test('Clear removes saved fonts and registered FontFaces',async()=>{const h=harness();await h.L.loadFile('arial',file(),'AV');await h.L.loadFile('swis',file('Swis721 BT'),'AV');await h.L.clear();assert.equal(h.L.status().ready,false);assert.equal(h.faces.size,0);assert.equal(h.store.size,0)});
+test('Unsupported TTC collection cannot activate a font',()=>{const h=harness(),b=fixture();new Uint8Array(b).set(Buffer.from('ttcf'));assert.throws(()=>h.L._parseForTest(b,'Synthetic'),/TTC/)});
+(async()=>{let failures=0;for(const[n,f]of cases)try{await f();console.log('PASS '+n)}catch(e){failures++;console.error('FAIL '+n+'\n'+e.stack)}console.log(`${cases.length-failures}/${cases.length} local-font tests passed (synthetic data only).`);process.exitCode=failures?1:0})();

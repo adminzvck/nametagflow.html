@@ -396,4 +396,4 @@ function previewBackup(backup){
 }
 $('exportBtn').textContent='Backup & draf';$('exportBtn').onclick=dataModal;
 NFPrintUI.init({state:()=>({...S,...printCache,pending:S.pending,printReceipts:S.printReceipts}),save:editPrintState,restore:restoreWorkspace,context:()=>endpoint+'|'+authGeneration,endpoint:()=>endpoint,operator:()=>operator,selectedOrders:()=>selectionRows().filter(o=>selected.has(o.id)),modal,toast,dirty:v=>modalDirty=v,isDirty:()=>modalDirty,editOrder:openOrder,finish:finishPrintJob});
-window.NFAppReady='13.8.6';
+window.NFAppReady='13.8.7';

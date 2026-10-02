@@ -1,4 +1,4 @@
-NAMETAGFLOW V13.7 - LOGO, PDF, DAN CORELDRAW
+NAMETAGFLOW V13.8.7 - LOGO, PDF, DAN CORELDRAW
 
 CETAK LOGO
 - Gunakan PNG atau JPG maksimal 5 MB. PNG transparan didukung.
@@ -38,13 +38,12 @@ YANG BISA DIEDIT
   Untuk mengubah ejaan, paling mudah edit pesanan lalu buat PDF baru.
 - Logo PNG/JPG tetap bitmap, bukan otomatis berubah menjadi logo vektor.
   Membesarkan logo melebihi resolusi aslinya dapat mengurangi ketajaman.
-- Font cetak memakai outline Arial-compatible Regular (Arimo) untuk nama tanpa NIP.
-- Desain dengan NIP memakai outline Swis721-compatible Regular (Nimbus Sans) dengan
-  kompresi horizontal 0,80 untuk mendekati metrik Swis721 BT referensi.
-- Arial-compatible Regular memakai
-  proporsi dan tracking yang dikalibrasi terhadap file Corel referensi.
-  Lembar lama v13.6 tetap memakai outline DejaVu lama; job v13.7 tetap memakai
-  Arimo Bold/geometri v13.7 saat diunduh ulang.
+- Job baru memakai Arial Regular asli untuk nama tanpa NIP dan Swis721 BT
+  Regular asli untuk nama dengan NIP serta baris NIP/jabatan.
+- Font dihubungkan dari PC dan disimpan lokal bila penyimpanan berhasil.
+  PDF berupa kurva sehingga pembukaan PDF yang sudah dihasilkan tidak
+  bergantung pada font terpasang pada komputer yang membuka PDF tersebut.
+- Job lama mempertahankan profil mesin versi lamanya.
 - Catatan custom tidak otomatis menjadi modifikasi desain.
 
 KOMPATIBILITAS DAN BATAS UJI
@@ -52,7 +51,8 @@ PDF memakai format 1.7, vektor, bitmap tertanam, serta transparansi PNG.
 Ekspor menonaktifkan object streams untuk struktur PDF yang lebih sederhana.
 Dukungan impor PDF dikonfirmasi dari dokumentasi resmi Corel. Versi
 CorelDRAW pengguna belum diketahui dan impor langsung belum diuji di sini.
-Periksa contoh PDF dalam paket pada CorelDRAW/printer yang digunakan.
+Buat PDF uji terbaru dari COBA-CETAK.html dengan font asli, lalu periksa
+di CorelDRAW/printer yang digunakan.
 Elemen hitam/putih vektor memakai DeviceGray netral; bitmap logo mempertahankan
 warna sumbernya. Profil ICC khusus (misalnya Japan Color 2001 Coated) belum
 ditanam ke PDF, jadi warna logo tetap mengikuti pengaturan CorelDRAW/printer.
@@ -64,6 +64,6 @@ Corel Discovery Center - How to edit PDFs in CorelDRAW:
 https://learn.corel.com/tutorials/how-to-edit-pdfs-in-coreldraw/
 
 BERKAS UJI
-Contoh-Cetak-10-Model.pdf: contoh aktual sepuluh model dengan logo contoh.
+Contoh-Cetak-10-Model.pdf: arsip contoh lama; baca CONTOH-LAMA.txt.
 COBA-CETAK.html: percobaan lokal tanpa menghubungi data pesanan pusat.
 tests/fixtures: gambar sintetis untuk pengujian PNG/JPG dan batas resolusi.

@@ -1,11 +1,11 @@
 /* NametagFlow print geometry. Units are millimetres; preview and PDF share paths. */
 (function(root){
 'use strict';
-const C=root.NFCore,F=root.NFPrintFont,L=root.NFLocalFonts,BUILD='13.8.6',MM=72/25.4;
+const C=root.NFCore,F=root.NFPrintFont,L=root.NFLocalFonts,BUILD='13.8.7',MM=72/25.4;
 const LEGACY_DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:8,gapX:3,gapY:2,nameHeight:7.5,nameNipHeight:5.4,nipHeight:3.1,shortSpacing:.8,condense:.62,cropMarks:true,layoutMode:'grid',designVersion:'13.6'};
 const V13_7_DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:7.5,nameNipHeight:5.4,nipHeight:3.1,shortSpacing:2.4,condense:.86,cropMarks:false,layoutMode:'corel29',designVersion:'13.7'};
 const V13_8_DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:6.771,nameNipHeight:5.294,nipHeight:3.290,shortSpacing:2.734,condense:1,cropMarks:false,layoutMode:'corel29',designVersion:'13.8.2'};
-const DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:9.8414,nameNipHeight:7.3812,nipHeight:4.5861,shortSpacing:2.734,condense:1,cropMarks:false,layoutMode:'corel29',designVersion:'13.8.6'};
+const DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:9.8414,nameNipHeight:7.3812,nipHeight:4.5861,shortSpacing:2.734,condense:1,cropMarks:false,layoutMode:'corel29',designVersion:'13.8.7'};
 const clone=v=>JSON.parse(JSON.stringify(v)),round=v=>Math.round(v*100000)/100000;
 const ranges={pageWidth:[100,1000],pageHeight:[100,1000],tagWidth:[40,150],tagHeight:[16,40],margin:[0,50],gapX:[0,20],gapY:[0,20],nameHeight:[2,12],nameNipHeight:[2,9],nipHeight:[1.5,5],shortSpacing:[0,4],condense:[.4,1.2]};
 function engineProfile(engine=BUILD){const v=String(engine||BUILD).split('.').map(Number),major=v[0]||0,minor=v[1]||0;if(major<13||(major===13&&minor<7))return 'legacy';if(major===13&&minor<8)return 'v13_7';return 'current';}

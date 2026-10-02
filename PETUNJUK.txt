@@ -1,150 +1,113 @@
-NAMETAGFLOW V13.8.2 · JOHN STORE
-Cetak ulang, pemulihan backup, dan validasi logo
+NAMETAGFLOW V13.8.7 — PETUNJUK PAKET LENGKAP
 
-STATUS PAKET
-Paket revisi siap dipasang. Paket ini belum diterapkan ke website atau Apps
-Script aktif. Pengujian menggunakan data simulasi, tidak mengubah produksi.
+MULAI DARI SINI
+Baca 00-BACA-DULU.txt. Paket ini memuat seluruh 47 file FULL-SOURCE v13.8.6,
+12 file contoh/pratinjau yang dipulihkan dari paket v13.8.5, serta perbaikan
+v13.8.7 dan laporan pemeriksaannya. Riwayat lama tetap disertakan sebagai arsip.
+Petunjuk aktif adalah file ini, 00-BACA-DULU.txt, dan README.md.
 
-CETAK ULANG PESANAN KEMARIN / HARI SEBELUMNYA
-1. Di Antrean produksi, klik Semua tanggal.
-2. Cari nama, NP, atau resi nametag yang kotor/rusak/perlu dibuat ulang.
-3. Klik Cetak ulang pada baris nametag. Untuk beberapa nametag, centang
-   item yang dimaksud lalu klik Cetak ulang hari ini pada panel pilihan.
-4. Pilih alasan dan isi keterangan jika diperlukan. Klik Masukkan ke
-   antrean hari ini. Maksimal 100 nametag per permintaan cetak ulang.
-5. Aplikasi membuka filter Hari ini. Tunggu konfirmasi simpan dari pusat.
-6. Pilih nametag tersebut > Buat lembar cetak > periksa desain > unduh PDF.
-7. Setelah semuanya benar-benar dicetak, pilih Selesai Cetak pada lembar.
+SEBELUM MEMASANG
+1. Di aplikasi lama, klik Backup & draf pada panel daftar pesanan dan simpan backup.
+   Simpan pula Backup cetak dari Riwayat Cetak Produksi jika diperlukan.
+2. Tunggu Antrean simpan selesai. Jangan hapus data situs/browser.
+3. Ekstrak ZIP. Upload isinya, bukan file ZIP atau folder pembungkusnya.
 
-HASIL CETAK ULANG
-- ID nametag, NP, resi, nama, NIP, model, pengait, SKU, dan catatan tetap.
-- Tanggal pesanan awal tetap tersimpan; tidak dipalsukan menjadi hari ini.
-- Jadwal produksi mengikuti tanggal saat tombol Simpan ditekan (Jakarta),
-  termasuk bila formulir dibiarkan terbuka melewati tengah malam.
-- Tahap kembali ke 1 · Cetak vinyl.
-- Cetak ke- bertambah satu, misalnya dari 1 menjadi 2. Nomor ini otomatis
-  dan tidak dapat dikurangi melalui formulir atau pengiriman API.
-- Setiap permintaan cetak ulang mendapat ID siklus baru. PDF lama tetap
-  ditolak walaupun nomor cetakan di Sheet pernah diubah manual.
-- Alasan tersimpan dan item ditandai perlu cetak ulang.
-- Retry permintaan yang sama tidak menambah nomor cetakan lagi.
-- Setelah Selesai Cetak dikonfirmasi, item tahap 1 masuk 2 · Laminasi dan
-  tanda perlu cetak ulang selesai. Alasan tetap ada sebagai catatan riwayat.
-- Mengunduh PDF saja tidak mengubah tahap dan tidak menambah nomor cetakan.
-- PDF dari nomor cetakan lama tidak bisa mengonfirmasi cetakan yang baru.
+UPLOAD GITHUB
+1. Buka repository yang sekarang dipakai untuk NametagFlow.
+2. Buka folder yang berisi index.html lama (sesuai sumber GitHub Pages).
+3. Pilih Add file > Upload files. Seret seluruh ISI folder hasil ekstrak.
+   Pertahankan folder vendor, licenses, tests, dan backend.
+4. Pastikan index.html, local-font.js, core.js, app.js, print-font.js,
+   print-engine.js, print-ui.js, styles.css berada sejajar. Jangan memakai
+   nama seperti app(1).js, dan jangan membuat folder baru di atas index.html.
+5. Commit changes. Tunggu penerbitan GitHub Pages selesai.
+6. Buka situs lalu Ctrl+Shift+R. Sidebar harus NAMETAGFLOW / V13.8.7.
+7. Muat ulang data pusat dan gunakan kode akses yang sama.
+File lama yang tidak ada di paket, termasuk NametagFlow.txt milik repository,
+boleh tetap ada. Upload ini mengganti file bernama sama, bukan menghapus
+file lain. NametagFlow.txt asli tidak tersedia dalam sumber yang diperiksa;
+isi file tersebut tidak direka ulang. Tidak perlu mengubah setting Pages
+bila situs sebelumnya sudah berjalan dan lokasi index.html tetap sama.
 
-CONTOH
-Pesanan dibuat 29 September, cetak ke-1, tahap Packing. Pada 30 September
-nametag diketahui kotor. Pilih Cetak ulang hari ini dengan alasan Kotor.
-Hasilnya: tanggal pesanan awal tetap 29 September, jadwal produksi menjadi
-30 September, cetak ke-2, tahap Cetak vinyl. Item muncul saat filter Hari ini.
-Filter produksi mengikuti jadwal terbaru; jejak sebelumnya ada di jurnal.
+FILE WAJIB APLIKASI
+index.html, styles.css, core.js, app.js, local-font.js, print-font.js,
+print-engine.js, print-ui.js, vendor/pdf-lib.min.js.
+licenses tetap disertakan. backend, tests, PDF, gambar pratinjau, riwayat,
+dan petunjuk disertakan agar paket lengkap; tidak dimuat saat aplikasi utama
+berjalan. Jangan menempel file website ke editor Apps Script.
 
-PESANAN YANG SUDAH DIARSIPKAN
-Pemilik dapat membuka Arsip pesanan atau Cari data lama, lalu Cetak ulang.
-Pesanan dipindahkan kembali ke antrean aktif dengan ID yang sama. Tidak
-membuat salinan nametag baru. Tanggal awal dan jejak arsip/pemulihan tetap
-tersimpan dalam data dan jurnal. Akses operator tidak dapat memulihkan arsip.
-Untuk item terhapus, pemilik harus memulihkannya dahulu melalui Pemulihan.
+APPS SCRIPT: KAPAN PERLU DIUBAH?
+Perbaikan website/font v13.8.7 tidak mengubah backend. backend/Code.gs tetap
+v13.8.6, sama persis dengan FULL-SOURCE sebelumnya.
+Jika pesanan dapat dimuat dan Buat lembar cetak tidak meminta pembaruan
+Apps Script, gunakan deployment sekarang: tidak perlu menggantinya.
+Jika aplikasi menyatakan pusat/backend terlalu lama atau meminta Perbarui
+Apps Script, lakukan langkah berikut:
+1. Backup spreadsheet dan antrean perangkat terlebih dahulu.
+2. Buka proyek Apps Script yang sudah dipakai. Ganti isi Code.gs dengan
+   backend/Code.gs dari paket ini. Jangan tempel file .js website.
+3. Pertahankan Script Properties, kode akses, dan spreadsheet produksi.
+   backend/appsscript.json adalah acuan; proyek harus memakai V8.
+4. Deploy > Manage deployments > Edit deployment aktif > New version > Deploy.
+   Pakai deployment yang sama agar URL /exec tetap.
+5. Jangan menjalankan setupNametagFlow atau rotateAccessCodes untuk update.
+6. Kembali ke situs dan klik Muat ulang.
+Backend memakai Antrean Produksi Q (Tanggal Produksi), R (ID Siklus Cetak),
+Arsip Produksi O (Tanggal Produksi), P (ID Siklus Cetak). Jika ada data lain
+pada kolom tersebut, sistem menolak menimpanya; periksa sebelum upgrade.
 
-KOREKSI ISIAN DAN DRAF
-Jika nama/NIP/model salah, edit datanya dahulu dan tunggu simpan selesai,
-kemudian minta cetak ulang. Draf lama yang kehilangan referensi simpan akan
-muncul sebagai Perlu diperiksa. Gunakan Antrean simpan > Periksa draf,
-Muat ulang, lalu tentukan versi yang benar. Jangan menebak ulang digit NIP
-yang sudah berubah menjadi notasi ilmiah; gunakan nomor dari sumber asli.
+HUBUNGKAN FONT SEKALI PADA SETIAP PC PRODUKSI
+1. Pastikan Arial Regular dan Swis721 BT Regular asli yang kamu miliki
+   tersedia di PC (font yang dipakai di Corel).
+2. Buka COBA-CETAK.html lewat alamat situs: alamat-situs/COBA-CETAK.html.
+   Bisa juga centang pesanan produksi > Buat lembar cetak.
+3. Bila muncul Hubungkan font Corel asli, klik Deteksi font yang terpasang
+   dan izinkan akses font lokal jika browser meminta.
+4. Jika deteksi tidak tersedia/ditolak, pilih file .ttf Arial Regular dan
+   Swis721 BT Regular lewat dua kolom yang disediakan. Bukan Bold/Italic,
+   bukan file .cdr, .otf, atau koleksi .ttc.
+5. Pastikan status kedua font siap lalu klik Lanjut cetak.
+6. Status tersimpan lokal berarti font dapat dipulihkan pada sesi berikutnya.
+   Jika tertulis hanya sesi ini (penyimpanan browser gagal), font dapat dipakai
+   saat itu tetapi perlu dihubungkan lagi setelah browser dimuat ulang.
+Font asli tidak termasuk ZIP, tidak dikirim ke backend/GitHub, dan tidak ikut
+backup cetak. Menghapus data situs/browser menghapus font lokal dan draf.
 
-PEMASANGAN WAJIB DUA BAGIAN
-A. Apps Script
-1. Simpan backup perangkat melalui Backup & draf; pemilik dapat membuat
-   salinan spreadsheet atau memakai fungsi backupNametagFlow yang tersedia.
-2. Ganti backend/Code.gs pada proyek Apps Script yang sedang dipakai.
-   PENTING: hanya backend/Code.gs yang ditempel ke Apps Script. Jangan tempel
-   app.js, core.js, print-engine.js, print-ui.js, atau print-font.js ke editor
-   Apps Script; file-file tersebut adalah file website/GitHub Pages.
-   Pastikan project Apps Script memakai runtime V8 (backend v13 memerlukannya).
-3. Deploy > Manage deployments > Edit deployment aktif > New version > Deploy.
-   Gunakan deployment yang sama supaya URL /exec tidak berubah.
-4. Kode akses dan Script Properties dipertahankan. Tidak perlu menjalankan
-   setupNametagFlow atau rotateAccessCodes lagi untuk pembaruan ini.
-5. Backend menambahkan metadata berikut, tanpa menggeser kolom lama:
-   - Antrean Produksi Q: Tanggal Produksi; R: ID Siklus Cetak.
-   - Arsip Produksi O: Tanggal Produksi; P: ID Siklus Cetak.
-   Jika salah satu kolom tersebut sudah digunakan untuk data lain, proses
-   berhenti tanpa menimpa data. Pindahkan kolom tambahan itu dahulu.
-   Revisi baris lama dan jurnal simpan terputus tetap dikenali. Tanggal
-   produksi arsip v13.5 yang hilang dibaca dari snapshot pemindahan bila
-   snapshot yang cocok masih tersedia. Tanggal yang tidak ada tidak ditebak.
-6. backend/appsscript.json tetap tersedia sebagai acuan konfigurasi.
+UJI CETAK SEBELUM PRODUKSI
+1. Pada COBA-CETAK.html, klik Coba 10 model. Gunakan font asli dan logo contoh.
+   Halaman ini tidak mengirim pesanan ke pusat; riwayat contoh hanya sesi ini.
+2. Periksa ejaan, NIP, font, logo, nama pendek/panjang dan 10 model.
+3. Pilih kertas sesuai media: default 210 x 290 mm; A4 210 x 297 mm.
+   Ukuran bingkai 80,4 x 20,4 mm. Layout Corel hingga 29 nametag per halaman.
+4. Centang pemeriksaan dan klik Simpan & unduh PDF.
+5. Buka/import PDF di Corel, jaga skala 100%. Print Actual size / 100%, matikan
+   Fit / Sesuaikan halaman. Ukur satu bingkai dan cocokkan tulisan dengan CDR.
+6. Setelah uji cocok, gunakan pesanan produksi. Selesai Cetak hanya ditekan
+   sesudah cetak fisik selesai; unduh PDF saja tidak mengubah tahap pesanan.
+Tulisan PDF berupa kurva vektor, logo tetap bitmap. Untuk mengubah ejaan,
+edit pesanan lalu buat PDF baru. Font asli di PC dan printer fisik belum
+tersedia dalam pemeriksaan paket ini, jadi kecocokan akhir harus diuji di PC.
 
-B. Website GitHub Pages
-Unggah/ganti file berikut dari paket yang sama dengan nama dan folder tepat:
-   index.html
-   styles.css
-   core.js
-   app.js
-   print-font.js
-   print-engine.js
-   print-ui.js
-   vendor/pdf-lib.min.js
-   licenses/DejaVu.txt (kompatibilitas PDF lama)
-   licenses/Arimo.txt
-   licenses/pdf-lib.txt
-Tunggu penerbitan selesai, buka website, lalu Ctrl+Shift+R. Sidebar harus
-V13.8.2. Masuk dengan kode akses yang sama lalu Muat ulang. Fitur cetak ulang
-memerlukan backend baru; aplikasi akan memberi pesan jika pusat masih lama.
-Folder tests dan berkas contoh tidak wajib diunggah untuk produksi.
+RIWAYAT DAN FILE CONTOH LAMA
+PDF/PNG/SVG yang dipulihkan berasal dari v13.8.2–v13.8.5 dan menggunakan
+font/geometri versi lama. Baca CONTOH-LAMA.txt. Itu arsip referensi, bukan
+contoh hasil font asli v13.8.7. Untuk contoh terbaru, unduh dari COBA-CETAK.html
+sesudah menghubungkan font asli. Job lama tetap memakai profil mesin lamanya.
+Riwayat job font asli memerlukan font lokal sebelum ditampilkan/diunduh ulang.
 
-CETAK PDF
-Default kertas 210 × 290 mm; tersedia preset A4 210 × 297 mm.
-Bingkai nametag 80,4 × 20,4 mm. Preset default meniru susunan Corel referensi:
-2 kolom × 13 baris dengan jarak kolom 0,85 mm dan baris 0,25 mm, ditambah
-3 posisi samping yang diputar 90°. Total maksimal 29 nametag per halaman.
-Mode Grid biasa tetap tersedia jika susunan rapat Corel tidak diinginkan.
-Pilih skala 100% / Actual size, matikan Fit / Sesuaikan halaman.
-Model berlogo memerlukan PNG/JPG atau pilihan area logo sengaja dikosongkan.
-Tulisan dan garis PDF menggunakan kurva vektor; logo tetap gambar bitmap.
-Font cetak memakai outline Arial-compatible Regular (Arimo) untuk nama biasa dan
-Swis721-compatible Regular (Nimbus Sans) untuk desain dengan NIP. Nama tanpa NIP
-6,80 mm; nama dengan NIP 5,29 mm; NIP 3,28 mm; tracking
-nama pendek 2,73 mm. Lembar v13.6/v13.7 lama tetap dirender dengan
-font/geometri lama saat diunduh ulang. Catatan custom perlu diperiksa manual.
-Nama tanpa logo maksimal 73 mm; dengan logo maksimal 55 mm. Nama pendek
-(< 8 huruf) diberi jarak; nama panjang dipadatkan secara horizontal.
-COBA-CETAK.html dan Contoh-Cetak-10-Model.pdf tersedia untuk uji desain.
+CETAK ULANG
+Pada Antrean produksi pilih Semua tanggal, cari pesanan, klik Cetak ulang,
+isi alasan lalu Masukkan ke antrean hari ini. Tunggu simpan pusat selesai.
+ID dan tanggal awal dipertahankan; jadwal produksi mengikuti hari cetak ulang.
+Nomor cetakan bertambah satu; PDF dari siklus sebelumnya tidak boleh menuntaskan
+siklus baru. Untuk pesanan arsip, gunakan akses pemilik untuk cetak ulang.
 
 BACKUP
-Riwayat cetak, logo, pengaturan cetak, dan checklist packing tetap berada
-pada browser/perangkat. Gunakan Backup & draf atau Backup cetak untuk pindah
-perangkat. Jadwal produksi dan permintaan cetak ulang tersimpan di pusat
-setelah dikonfirmasi, sehingga dapat dimuat oleh perangkat lain.
-Jangan membersihkan data browser ketika antrean simpan belum selesai.
+Backup & draf membawa antrean, riwayat, pengaturan, logo dan hubungan konfirmasi.
+Backup cetak membawa bagian cetak saja, tidak membuat operasi simpan pusat baru.
+Simpan backup sebelum pindah PC, tetapi hubungkan font sendiri pada PC tujuan.
 
-LOGO DAN CORELDRAW
-Baca PANDUAN-LOGO-DAN-CORELDRAW.txt. Model berlogo tidak membuat PDF tanpa
-file logo atau pilihan sengaja kosongkan logo pada lembar tersebut.
-Pilihan kosong tidak disimpan otomatis untuk lembar berikutnya. Upload logo
-baru yang gagal menghapus pilihan lama agar logo lama tidak ikut tercetak.
-Logo tanpa nama dipisahkan per ID pesanan, bukan digunakan untuk satu model.
-Sesudah upgrade dari v13.5, pilih/upload ulang logo untuk lembar baru.
-Gambar yang sudah tertanam dalam riwayat cetak lama tetap dipertahankan.
-
-PEMULIHAN BACKUP V13.8
-Backup & draf menyertakan antrean, riwayat/setting/logo cetak, dan hubungan
-konfirmasi. Pemulihan antrean asli menyimpan semuanya dalam satu transaksi
-lokal: jika penyimpanan gagal, kedua catatan sebelumnya tetap utuh.
-Backup cetak memulihkan riwayat/setting/logo dan hubungan konfirmasi saja.
-Jika status menunjukkan Periksa perpindahan, pulihkan antrean dari backup
-perangkat lengkap; riwayat cetak saja tidak membuat perubahan pusat baru.
-Snapshot pesanan dalam backup tidak otomatis mengganti data pusat.
-Checklist packing tetap lokal; pemulihan checklist tidak ditambahkan.
-
-VERIFIKASI V13.8
-Jalankan: node tests/run-tests.cjs (Node 18+, tanpa instalasi/jaringan).
-Hasil rinci tersedia di tests/HASIL-UJI.txt.
-Uji meliputi siklus cetak, guard backend, backup lengkap/khusus cetak,
-rollback transaksi lokal, tanggal arsip, pergantian hari, logo PNG/JPG,
-rasio/ukuran logo, resolusi, logo transparan/gelap, serta regresi v13.5.
-PDF contoh dibuat mesin versi ini, diperiksa struktur dan tampilannya.
-Formulir memakai DOM simulasi. Browser penuh, Apps Script aktif, impor
-langsung CorelDRAW, dan printer fisik belum diuji pada lingkungan ini.
+VERIFIKASI PAKET
+Jalankan node tests/run-tests.cjs dan node tests/local-font-tests.cjs (Node 18+).
+Laporan hasil berada di tests/HASIL-UJI-V13.8.7.txt.
+Pengujian memakai simulasi, tanpa mengubah data pusat atau deployment aktif.

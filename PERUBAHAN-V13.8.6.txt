@@ -1,0 +1,34 @@
+NAMETAGFLOW V13.8.6 — FONT ASLI COREL
+
+TUJUAN
+- Job baru memakai Arial Regular asli dan Swis721 BT Regular asli dari PC produksi.
+- File font TIDAK disertakan di ZIP, TIDAK di-upload ke GitHub, dan TIDAK dikirim ke backend.
+- PDF tetap berupa kurva/vector path sehingga setelah dibuat bentuk huruf tidak bergantung pada font di Corel/PDF viewer.
+
+FONT DAN UKURAN SUMBER COREL
+- Nama tanpa NIP: Arial Regular, 9,8414 mm.
+- Nama dengan NIP: Swis721 BT Regular, 7,3812 mm.
+- NIP/jabatan: Swis721 BT Regular, 4,5861 mm.
+- Nama pendek: tracking 2,734 mm sesuai referensi.
+- Nama panjang: kompres horizontal hanya bila melewati area, mengikuti pola Corel.
+- Batas lebar: 73 mm tanpa logo; 55 mm dengan logo.
+
+CARA KERJA
+1. Saat pertama membuka Cetak Produksi setelah reload, aplikasi mencoba mendeteksi Arial Regular dan Swis721 BT Regular yang terpasang di PC melalui Local Font Access browser.
+2. Bila browser tidak mengizinkan deteksi otomatis, pengguna dapat memilih file .TTF Regular secara lokal.
+3. Aplikasi memvalidasi nama face agar file yang salah/Bold/Italic tidak dipakai.
+4. Font diproses di browser menjadi outline; bytes font tidak dikirim ke server.
+5. Kerning pasangan huruf diukur dari face lokal yang sama agar jarak huruf seperti AV/WA mengikuti font asli.
+5. Job v13.8.5 dan lebih lama tetap memakai mesin/font arsip lamanya saat diunduh ulang.
+
+PENTING
+- Swis721 BT harus memang tersedia dan berlisensi pada PC produksi.
+- Jangan upload file Arial/Swis721 BT ke GitHub hanya untuk menjalankan aplikasi.
+- local-font.js WAJIB ikut di-upload ke GitHub bersama file aplikasi v13.8.6.
+
+PENYIMPANAN PER PC
+- Setelah Arial dan Swis721 BT berhasil dibaca, salinan font untuk NametagFlow disimpan di IndexedDB browser pada PC itu saja.
+- Saat membuka Cetak Produksi berikutnya, aplikasi memuat font lokal tersebut otomatis; operator biasanya tidak perlu memilih ulang.
+- Menghapus data situs/browser akan menghapus salinan lokal NametagFlow dan font perlu dihubungkan lagi.
+- Tombol "Hapus font lokal dari NametagFlow" tersedia pada layar pemasangan font.
+- Tidak ada byte font yang dimasukkan ke ZIP GitHub, request backend, Google Sheets, atau backup cetak.

@@ -1,0 +1,19 @@
+NAMETAGFLOW V13.8.7 — PAKET LENGKAP DAN PERBAIKAN FONT
+
+1. COBA-CETAK.html memuat local-font.js sebelum mesin/UI cetak, memakai cache
+   versi yang sama, dan memakai pengaturan terbaru untuk job contoh baru.
+2. Riwayat cetak job font asli memulihkan/meminta font sebelum menggambar
+   pratinjau, sehingga tidak diam-diam menampilkan font pengganti setelah reload.
+3. Font baru hanya diaktifkan setelah FontFace berhasil dimuat. Penggantian
+   font yang gagal mempertahankan font valid sebelumnya. Varian Narrow,
+   Condensed, Extended dan bobot lain ditolak agar ukuran tidak menyimpang.
+4. Status membedakan tersimpan lokal dengan hanya sesi ini bila penyimpanan
+   browser gagal. FontFace lama dilepas saat penggantian/penghapusan.
+5. Generator contoh memakai path output yang portabel serta memerlukan TTF
+   asli untuk job terbaru, atau opsi --legacy untuk referensi lama.
+6. Petunjuk aktif diperbarui; instruksi Apps Script dibuat bersyarat sesuai
+   kemampuan backend. backend/Code.gs tetap sama dengan v13.8.6.
+7. Semua file FULL-SOURCE dipertahankan; 12 contoh lama dipulihkan dari ZIP
+   v13.8.5 dan diberi keterangan versi; petunjuk v13.8.2 diarsipkan.
+8. Tests tambahan memeriksa font gagal, penyimpanan/reload, dan alur demo
+   serta riwayat dengan font lokal. Tidak ada TTF asli yang disertakan.
