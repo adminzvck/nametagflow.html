@@ -1,0 +1,47 @@
+NAMETAGFLOW V13.7.0 · PENYESUAIAN DESAIN CORELDRAW
+
+ACUAN
+Revisi ini dikalibrasi terhadap file referensi "15 SEPTEMBER 02.cdr" yang
+menyimpan halaman 210 × 290 mm, font Arial / Swis721 BT, dan susunan rapat
+nametag pada satu halaman.
+
+PERUBAHAN DESAIN CETAK
+- Font cetak baru: outline Arial-compatible Bold (Arimo), tetap menjadi kurva
+  vektor sehingga komputer produksi tidak perlu memasang font tersebut.
+- Proporsi lebar huruf default 0,86. SUPRIYADI sekitar 50 mm pada Model 1.
+- Nama pendek memakai tracking 2,4 mm; SAHREL sekitar 50 mm.
+- Garis NIP dan divider logo menjadi 0,75 mm agar mendekati referensi.
+- Area logo diperkecil dan dipusatkan; aspect ratio tetap dipertahankan.
+- Lis luar tetap memakai inset 2,075 mm dan ukuran nametag 80,4 × 20,4 mm.
+- Hitam/putih vektor memakai DeviceGray netral. Logo mempertahankan warna file.
+
+SUSUNAN LEMBAR
+- Preset default "Corel hemat" memuat maksimal 29 posisi pada 210 × 290 mm:
+  2 kolom × 13 baris utama + 3 posisi samping diputar 90°.
+- Posisi utama dikalibrasi sekitar x 34,18 mm, y 11,85 mm; gap kolom 0,85 mm
+  dan gap baris 0,25 mm.
+- Mode "Grid biasa" tetap tersedia dari dialog Cetak Produksi.
+- Tanda potong default dimatikan pada preset rapat karena jarak antarobjek kecil.
+
+KOMPATIBILITAS
+- Job/PDF v13.6 yang sudah tersimpan tetap memakai outline DejaVu dan geometri
+  v13.6 saat diunduh ulang. Upgrade tidak mengubah desain riwayat cetak lama.
+- Pengaturan cetak lama tanpa penanda layout dimigrasikan ke preset Corel baru
+  saat membuat job baru; ukuran halaman dan nametag tetap dipertahankan.
+- Backend tetap mempertahankan guard siklus cetak, cetak ulang, backup, dan
+  recovery dari v13.6.
+
+VERIFIKASI
+- 65/65 regression test lulus tanpa jaringan atau data produksi.
+- PDF 29 posisi dirender ulang pada 210 × 290 mm dan tiga posisi samping
+  terverifikasi berotasi 90°.
+- Render job v13.6 dari mesin v13.7 dibandingkan dengan mesin v13.6 asli dan
+  hasil pikselnya identik pada uji regresi.
+- Contoh-Cetak-10-Model.pdf, Pratinjau-10-Model.svg, dan PNG sudah dibuat ulang
+  memakai mesin v13.7.
+
+BATASAN
+- File CDR tidak diubah. PDF tetap format pertukaran utama ke CorelDRAW.
+- Logo PNG/JPG tetap bitmap. Profil ICC khusus percetakan belum ditanam ke PDF.
+- Uji printer fisik dan impor pada instalasi CorelDRAW pengguna tetap perlu
+  dilakukan sebelum produksi massal.

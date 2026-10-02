@@ -1,0 +1,6 @@
+V13.8.1
+- Koreksi font produksi ke Arial-compatible Regular.
+- Koreksi ukuran huruf, outline lis 0,10 mm, inner stroke 0,20 mm, dan posisi garis NIP.
+- Garis NIP/divider 0,75 mm serta inset 2,075 mm dipertahankan karena sudah cocok.
+- Kompatibilitas job v13.6 dan v13.7 dipertahankan.
+- Prompt Gemini diperjelas: nama terbaru menang, aturan kapitalisasi, dan default nama saja = Model 1.

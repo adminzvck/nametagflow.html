@@ -1,0 +1,20 @@
+LAPORAN VERIFIKASI V13.8.0
+Acuan: 15 SEPTEMBER 02.cdr / SVG hasil konversi
+
+TEMUAN TERUKUR DARI REFERENSI
+- Font nama utama: Arial, weight 400 (Regular), font-size 9,88 mm.
+- Font nama pada desain dengan NIP: Swis721 BT Regular, font-size 7,41 mm.
+- Font NIP: Swis721 BT Regular, font-size 4,59 mm.
+- Cap-height yang ditiru mesin: nama 6,80 mm; nama+NIP 5,29 mm; NIP 3,28 mm.
+- Stroke garis horizontal NIP: 0,75 mm.
+- Stroke divider vertikal: 0,75 mm.
+- Stroke outline luar: sekitar 0,10 mm.
+- Stroke tepi bidang hitam: sekitar 0,20 mm.
+- Inset bidang hitam/lis: sekitar 2,075 mm.
+- Garis horizontal berada sekitar 56% dari tinggi bidang hitam.
+
+CATATAN FONT
+Arimo Regular digunakan sebagai pasangan metric-compatible Arial. Untuk desain dengan NIP digunakan Nimbus Sans Regular yang dikalibrasi horizontal 0,80 terhadap metrik Swis721 BT pada SVG referensi. Keduanya dikonversi menjadi path/kurva. Bentuk glyph sangat dekat tetapi tidak diklaim identik node-per-node dengan font proprietary Arial/Swis721 BT. File font proprietary tidak disertakan.
+
+PROMPT GEMINI
+Prompt file dan tombol “Salin prompt Gemini” sudah memakai aturan yang sama: sumber nama terbaru menang, lowercase semua -> uppercase kecuali dilarang, format nama yang sudah sesuai tidak diubah, dan nama saja default Model 1.

@@ -1,24 +1,95 @@
-Rapikan pesanan berikut untuk Impor massal NametagFlow.
-NP berarti Nomor Pesanan. Isi dengan nomor pesanan asli dari sumber. NIP dan Resi memiliki kolom tersendiri.
-Keluarkan satu blok teks dengan pemisah TAB, tepat 9 kolom dalam urutan ini:
+Rapikan pesanan berikut untuk Impor massal NametagFlow John Store.
+
+TUJUAN OUTPUT
+Keluarkan HANYA satu blok teks berformat TAB/TSV, tanpa tabel Markdown, tanpa bullet, tanpa penjelasan sebelum atau sesudah data.
+Tepat 9 kolom dalam urutan:
 NP	Nama	NIP	Model	Pengait	Logo	Resi	SKU	Catatan
-Satu baris = satu nametag. Pertahankan jumlah item, termasuk nama atau baris yang sama. Jangan gabungkan atau hapus duplikat.
-NP, resi, dan NIP wajib berupa teks utuh, termasuk nol awal. Jangan gunakan notasi ilmiah atau rumus.
-NIP/jabatan, logo, resi, SKU, dan catatan boleh memakai - jika kosong. SKU opsional: pertahankan kode sumber walaupun belum terdaftar. Jika tidak ada, isi -. Jangan menebak SKU. NP, nama, model, dan pengait wajib jelas.
-Katalog John Store hanya Model 1 sampai 10, tidak ada Model 11. Gunakan model persis dari daftar berikut, atau nomornya (10 tetap Model 10):
-Model 1 (Lis + Nama)
-Model 2 (Lis + Nama + NIP)
-Model 3 (Lis + Logo + Nama)
-Model 4 (Lis + Logo + Nama + NIP)
-Model 5 (Lis + Logo + Nama + Line + NIP)
-Model 6 (Polos + Nama)
-Model 7 (Polos + Nama + NIP)
-Model 8 (Polos + Logo + Nama)
-Model 9 (Polos + Logo + Nama + NIP)
-Model 10 (Polos + Logo + Nama + Line + NIP)
-Model 1–5 berlis luar; Model 6–10 tanpa lis luar. Model 5 dan 10 memiliki garis vertikal pembatas logo. Line pada nama model berarti garis vertikal ini, bukan garis horizontal di bawah nama.
-Pengait: Magnet, Peniti. M berarti Magnet, P berarti Peniti. Ikuti revisi pengait yang disebutkan secara eksplisit.
-Referensi SKU (bukan pembatas; SKU baru atau kosong tetap diterima):
+Satu baris = satu nametag. Pertahankan jumlah item, termasuk item/nama yang sama. Jangan gabungkan atau menghapus duplikat.
+
+ATURAN SUMBER DATA & REVISI TERBARU — WAJIB
+1. Baca Catatan Pesanan dan seluruh chat customer secara kronologis.
+2. Jika data yang sama muncul lebih dari sekali dan ada revisi, pakai informasi PALING BARU yang dikirim customer.
+3. KHUSUS NAMA: jika ada nama di Catatan Pesanan lalu ada nama/koreksi nama di chat yang lebih baru, gunakan nama dari chat terbaru. Berlaku juga jika nama berubah beberapa kali: selalu ambil nama paling terakhir yang relevan untuk nametag tersebut.
+   Contoh: Catatan Pesanan “Nama: ANDI”, lalu chat terbaru “nama BUDI” -> gunakan BUDI.
+4. Jangan memakai nama penerima, nama akun, nama pengirim chat, atau nama pada alamat sebagai Nama nametag kecuali jelas disebut sebagai tulisan nametag.
+5. Revisi eksplisit terbaru seperti “ganti nama jadi…”, “yang benar…”, “pakai nama…”, “pengaitnya ganti…”, atau “modelnya…” mengalahkan data yang lebih lama.
+6. Jika ada beberapa nametag dalam satu NP, cocokkan revisi ke item yang dimaksud. Jangan memindahkan nama/revisi ke item lain.
+
+ATURAN PENULISAN NAMA — WAJIB
+1. Pertahankan ejaan, gelar, tanda baca, spasi khusus, dan kapitalisasi customer jika penulisannya sudah bukan huruf kecil semua.
+   Contoh: “Budi Santoso”, “BUDI SANTOSO”, “dr. Budi, S.Pd.”, atau “S A H R E L” -> pertahankan PERSIS seperti yang dikirim.
+2. Jika nama terbaru ditulis huruf kecil semua, ubah huruf alfabet menjadi HURUF KAPITAL.
+   Contoh: “budi santoso” -> “BUDI SANTOSO”.
+3. PENGECUALIAN: jika customer meminta “jangan diubah”, “sesuai ketikan”, “huruf kecil”, “lowercase”, atau instruksi sejenis, pertahankan nama PERSIS walaupun semuanya huruf kecil.
+4. Jangan memperbaiki ejaan, menambah gelar, menghapus gelar, menambah spasi antarhuruf, atau menebak nama yang tidak dikirim customer.
+
+NP / NIP / RESI / SKU
+- NP = Nomor Pesanan asli dari sumber, bukan NIP dan bukan Resi.
+- NP, Resi, dan NIP wajib berupa teks utuh; pertahankan nol awal. Jangan gunakan notasi ilmiah atau rumus.
+- NIP/jabatan, Logo, Resi, SKU, dan Catatan boleh diisi - jika kosong.
+- SKU opsional. Pertahankan SKU sumber walaupun belum terdaftar. Jika tidak ada, isi -. JANGAN menebak SKU.
+- NP, Nama, Model, dan Pengait harus jelas.
+
+ATURAN MODEL — BACA CIRI SATU PER SATU
+Katalog hanya Model 1–10. Tidak ada Model 11.
+Jika customer/sumber menyebut nomor model secara eksplisit, ikuti model eksplisit TERBARU.
+Jika model tidak disebut, tentukan hanya dari fitur yang benar-benar diminta. Jangan menebak “polos”, “logo”, atau “line” tanpa petunjuk.
+
+Model 1 = LIS LUAR + NAMA saja.
+- Tidak ada logo.
+- Tidak ada NIP/jabatan.
+- DEFAULT PALING UMUM: jika customer HANYA mengirim nama dan tidak ada request model/fitur lain, WAJIB pilih Model 1.
+
+Model 2 = LIS LUAR + NAMA + NIP/jabatan.
+- Tidak ada logo.
+- Jika hanya ada nama + NIP/jabatan dan tidak ada permintaan polos/logo, pilih Model 2.
+
+Model 3 = LIS LUAR + LOGO + NAMA.
+- Tidak ada NIP/jabatan.
+- Pilih jika logo diminta/ditentukan dan tidak ada NIP/jabatan, selama tidak ada permintaan polos.
+
+Model 4 = LIS LUAR + LOGO + NAMA + NIP/jabatan.
+- Ada garis horizontal pemisah nama dan NIP sebagai bagian desain normal.
+- TIDAK ada garis vertikal pembatas logo.
+- Pilih jika ada logo + NIP/jabatan, selama tidak ada permintaan polos atau line vertikal.
+
+Model 5 = LIS LUAR + LOGO + NAMA + LINE VERTIKAL + NIP/jabatan.
+- “Line” berarti GARIS VERTIKAL pembatas area logo dengan area teks.
+- Bukan garis horizontal NIP.
+- Gunakan hanya jika Model 5/line vertikal memang disebut atau diminta.
+
+Model 6 = POLOS/TANPA LIS LUAR + NAMA saja.
+- Tidak ada logo dan NIP.
+- Gunakan hanya jika customer meminta polos/tanpa lis atau sumber jelas menyebut Model 6.
+
+Model 7 = POLOS/TANPA LIS LUAR + NAMA + NIP/jabatan.
+- Tidak ada logo.
+
+Model 8 = POLOS/TANPA LIS LUAR + LOGO + NAMA.
+- Tidak ada NIP/jabatan.
+
+Model 9 = POLOS/TANPA LIS LUAR + LOGO + NAMA + NIP/jabatan.
+- Tidak ada line vertikal.
+
+Model 10 = POLOS/TANPA LIS LUAR + LOGO + NAMA + LINE VERTIKAL + NIP/jabatan.
+- “Line” = garis vertikal pembatas logo, bukan garis horizontal NIP.
+- Gunakan hanya jika Model 10/line vertikal memang disebut atau diminta.
+
+RINGKASAN PEMILIHAN MODEL JIKA MODEL TIDAK DISEBUT
+- Nama saja -> Model 1.
+- Nama + NIP/jabatan -> Model 2.
+- Nama + Logo -> Model 3.
+- Nama + Logo + NIP/jabatan -> Model 4.
+- Tambahkan line vertikal hanya jika diminta -> Model 5.
+- Jika customer secara eksplisit meminta polos/tanpa lis, gunakan pasangan polos: 1->6, 2->7, 3->8, 4->9, 5->10.
+- Jangan menganggap kata “garis” sebagai line vertikal jika konteksnya tidak jelas. Jika sumber sudah menyebut Model 5/10, gunakan itu.
+
+PENGAIT
+- Nilai yang diterima: Magnet atau Peniti.
+- M/MAG = Magnet. P/PEN = Peniti.
+- Ikuti pengait yang disebut eksplisit paling baru. Jangan biarkan SKU lama menimpa revisi pengait dari chat.
+
+REFERENSI SKU — BUKAN PEMBATAS DAN JANGAN DITEBAK
 JS11__PKT_NP_PGRI_PEN
 JS11_PKT_NP_PGRI_PEN
 JS14__PKT_NP_MAG
@@ -40,7 +111,15 @@ JS9_PKT_NP_PEN
 NT-AKR-MAG
 NT-AKR-PEN
 SKU
-Pertahankan ejaan nama, gelar, tanda baca, dan instruksi custom. Jangan sertakan tabel Markdown atau penjelasan di dalam blok data.
+
+PEMERIKSAAN SEBELUM OUTPUT
+- Pastikan nama yang dipakai adalah nama TERBARU jika Catatan Pesanan dan chat berbeda.
+- Pastikan nama lowercase semua sudah menjadi UPPERCASE, kecuali ada instruksi jangan diubah/lowercase.
+- Pastikan nama saja tanpa request lain = Model 1.
+- Pastikan Model 1–5 berlis; Model 6–10 polos.
+- Pastikan Model 5/10 saja yang memiliki line vertikal.
+- Pastikan tepat 9 kolom TAB setiap baris.
+- Jangan menambahkan komentar apa pun di luar blok data.
 
 DATA PESANAN:
-[tempel chat atau rincian pesanan di sini]
+[tempel Catatan Pesanan + chat customer + rincian pesanan di sini]

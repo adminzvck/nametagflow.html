@@ -1,0 +1,68 @@
+LAPORAN PERBAIKAN MENYELURUH - NAMETAGFLOW V13.7.0
+Acuan: 15 SEPTEMBER 02.cdr
+Tanggal pemeriksaan: 2026-10-01
+
+HASIL AKHIR
+Paket v13.6 diperbarui menjadi v13.7.0. Fokus revisi adalah menyamakan rasa
+visual dan geometri produksi dengan file Corel referensi tanpa merusak alur
+cetak ulang, backup, dan riwayat PDF lama.
+
+YANG DIPERBAIKI
+1. Font cetak
+   - DejaVu Sans Bold untuk job baru diganti outline Arial-compatible Bold
+     (Arimo), karena CDR referensi mencatat Arial dan Swis721 BT.
+   - Font tetap berupa path/kurva pada PDF; tidak perlu instal font di PC.
+   - Proporsi horizontal default 0,86.
+   - Nama pendek diberi tracking 2,4 mm.
+   - SUPRIYADI dan SAHREL pada uji berada sekitar 50 mm, mendekati target
+     visual referensi yang sebelumnya jauh lebih sempit.
+
+2. Garis dan lis
+   - Garis NIP dan divider logo: 0,75 mm.
+   - Inset lis luar dipertahankan 2,075 mm.
+   - Ukuran nametag tetap 80,4 x 20,4 mm.
+
+3. Logo
+   - Kotak logo diperkecil dan dipusatkan per tipe model.
+   - Aspect ratio PNG/JPG tetap dipertahankan.
+   - Validasi resolusi, transparansi, dan logo terlalu gelap tetap aktif.
+
+4. Layout lembar
+   - Preset default baru: Corel hemat, maksimum 29 posisi.
+   - 26 posisi utama: 2 kolom x 13 baris.
+   - 3 posisi tambahan di sisi kiri diputar 90 derajat.
+   - Posisi utama: sekitar x 34,175 mm dan y 11,85 mm.
+   - Gap default: 0,85 mm horizontal dan 0,25 mm vertikal.
+   - Mode Grid biasa tetap tersedia.
+
+5. Warna
+   - Hitam/putih vektor memakai DeviceGray netral.
+   - Logo tetap mempertahankan warna bitmap sumber.
+   - Profil ICC Japan Color dari CDR tidak disalin/ditanam ke PDF.
+
+6. Kompatibilitas
+   - Job v13.6 tetap dirender memakai font DejaVu dan geometri v13.6.
+   - Render job v13.6 dari mesin baru dibandingkan dengan mesin lama dan
+     hasil render uji identik piksel.
+   - Pengaturan cetak lama dimigrasikan ke preset referensi untuk job baru.
+
+7. Preview dan contoh
+   - Preview aplikasi diselaraskan dengan font/spacing/garis baru.
+   - Contoh-Cetak-10-Model.pdf dibuat ulang.
+   - Pratinjau-10-Model.svg dan PNG dibuat ulang.
+   - COBA-CETAK.html memakai mesin/settings v13.7.
+
+PENGUJIAN
+- 65/65 regression test PASS.
+- Syntax check seluruh JavaScript utama PASS.
+- PDF contoh dapat dibuka dan dirender pada ukuran 210 x 290 mm.
+- Layout 29 posisi dan rotasi posisi samping diverifikasi dari hasil render.
+- Tidak ada data produksi atau jaringan yang digunakan saat pengujian.
+
+CATATAN PENTING
+Hasil dibuat sedekat mungkin dengan CDR referensi tanpa mendistribusikan font
+proprietary Arial/Swis721 BT. Karena itu bentuk glyph tidak dijanjikan identik
+100% node-per-node dengan font proprietary Corel, tetapi ukuran, tracking,
+layout lembar, dan karakter visualnya sudah dikalibrasi jauh lebih dekat.
+Sebelum produksi massal, lakukan satu cetak fisik 100% / Actual size dan ukur
+80,4 x 20,4 mm pada printer yang dipakai.

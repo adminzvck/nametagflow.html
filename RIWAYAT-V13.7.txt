@@ -1,0 +1,7 @@
+V13.7.0
+- Penyesuaian tipografi, tracking, garis, logo, dan susunan lembar terhadap
+  referensi Corel 15 SEPTEMBER 02.cdr.
+- Preset Corel hemat 29 posisi dan mode Grid biasa.
+- Kompatibilitas render job v13.6 dipertahankan.
+- Font outline baru Arial-compatible Bold (Arimo); lisensi disertakan.
+- Regression test diperluas menjadi 65 kasus.

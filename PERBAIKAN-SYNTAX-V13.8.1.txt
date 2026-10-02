@@ -1,0 +1,18 @@
+NAMETAGFLOW V13.8.1 - COMPATIBILITY FIX
+
+Perbaikan:
+- app.js baris 328: optional catch binding `catch {}` diganti menjadi `catch(e) {}` untuk kompatibilitas parser/runtime yang lebih luas.
+- Bentuk `catch {}` lain di file website juga diganti menjadi `catch(e) {}`.
+- Optional chaining pada backend/Code.gs dihilangkan dari dua guard penting agar parser Apps Script lebih toleran.
+- Tidak mengubah ukuran nametag, font cetak, ketebalan garis, posisi logo, atau layout Corel v13.8.
+- Petunjuk instalasi diperjelas: HANYA backend/Code.gs masuk ke Google Apps Script. File app.js/core.js/print-*.js masuk ke website/GitHub Pages.
+- Backend tetap membutuhkan runtime V8.
+
+Verifikasi lokal:
+- backend/Code.gs syntax: PASS
+- app.js syntax: PASS
+- core.js syntax: PASS
+- print-engine.js syntax: PASS
+- print-font.js syntax: PASS
+- print-ui.js syntax: PASS
+- Regression test: 67/67 PASS

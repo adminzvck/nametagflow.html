@@ -1,0 +1,14 @@
+NAMETAGFLOW V13.8.1 - HASIL UJI LOKAL
+Tanggal: 2026-10-01
+
+67/67 regression test PASS.
+Tidak memakai jaringan atau data produksi.
+
+Cakupan tambahan v13.8:
+- Font baru Arial-compatible Regular (Arimo).
+- Tinggi nama 6,80 mm; nama+NIP 5,29 mm; NIP 3,28 mm.
+- Tracking nama pendek 2,73 mm dan tidak didobel jika nama sudah memakai spasi khusus.
+- Outline lis 0,10 mm; inner stroke 0,20 mm; garis NIP/divider 0,75 mm.
+- Kompatibilitas render job v13.6 dan v13.7.
+- Migrasi setting cetak lama ke geometri v13.8.
+- Prompt Gemini: nama terbaru dari chat/catatan, aturan lowercase->uppercase dengan pengecualian, Model 1 default untuk nama saja, dan penjelasan Model 1-10.

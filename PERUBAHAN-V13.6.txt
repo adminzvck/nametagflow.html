@@ -1,0 +1,24 @@
+NAMETAGFLOW V13.6.0
+Pembaruan frontend dan backend harus dipasang bersama.
+
+1. Nomor cetakan otomatis dan ID siklus baru untuk tiap cetak ulang.
+   Upsert biasa tidak dapat mengganti keduanya; PDF lama tidak dapat
+   mengonfirmasi siklus baru, termasuk saat referensi backup hilang.
+2. Backup antrean, riwayat cetak, dan hubungan konfirmasi dipulihkan
+   bersama dalam transaksi lokal. Backup lama dengan moves direkonstruksi.
+   ID pengiriman asli tetap sama untuk idempotensi.
+3. Tanggal produksi dan ID siklus ikut masuk arsip dan pemulihan.
+   Tanggal arsip lama dipulihkan dari snapshot cocok bila masih tersedia.
+4. Tanggal hari ini ditentukan saat submit, termasuk lewat tengah malam.
+5. Validasi dimensi isi PNG/JPG; rasio gambar dipertahankan. Resolusi rendah
+   ditolak/diperingatkan; upload transparan atau tak terlihat ditolak.
+6. Pilihan logo kosong tidak menempel ke lembar berikutnya. Penggantian
+   gambar gagal memblokir ekspor; unggahan bertumpuk tidak menimpa pilihan
+   terbaru. Nama logo dibedakan lebih tepat, logo tanpa nama per pesanan.
+7. PDF 1.7 tanpa object streams; contoh PDF dan halaman demo diperbarui.
+   Tulisan vektor, logo bitmap. Panduan CorelDRAW disertakan.
+8. Kolom tambahan aktif Q:R dan arsip O:P dilindungi dari benturan data.
+   Revisi baris lama serta pemulihan jurnal tetap didukung.
+
+Lihat PETUNJUK.txt, PANDUAN-LOGO-DAN-CORELDRAW.txt, tests/HASIL-UJI.txt.
+Belum dipasang pada website/Apps Script aktif atau diuji dengan printer.

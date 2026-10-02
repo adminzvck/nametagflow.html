@@ -1,0 +1,31 @@
+NAMETAGFLOW V13.8.1 · KOREKSI PRESISI CORELDRAW + PROMPT GEMINI
+
+KOREKSI DESAIN BERDASARKAN DATA SVG CDR
+- Font nama tanpa NIP: Arial Regular pada referensi (weight 400), bukan Bold.
+  Mesin baru memakai outline Arimo Regular yang metric-compatible dengan Arial.
+- Nama dengan NIP dan NIP referensi memakai Swis721 BT Regular. Mesin memakai
+  Nimbus Sans Regular sebagai pasangan Swiss/Helvetica-compatible dengan skala horizontal 0,80.
+- Tinggi huruf nama tanpa NIP: 6,80 mm (setara cap-height Arial pada font-size 9,88 mm di referensi).
+- Nama dengan NIP: 5,29 mm.
+- NIP/jabatan: 3,28 mm.
+- Proporsi horizontal default: 1,00.
+- Tracking nama pendek: 2,73 mm, tetapi TIDAK ditambahkan jika customer sudah mengirim spasi khusus seperti “S A H R E L”.
+- Garis NIP dan divider vertikal tetap 0,75 mm: nilai ini memang cocok dengan referensi.
+- Posisi garis horizontal dikoreksi ke sekitar 56% tinggi bidang hitam, sesuai geometri CDR.
+- Garis tepi luar lis dikoreksi dari 0,35 mm menjadi 0,10 mm.
+- Bidang hitam berlis memakai stroke hitam 0,20 mm seperti objek referensi.
+- Inset lis tetap 2,075 mm dan ukuran nametag tetap 80,4 × 20,4 mm.
+
+KOMPATIBILITAS CETAK ULANG
+- Job v13.6 tetap memakai DejaVu/geometri v13.6.
+- Job v13.7 tetap memakai Arimo Bold/geometri v13.7.
+- Job baru v13.8 memakai Arimo Regular/geometri presisi baru.
+
+PROMPT GEMINI
+- Jika Catatan Pesanan dan chat berisi nama berbeda, gunakan nama customer yang paling baru secara kronologis.
+- Jika nama berubah beberapa kali, gunakan revisi terakhir yang relevan untuk item tersebut.
+- Nama lowercase semua otomatis menjadi UPPERCASE, kecuali customer meminta jangan diubah/lowercase/sesuai ketikan.
+- Nama yang sudah memiliki kapitalisasi/format sendiri dipertahankan persis.
+- Nama saja tanpa request lain = Model 1.
+- Ciri Model 1–10 dijelaskan satu per satu, termasuk beda lis/polos, logo, NIP, dan line vertikal.
+- Revisi eksplisit terbaru untuk model/pengait mengalahkan data lama.

@@ -1,0 +1,33 @@
+NAMETAGFLOW V13.5.0 — CATATAN REVISI
+
+FITUR BARU
+- Cetak ulang hari ini untuk satu atau banyak nametag aktif (maksimal 100).
+- Pemilik dapat meminta cetak ulang pesanan dari arsip dengan ID yang sama.
+- Tanggal Produksi disimpan pada kolom Q Antrean Produksi; tanggal pesanan
+  awal tetap tersimpan. Filter Hari ini dan ringkasan memakai jadwal produksi.
+- Cetak ke- naik satu, alasan dicatat, tahap kembali Cetak vinyl. Konfirmasi
+  hasil cetak memindahkan ke Laminasi dan menyelesaikan tanda cetak ulang.
+
+LIMA PERBAIKAN HASIL AUDIT
+1. Referensi simpan formulir yang selesai lebih dahulu dapat disambungkan
+   ke revisi terkonfirmasi. Draf yatim/tidak aman ditampilkan untuk diperiksa.
+2. Resi yang ada dalam jurnal tertunda tetap dicadangkan. Jalur pemulihan
+   mengulangi validasi identitas sebelum menulis data.
+3. Riwayat cetak mengikuti ID operasi pengganti setelah konflik diselesaikan.
+   Pembatalan perpindahan diberi status jelas; ekspor menyimpan referensinya.
+4. Nomor cetakan diperiksa saat Selesai Cetak dan penyelesaian konflik.
+   PDF lama tidak dapat mengesahkan siklus cetak baru.
+5. NIP notasi ilmiah ditolak pada impor, formulir, backend, dan mesin cetak.
+
+KOMPATIBILITAS
+- A–P pada Antrean dan seluruh 14 kolom Arsip tetap dipertahankan.
+- Revisi dan jurnal lama 16 kolom tetap dapat dibaca; kolom Q kosong tidak
+  mengubah hash revisi lama. Kolom Q yang dipakai data lain tidak ditimpa.
+- Kode akses, endpoint, ID pesanan, nomor pesanan, dan data lama dipertahankan.
+- Website dan deployment Apps Script sama-sama harus diperbarui.
+- Riwayat/logo cetak belum disinkron otomatis antarperangkat; impor XLSX
+  langsung dan font CorelDRAW asli belum ditambahkan pada revisi ini.
+
+PENGUJIAN
+38/38 pengujian otomatis lulus. Lihat tests/run-tests.cjs.
+Pengujian lokal; belum ada penerapan atau pengujian terhadap pusat produksi.
