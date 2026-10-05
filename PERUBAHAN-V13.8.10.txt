@@ -1,0 +1,18 @@
+NAMETAGFLOW V13.8.10 — 3 OKTOBER 2026
+
+1. Permintaan terbaru: nama utama tanpa NIP memakai Arial Bold tepat 28 pt.
+   Ukuran mesin: 28 × 25,4 / 72 mm. Memakai outline asli Bold, bukan efek stroke.
+2. Arial Bold divalidasi dari metadata font; Arial Regular dan Bold Italic
+   ditolak untuk slot Bold. Deteksi otomatis memilih face Bold yang sesuai.
+3. Cache Arial Regular lama disimpan terpisah. Font tersebut tidak membuat
+   status Bold menjadi siap, dan tetap dipakai untuk riwayat v13.8.6–v13.8.9.
+4. Font manager, panduan, contoh interaktif, versi cache, dan tampilan font
+   diperbarui. Ukuran nama tanpa NIP di panel ditampilkan dalam pt.
+5. Pengaturan lama otomatis pindah ke default 28 pt hanya untuk lembar baru.
+6. Batas nama tetap 73 mm tanpa logo / 55 mm dengan logo. Hanya yang lebih
+   lebar dipadatkan horizontal; tinggi font dipertahankan, nama pendek tidak
+   dilebarkan. Aturan spasi nama pendek dan ukuran model NIP tetap.
+7. Semua file lama tetap disertakan; backend tidak berubah. Tidak ada akses
+   ke data produksi atau perubahan langsung di GitHub/Apps Script.
+8. 87 uji regresi dan 16 uji font lulus. Font asli PC/printer belum diuji di
+   lingkungan ini; pengujian parser memakai fixture font sintetis.

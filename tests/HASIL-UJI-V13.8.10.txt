@@ -1,0 +1,28 @@
+HASIL UJI NAMETAGFLOW V13.8.10
+Tanggal: 3 Oktober 2026
+
+node tests/run-tests.cjs: 87/87 PASS
+node tests/local-font-tests.cjs: 16/16 PASS
+Jumlah: 103/103 PASS
+
+Cakupan perubahan:
+- Arial Bold 28 pt pada nama tanpa NIP di seluruh model terkait.
+- Ukuran 28 pt di UI tersimpan menjadi 9,8777777778 mm untuk PDF.
+- Lebar 73/55 mm hanya mengompres nama yang melampaui batas.
+- Nama di bawah batas mempertahankan ukuran, tidak diregangkan.
+- Nama dengan NIP dan NIP tetap Swis721 BT Regular.
+- Deteksi otomatis memilih Bold meskipun Regular/Italic terdaftar lebih dulu.
+- Pemilihan file menolak Regular/Bold Italic dan keluarga pengganti.
+- FontFace memakai ArrayBuffer untuk pilih file, deteksi, dan restore.
+- Cache Regular lama tidak meloloskan syarat Bold pada PDF baru.
+- Cache Bold/Regular dipulihkan terpisah; arsip lama tetap Regular.
+- PDF dibuat memakai parser font sintetis melalui jalur produksi.
+- Antrean, backend, model, logo, PDF, dan simulasi UI lulus regresi.
+- Pemeriksaan sintaks local-font.js, print-engine.js, print-ui.js lulus.
+
+Batas verifikasi:
+Font dalam tes adalah fixture sintetis dan outline pengganti untuk menguji
+alur/geometri, bukan file Arial Bold/Swis721 asli pengguna. Tidak ada font
+proprietary dalam paket. Pengujian browser memakai simulasi DOM; belum ada
+uji printer atau browser PC produksi. Periksa satu lembar baru setelah
+menghubungkan font asli, dengan skala cetak 100%.

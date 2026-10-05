@@ -1,22 +1,21 @@
-# NametagFlow v13.8.9
+# NametagFlow v13.8.10
 
-Paket lengkap untuk memperbarui repository NametagFlow yang sudah dipakai.
-Mulai dari **00-BACA-DULU.txt**, lalu ikuti **PETUNJUK.txt**.
+Paket lengkap: nama tanpa NIP memakai **Arial Bold asli tepat 28 pt**.
+Baca **00-BACA-DULU.txt** untuk pemasangan dan **PETUNJUK.txt** untuk rinciannya.
 
-- Unggah seluruh isi paket ke folder yang berisi `index.html` lama.
-- Pertahankan struktur `vendor/`, `licenses/`, `tests/`, dan `backend/`.
-- Setelah GitHub Pages selesai, muat ulang situs dengan Ctrl+Shift+R.
-- Hubungkan Arial Regular dan Swis721 BT Regular pada setiap PC produksi.
-- Uji melalui `COBA-CETAK.html`; cetak dengan skala 100% / Actual size.
-- Backend disertakan sebagai sumber lengkap dan tetap v13.8.6; perubahan font
-  tidak memerlukan update backend yang sudah kompatibel.
+- Upload seluruh isi folder ke lokasi `index.html` lama di GitHub.
+- Tunggu GitHub Pages selesai, lalu Ctrl+Shift+R dan periksa versi V13.8.10.
+- Buka Cetak Produksi → Kelola font → Deteksi font yang terpasang.
+- Manual di Windows: pilih `C:\Windows\Fonts\arialbd.ttf` untuk Arial Bold.
+- Buat lembar cetak baru; panel font menampilkan Arial Bold (lokal asli) · 28 pt.
+- Batas 73/55 mm adalah maksimum. Nama pendek tidak dibesarkan ke batas itu.
+- Nama dengan NIP dan baris NIP tetap memakai Swis721 BT Regular.
+- Riwayat v13.8.6–v13.8.9 tetap menggunakan Arial Regular tersimpan secara terpisah.
+- Backend tetap v13.8.6, identik dengan paket sebelumnya; Apps Script tidak perlu diubah.
 
-Baca `CONTOH-LAMA.txt` sebelum memakai PDF/PNG/SVG arsip. Contoh hasil font asli
-terbaru perlu dibuat di PC yang memiliki font tersebut.
+Semua file paket sebelumnya dipertahankan. Font proprietary tidak disertakan.
+PDF/PNG/SVG lama adalah arsip; baca CONTOH-LAMA.txt. Uji hasil terbaru pada
+PC produksi melalui COBA-CETAK.html dan gunakan skala cetak 100% / Actual size.
 
-Verifikasi lokal: `node tests/run-tests.cjs` dan `node tests/local-font-tests.cjs`.
-
-**Font:** buka Cetak Produksi → Kelola font. Keterangan font yang benar-benar
- dipakai terlihat pada panel **Font pada lembar ini**, tepat di atas pratinjau.
-Lembar baru menggunakan Arial Regular/Swis721 BT Regular asli sesuai model.
-Arsip lama tetap memakai profil lamanya; buat lembar baru untuk font terbaru.
+Verifikasi: `node tests/run-tests.cjs` dan `node tests/local-font-tests.cjs`.
+Hasil: 103 pengujian lulus; rincian dan batas verifikasi dalam tests/HASIL-UJI-V13.8.10.txt.

@@ -1,9 +1,9 @@
-NAMETAGFLOW V13.8.9 — PETUNJUK PAKET LENGKAP
+NAMETAGFLOW V13.8.10 — PETUNJUK PAKET LENGKAP
 
 MULAI DARI SINI
 Baca 00-BACA-DULU.txt. Paket ini memuat seluruh 47 file FULL-SOURCE v13.8.6,
 12 file contoh/pratinjau yang dipulihkan dari paket v13.8.5, serta perbaikan
-v13.8.9 dan laporan pemeriksaannya. Riwayat lama tetap disertakan sebagai arsip.
+v13.8.10 dan laporan pemeriksaannya. Riwayat lama tetap disertakan sebagai arsip.
 Petunjuk aktif adalah file ini, 00-BACA-DULU.txt, dan README.md.
 
 SEBELUM MEMASANG
@@ -21,7 +21,7 @@ UPLOAD GITHUB
    print-engine.js, print-ui.js, styles.css berada sejajar. Jangan memakai
    nama seperti app(1).js, dan jangan membuat folder baru di atas index.html.
 5. Commit changes. Tunggu penerbitan GitHub Pages selesai.
-6. Buka situs lalu Ctrl+Shift+R. Sidebar harus NAMETAGFLOW / V13.8.9.
+6. Buka situs lalu Ctrl+Shift+R. Sidebar harus NAMETAGFLOW / V13.8.10.
 7. Muat ulang data pusat dan gunakan kode akses yang sama.
 File lama yang tidak ada di paket, termasuk NametagFlow.txt milik repository,
 boleh tetap ada. Upload ini mengganti file bernama sama, bukan menghapus
@@ -37,7 +37,7 @@ dan petunjuk disertakan agar paket lengkap; tidak dimuat saat aplikasi utama
 berjalan. Jangan menempel file website ke editor Apps Script.
 
 APPS SCRIPT: KAPAN PERLU DIUBAH?
-Perbaikan website/font v13.8.9 tidak mengubah backend. backend/Code.gs tetap
+Perbaikan website/font v13.8.10 tidak mengubah backend. backend/Code.gs tetap
 v13.8.6, sama persis dengan FULL-SOURCE sebelumnya.
 Jika pesanan dapat dimuat dan Buat lembar cetak tidak meminta pembaruan
 Apps Script, gunakan deployment sekarang: tidak perlu menggantinya.
@@ -61,20 +61,41 @@ Pada halaman utama, klik Cetak Produksi > Kelola font.
 Tombol yang sama ada di bagian atas pembuat lembar dan riwayat lembar.
 Panel font tetap dapat dibuka meskipun kedua font sudah tersimpan.
 Di atas pratinjau kertas, Font pada lembar ini menunjukkan nama font yang
-benar-benar dipakai. Nama tanpa NIP: Arial Regular (lokal asli). Nama dengan
+benar-benar dipakai. Nama tanpa NIP: Arial Bold (lokal asli). Nama dengan
 NIP dan baris NIP/jabatan: Swis721 BT Regular (lokal asli).
 Jika arsip lama menunjukkan Arimo/Nimbus/DejaVu, buat lembar BARU dari
 pesanan untuk menggunakan font asli terbaru. Label arsip tidak dipalsukan.
 
+UKURAN DAN KETEBALAN TERBARU
+- Nama tanpa NIP: Arial Bold asli, tepat 28 pt = 9,8777777778 mm.
+- Nama dengan NIP: Swis721 BT Regular 7,3812 mm, tidak diubah.
+- NIP/jabatan: Swis721 BT Regular 4,5861 mm, tidak diubah.
+- Batas nama tanpa logo 73 mm, dengan logo 55 mm. Hanya yang melampaui
+  batas dipadatkan mendatar; yang di bawah batas tidak diperbesar.
+- Spasi tambahan 2,734 mm untuk nama satu kata di bawah 8 huruf tetap berlaku.
+- Ukuran nama tanpa NIP sekarang tampil dalam pt pada panel Ukuran tulisan.
+- Pengaturan versi sebelumnya otomatis memakai 28 pt saat membuat lembar baru.
+- Riwayat v13.8.6–v13.8.9 tetap memakai Arial Regular dan ukuran tersimpannya.
+  Arial Regular lama dipertahankan secara terpisah untuk membuka arsip itu.
+
+JIKA FILE ARIAL BOLD TIDAK TERLIHAT
+Coba tombol Deteksi font yang terpasang terlebih dahulu.
+Jika harus memilih file: klik Pilih file pada Arial Bold, lalu masukkan
+C:\Windows\Fonts\arialbd.ttf pada kolom Nama file dan klik Buka.
+Gunakan arialbd.ttf (Bold), bukan arial.ttf (Regular) atau arialbi.ttf
+(Bold Italic). Jika Windows berada di lokasi lain, sesuaikan lokasinya.
+Swis721 BT yang sudah tersimpan tetap dipakai dan tidak perlu dipilih ulang.
+
 HUBUNGKAN FONT SEKALI PADA SETIAP PC PRODUKSI
-1. Pastikan Arial Regular dan Swis721 BT Regular asli yang kamu miliki
+1. Pastikan Arial Bold dan Swis721 BT Regular asli yang kamu miliki
    tersedia di PC (font yang dipakai di Corel).
 2. Buka COBA-CETAK.html lewat alamat situs: alamat-situs/COBA-CETAK.html.
    Bisa juga centang pesanan produksi > Buat lembar cetak.
 3. Bila muncul Hubungkan font Corel asli, klik Deteksi font yang terpasang
    dan izinkan akses font lokal jika browser meminta.
-4. Jika deteksi tidak tersedia/ditolak, pilih file .ttf Arial Regular dan
-   Swis721 BT Regular lewat dua kolom yang disediakan. Bukan Bold/Italic,
+4. Jika deteksi tidak tersedia/ditolak, pilih file .ttf Arial Bold dan
+   Swis721 BT Regular lewat dua kolom yang disediakan. Arial wajib Bold;
+   Swis721 BT wajib Regular/Roman. Jangan pilih Italic,
    bukan file .cdr, .otf, atau koleksi .ttc.
 5. Pastikan status kedua font siap lalu klik Lanjut cetak.
 6. Status tersimpan lokal berarti font dapat dipulihkan pada sesi berikutnya.
@@ -101,7 +122,7 @@ tersedia dalam pemeriksaan paket ini, jadi kecocokan akhir harus diuji di PC.
 RIWAYAT DAN FILE CONTOH LAMA
 PDF/PNG/SVG yang dipulihkan berasal dari v13.8.2–v13.8.5 dan menggunakan
 font/geometri versi lama. Baca CONTOH-LAMA.txt. Itu arsip referensi, bukan
-contoh hasil font asli v13.8.9. Untuk contoh terbaru, unduh dari COBA-CETAK.html
+contoh hasil font asli v13.8.10. Untuk contoh terbaru, unduh dari COBA-CETAK.html
 sesudah menghubungkan font asli. Job lama tetap memakai profil mesin lamanya.
 Riwayat job font asli memerlukan font lokal sebelum ditampilkan/diunduh ulang.
 
@@ -119,5 +140,5 @@ Simpan backup sebelum pindah PC, tetapi hubungkan font sendiri pada PC tujuan.
 
 VERIFIKASI PAKET
 Jalankan node tests/run-tests.cjs dan node tests/local-font-tests.cjs (Node 18+).
-Laporan hasil berada di tests/HASIL-UJI-V13.8.9.txt.
+Laporan hasil berada di tests/HASIL-UJI-V13.8.10.txt.
 Pengujian memakai simulasi, tanpa mengubah data pusat atau deployment aktif.

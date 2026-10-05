@@ -1,4 +1,4 @@
-NAMETAGFLOW V13.8.9 - LOGO, PDF, DAN CORELDRAW
+NAMETAGFLOW V13.8.10 - LOGO, PDF, DAN CORELDRAW
 
 CETAK LOGO
 - Gunakan PNG atau JPG maksimal 5 MB. PNG transparan didukung.
@@ -38,7 +38,7 @@ YANG BISA DIEDIT
   Untuk mengubah ejaan, paling mudah edit pesanan lalu buat PDF baru.
 - Logo PNG/JPG tetap bitmap, bukan otomatis berubah menjadi logo vektor.
   Membesarkan logo melebihi resolusi aslinya dapat mengurangi ketajaman.
-- Job baru memakai Arial Regular asli untuk nama tanpa NIP dan Swis721 BT
+- Job baru memakai Arial Bold asli untuk nama tanpa NIP dan Swis721 BT
   Regular asli untuk nama dengan NIP serta baris NIP/jabatan.
 - Font dihubungkan dari PC dan disimpan lokal bila penyimpanan berhasil.
   PDF berupa kurva sehingga pembukaan PDF yang sudah dihasilkan tidak
