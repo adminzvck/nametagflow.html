@@ -1,21 +1,24 @@
-# NametagFlow v13.8.10
+# NametagFlow v13.8.11 - proporsi tulisan Corel
 
-Paket lengkap: nama tanpa NIP memakai **Arial Bold asli tepat 28 pt**.
-Baca **00-BACA-DULU.txt** untuk pemasangan dan **PETUNJUK.txt** untuk rinciannya.
+Nama tanpa NIP memakai Arial Bold asli 28 pt dengan lebar awal **70%**.
+Pengaturan ini mengikuti proporsi mendatar yang paling umum pada referensi
+15 SEPTEMBER 02.cdr: rasio lebar/tinggi sekitar 0,69913.
 
-- Upload seluruh isi folder ke lokasi `index.html` lama di GitHub.
-- Tunggu GitHub Pages selesai, lalu Ctrl+Shift+R dan periksa versi V13.8.10.
-- Buka Cetak Produksi → Kelola font → Deteksi font yang terpasang.
-- Manual di Windows: pilih `C:\Windows\Fonts\arialbd.ttf` untuk Arial Bold.
-- Buat lembar cetak baru; panel font menampilkan Arial Bold (lokal asli) · 28 pt.
-- Batas 73/55 mm adalah maksimum. Nama pendek tidak dibesarkan ke batas itu.
-- Nama dengan NIP dan baris NIP tetap memakai Swis721 BT Regular.
-- Riwayat v13.8.6–v13.8.9 tetap menggunakan Arial Regular tersimpan secara terpisah.
-- Backend tetap v13.8.6, identik dengan paket sebelumnya; Apps Script tidak perlu diubah.
+Baca **00-BACA-DULU.txt** untuk pemasangan dan **PERUBAHAN-V13.8.11.txt** untuk rincian.
 
-Semua file paket sebelumnya dipertahankan. Font proprietary tidak disertakan.
-PDF/PNG/SVG lama adalah arsip; baca CONTOH-LAMA.txt. Uji hasil terbaru pada
-PC produksi melalui COBA-CETAK.html dan gunakan skala cetak 100% / Actual size.
+- Upload seluruh isi folder aplikasi ke lokasi index.html lama di GitHub.
+- Setelah penerbitan selesai, Ctrl+Shift+R dan pastikan versi V13.8.11.
+- Buat lembar cetak **baru**. PDF dan riwayat lama tidak berubah.
+- Cetak Produksi > Ukuran tulisan > Lebar nama tanpa NIP: 70% (dapat diatur 40-100%).
+- Font tetap Arial Bold (arialbd.ttf); tidak perlu mengganti ke Arial Regular.
+- Nama dengan NIP dan baris NIP tetap memakai pengaturan sebelumnya.
+- Backend tetap v13.8.6. Apps Script tidak perlu diperbarui untuk revisi ini.
+- Font proprietary tidak dibundel. Font dibaca dari PC produksi.
 
-Verifikasi: `node tests/run-tests.cjs` dan `node tests/local-font-tests.cjs`.
-Hasil: 103 pengujian lulus; rincian dan batas verifikasi dalam tests/HASIL-UJI-V13.8.10.txt.
+**Perbandingan-Sebelum-Sesudah.pdf** memuat contoh nama yang sama pada kedua profil.
+Contoh baru ini memakai outline Arial Bold yang tertanam dalam referensi CDR,
+tanpa membundel file font. Pengukuran kerning contoh Node dapat sedikit berbeda
+dari browser produksi. PDF/PNG/SVG versi sebelumnya tetap merupakan arsip.
+
+Verifikasi: `node tests/run-tests.cjs` (93/93) dan
+`node tests/local-font-tests.cjs` (16/16). Lihat tests/HASIL-UJI-V13.8.11.txt.

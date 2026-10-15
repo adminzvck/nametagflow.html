@@ -1,0 +1,21 @@
+HASIL UJI NAMETAGFLOW V13.8.11
+15 Oktober 2026
+
+node tests/run-tests.cjs: 93/93 PASS
+node tests/local-font-tests.cjs: 16/16 PASS
+Total: 109/109 PASS
+
+Pemeriksaan tambahan:
+- Skala nama tanpa NIP 70%, tinggi Arial Bold tetap 28 pt.
+- Nama pendek, spasi eksplisit, dan spasi otomatis mengikuti skala mendatar.
+- Nama panjang tetap dibatasi 73 mm / 55 mm.
+- Enam model dengan NIP menghasilkan bentuk identik dengan v13.8.10.
+- Preferensi lama berpindah ke profil baru tanpa mengubah objek asal.
+- Pilihan persentase baru tersimpan dan bertahan setelah membuka Kelola font.
+- 80 kombinasi profil/model lama cocok dengan hash bentuk mesin asli.
+- Contoh vektor memakai parser produksi dan Arial Bold tertanam dalam CDR.
+- PDF contoh dirender dan diperiksa secara visual.
+
+Tes otomatis memakai simulasi DOM, font sintetis dan outline pengganti seperti
+suite sebelumnya. Contoh PDF tambahan memakai outline Arial Bold dari CDR.
+Belum diuji pada browser/font/driver printer PC produksi.

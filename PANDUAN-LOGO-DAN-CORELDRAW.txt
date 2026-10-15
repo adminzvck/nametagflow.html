@@ -1,4 +1,11 @@
-NAMETAGFLOW V13.8.10 - LOGO, PDF, DAN CORELDRAW
+PEMBARUAN V13.8.11 - LEBAR NAMA TANPA NIP
+Arial Bold tetap 28 pt; lebar awal nama tanpa NIP sekarang 70%.
+Lebar dapat diatur 40-100% melalui Ukuran tulisan. Pengaturan hanya berlaku
+pada lembar baru. Riwayat v13.8.10 tetap 100%, sesuai profil saat dibuat.
+Batas 73/55 mm tetap berlaku; nama sangat panjang dapat tetap sama lebarnya.
+Baca 00-BACA-DULU.txt dan Perbandingan-Sebelum-Sesudah.pdf.
+
+NAMETAGFLOW V13.8.11 - LOGO, PDF, DAN CORELDRAW
 
 CETAK LOGO
 - Gunakan PNG atau JPG maksimal 5 MB. PNG transparan didukung.

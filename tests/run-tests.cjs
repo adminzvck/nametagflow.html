@@ -10,7 +10,7 @@ const state=rows=>({snapshot:snapshot(rows),pending:[]});
 const upsert=o=>({kind:'upsert',id:o.id,expectedRevision:o.revision,opId:C.uid(),data:C.fields(o)});
 const ack=(op,o)=>({committed:true,opId:op.opId,id:op.id,kind:op.kind,order:{...o,revision:C.uid('rev-')}});
 const cases=[];function test(name,fn){cases.push([name,fn]);}
-test('All browser print modules carry the same v13.8.10 build number',()=>{assert.equal(C.WEB_BUILD,'13.8.10');assert.equal(PF.version,C.WEB_BUILD);assert.equal(LFModule.BUILD,C.WEB_BUILD);assert.equal(P.BUILD,C.WEB_BUILD);});
+test('All browser print modules carry the same v13.8.11 build number',()=>{assert.equal(C.WEB_BUILD,'13.8.11');assert.equal(PF.version,C.WEB_BUILD);assert.equal(LFModule.BUILD,C.WEB_BUILD);assert.equal(P.BUILD,C.WEB_BUILD);});
 function printing(){const o={...order(),currentStep:1},j=P.createJob([o]);j.downloadedAt=j.createdAt;const s={...state([o]),printJobs:[j]};return{o,j,s};}
 function backend(){
  const tables=new Map();let crashFlush=0,flushes=0;
@@ -49,7 +49,7 @@ test('Reference border, NIP and divider strokes match measured CDR geometry',()=
 test('Reference logo boxes are smaller and remain inside the reserved logo column',()=>{for(const i of [2,3,4,7,8,9]){const o={...order(),model:models[i],logo:'DEMO'},a=P.artwork(o,{}, {[P.logoKey(o)]:fixtureLogo()}),image=a.shapes.find(x=>x.type==='image');assert(image.w<=12.4+.001);assert(image.h<=14.2+.001);assert(image.x+image.w<20);}});
 test('Legacy v13.6 jobs retain the old font and geometry when redownloaded',()=>{const old=P.LEGACY_DEFAULTS,o={...order(),model:models[1]},a=P.artwork(o,old,{},false,'13.6.0');assert.equal(a.font,'DejaVu Sans Bold');assert.equal(a.shapes.find(x=>x.type==='line').line,.3);assert.equal(P.plan(Array.from({length:25},(_,i)=>order('L-'+i)),old,{},false,'13.6.0').grid.capacity,24);});
 test('Saved v13.7 jobs retain Arimo Bold and v13.7 border geometry',()=>{const o={...order(),model:models[0]},a=P.artwork(o,P.V13_7_DEFAULTS,{},false,'13.7.0');assert.equal(a.font,'Arial-compatible Bold (Arimo)');assert.equal(a.shapes[0].line,.35);assert.equal(a.nameSpacing,0);});
-test('Old saved print settings migrate to the v13.8 Corel reference defaults for new jobs',()=>{const oldSaved={...P.V13_7_DEFAULTS};delete oldSaved.designVersion;const migrated=P.currentSettings(oldSaved);assert.equal(migrated.layoutMode,'corel29');assert.equal(migrated.condense,1);assert.equal(migrated.shortSpacing,2.734);assert.equal(migrated.nameHeight,28*25.4/72);assert.equal(migrated.nameNipHeight,7.3812);assert.equal(migrated.nipHeight,4.5861);assert.equal(migrated.designVersion,'13.8.10');});
+test('Old saved print settings migrate to the v13.8 Corel reference defaults for new jobs',()=>{const oldSaved={...P.V13_7_DEFAULTS};delete oldSaved.designVersion;const migrated=P.currentSettings(oldSaved);assert.equal(migrated.layoutMode,'corel29');assert.equal(migrated.condense,1);assert.equal(migrated.shortSpacing,2.734);assert.equal(migrated.nameHeight,28*25.4/72);assert.equal(migrated.nameNipHeight,7.3812);assert.equal(migrated.nipHeight,4.5861);assert.equal(migrated.designVersion,'13.8.11');});
 test('Missing logo and unsupported font glyph block production PDF',()=>{assert.throws(()=>P.createJob([{...order(),model:models[2]}]),/belum diunggah/);assert.throws(()=>P.artwork({...order(),name:'测试'}),/belum didukung/);});
 test('Gemini prompt prioritizes newest chat name, capitalization exceptions and Model 1 default',()=>{const prompt=C.bulkPrompt(snapshot([]).settings);assert.match(prompt,/nama di Catatan Pesanan.*chat.*lebih baru/i);assert.match(prompt,/huruf kecil semua.*HURUF KAPITAL/i);assert.match(prompt,/jangan diubah/i);assert.match(prompt,/HANYA mengirim nama.*Model 1/i);assert.match(prompt,/Model 10 = POLOS/i);assert(prompt.includes('NP\tNama\tNIP\tModel\tPengait\tLogo\tResi\tSKU\tCatatan'));});
 test('Optional SKU, leading zero identifiers and identical names survive import',()=>{const r=C.parseBulk('NP\tNama\tNIP\tModel\tPengait\tSKU\n0000123456789123456789\tADI\t00198912022024210023\t2\tM\tNEW\n0000123456789123456789\tADI\t00198912022024210023\t2\tM\tNEW',snapshot([]));assert.equal(r.rows.length,2);assert.equal(r.duplicateCount,1);assert.equal(r.rows[0].errors.length,0);assert.equal(r.rows[0].data.nip,'00198912022024210023');assert.equal(r.rows[0].data.mp,'0000123456789123456789');assert.equal(r.rows[0].data.sku,'NEW');});
@@ -143,4 +143,47 @@ test('Bold names preserve 28 pt height and only compress above either width cap'
 test('Old saved settings migrate to 28 pt only for new jobs; old records stay Regular',()=>{const old={...P.V13_8_6_DEFAULTS,tagWidth:81},before=JSON.stringify(old),fresh=P.currentSettings(old);assert.equal(fresh.nameHeight,28*25.4/72);assert.equal(fresh.tagWidth,81);assert.equal(JSON.stringify(old),before);for(const engine of ['13.8.6','13.8.7','13.8.8','13.8.9']){assert.equal(P.artwork(order(),{}, {},false,engine).font,'Arial Regular (lokal asli)');assert.equal(P.settings({},engine).nameHeight,9.8414);}});
 test('Builder displays 28 pt and saves the correct millimetre geometry',async()=>{const h=printUIHarness([{...order(),currentStep:1}],{});await h.open();assert.equal(Number(h.e('pc_nameHeight').value),28);assert.match(h.e('pcFontsUsed').innerHTML,/Arial Bold.*28 pt/);h.e('pcReviewed').checked=true;await h.e('pcExport').onclick();assert(h.saved());assert(Math.abs(h.saved().settings.nameHeight*72/25.4-28)<1e-8);});
 test('Archived font setup requests Regular while new setup requests Bold',async()=>{const fonts={...global.NFLocalFonts,status:()=>({ready:false}),restore:async()=>{},detect:async()=>{}},o={...order(),currentStep:1},h=printUIHarness([o],{},fonts);await h.open();assert.match(h.html(),/Arial Bold/);assert.match(h.html(),/arialbd\.ttf/);assert.doesNotMatch(h.html(),/Jangan pilih Bold/);h.s.printJobs=[{...P.createJob([o]),id:'OLD',engine:'13.8.9',settings:P.V13_8_6_DEFAULTS}];await h.ctx.NFPrintUI.showJob('OLD');assert.match(h.html(),/Arial Regular/);assert.doesNotMatch(h.html(),/Arial Bold/);});
+
+// CDR width calibration and backward-compatibility regressions.
+test('New sheets use 70 percent name width while preserving the real 28 pt height',()=>{
+ for(const model of [models[0],models[2],models[5],models[7]])for(const name of ['JAMARUDIN.','UMURIDAH','AMING','A M I N G']){
+  const o={...order(),name,model},assets={[P.logoKey(o)]:{omit:true}},old=P.artwork(o,{},assets,false,'13.8.10'),now=P.artwork(o,{},assets);
+  assert.equal(now.nameWidthScale,.7);assert.equal(now.nameSizePt,28);
+  if(old.nameCompression===1){assert(Math.abs(now.nameWidth/old.nameWidth-.7)<1e-9);assert(Math.abs(now.nameSpacing-old.nameSpacing*.7)<1e-9);}
+  assert.equal(now.shapes.find(x=>x.type==='path').sy,old.shapes.find(x=>x.type==='path').sy);
+ }
+});
+test('Long names still respect both physical width caps after Corel calibration',()=>{
+ for(const model of [models[0],models[2],models[5],models[7]]){
+  const o={...order(),model,name:'MUHAMMAD NAMA YANG SANGAT PANJANG SEKALI UNTUK NAMETAG'},cap=C.modelLayout(model).logo?55:73,a=P.artwork(o,{}, {[P.logoKey(o)]:{omit:true}});
+  assert(Math.abs(a.nameWidth-cap)<1e-8);assert.equal(a.nameSizePt,28);assert(a.nameCompression<1);
+ }
+});
+test('The six NIP models keep all original artwork and line geometry',()=>{
+ for(const model of models.filter(x=>C.modelLayout(x).nip)){
+  const o={...order(),model},assets={[P.logoKey(o)]:{omit:true}},old=P.artwork(o,{},assets,false,'13.8.10'),now=P.artwork(o,{},assets);
+  assert.deepEqual(now.shapes,old.shapes);assert.equal(now.nameWidth,old.nameWidth);assert.equal(now.nameWidthScale,1);
+ }
+});
+test('Old preferences migrate once; a chosen new width survives later opening',()=>{
+ const old=P.settings({tagWidth:81},'13.8.10'),before=JSON.stringify(old),fresh=P.currentSettings(old);
+ assert.equal(old.nameWidthScale,1);assert.equal(fresh.nameWidthScale,.7);assert.equal(fresh.tagWidth,81);assert.equal(JSON.stringify(old),before);
+ assert.equal(P.currentSettings({...fresh,nameWidthScale:.65}).nameWidthScale,.65);
+ assert.throws(()=>P.settings({nameWidthScale:.39}),/40–100/);assert.throws(()=>P.settings({nameWidthScale:1.01}),/40–100/);
+});
+test('Width percentage is visible, saved and restored after opening the font manager',async()=>{
+ const h=printUIHarness([{...order(),currentStep:1}],{}, {...global.NFLocalFonts,restore:async()=>{}});await h.open();
+ assert.equal(Number(h.e('pc_nameWidthScale').value),70);assert.match(h.e('pcFontsUsed').innerHTML,/lebar 70%/);
+ h.e('pc_nameWidthScale').value=65;await h.e('pcManageFonts').onclick();await h.e('pcFontContinue').onclick();
+ assert.equal(Number(h.e('pc_nameWidthScale').value),65);h.e('pcReviewed').checked=true;await h.e('pcExport').onclick();
+ assert.equal(h.saved().settings.nameWidthScale,.65);assert.equal(h.saved().engine,'13.8.11');
+});
+test('Historical artwork matches saved v13.8.10 reference hashes for every supported profile',()=>{
+ const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/legacy-geometry-v13.8.10.json'),'utf8'));
+ for(const row of fixture){const o={...order(),name:row.name,model:models[row.model-1]},a=P.artwork(o,{}, {[P.logoKey(o)]:{omit:true}},false,row.engine);
+  const digest=crypto.createHash('sha256').update(JSON.stringify({shapes:a.shapes,font:a.font,nipFont:a.nipFont,nameWidth:a.nameWidth,nameSpacing:a.nameSpacing})).digest('hex');
+  assert.equal(digest,row.sha256,row.engine+' model '+row.model);
+ }
+});
+
 (async()=>{let passed=0;for(const [name,fn] of cases){try{await fn();passed++;console.log('PASS '+name);}catch(e){console.error('FAIL '+name+'\n'+e.stack);process.exitCode=1;}}console.log(`${passed}/${cases.length} tests passed. No network or live data used.`);})();

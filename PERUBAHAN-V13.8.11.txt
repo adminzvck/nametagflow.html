@@ -1,0 +1,26 @@
+NAMETAGFLOW V13.8.11 - 15 OKTOBER 2026
+
+1. Diagnosis dari data objek CDR (bukan hanya thumbnail):
+   Banyak nama memakai matriks horizontal 0,7017159565 dan vertikal
+   1,0036965243. Rasio keduanya 0,6991315995, atau sekitar 70%.
+   Beberapa nama disesuaikan manual sekitar 50-75%.
+   Ukuran asli 98414 satuan CDR dikalikan transformasi vertikal mendekati 28 pt.
+   Karena itu font tetap Arial Bold 28 pt; tidak diganti ke Regular.
+2. Pengaturan baru nameWidthScale=0.7 hanya untuk nama tanpa NIP.
+   Spasi tambahan nama pendek mengikuti skala mendatar yang sama.
+3. UI menampilkan Lebar nama tanpa NIP (%) dengan rentang 40-100%.
+   Ringkasan font menampilkan skala yang benar-benar dipakai.
+4. Batas lebar 73/55 mm, posisi tengah, tinggi font, dan enam model NIP tetap.
+5. Preferensi lama mendapat profil baru saat membuat lembar baru.
+   Pengaturan persentase yang sudah dipilih pada versi ini dipertahankan.
+6. Profil dan bentuk lama v13.6-v13.8.10 dipertahankan. Pengujian membandingkan
+   80 kombinasi profil/model dengan hash bentuk dari mesin asli v13.8.10.
+7. Script contoh make-user-preview.cjs diperbaiki agar memakai slot Arial Bold
+   yang sesuai dengan versi aplikasi.
+8. File backend/Code.gs dan appsscript.json sama persis dengan paket asli.
+9. Total 109 pengujian lulus. Contoh sebelum/sesudah memakai outline Arial Bold
+   dari font tertanam dalam CDR, hanya sebagai kurva pada PDF. Font tidak dibundel.
+
+Batas verifikasi: tidak ada uji printer atau CorelDRAW pada PC produksi.
+Tidak ada akses atau perubahan data pusat/GitHub/deployment aktif.
+Perbandingan Node tidak melakukan pengukuran kerning melalui canvas browser.

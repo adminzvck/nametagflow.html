@@ -1,29 +1,34 @@
-NAMETAGFLOW V13.8.10 — ARIAL BOLD 28 PT
+NAMETAGFLOW V13.8.11 - PROPORSI TULISAN MENGIKUTI COREL
 
-1. Simpan Backup & draf dari aplikasi lama, lalu ekstrak ZIP ini.
-2. Upload SEMUA ISI folder hasil ekstrak ke folder index.html lama di GitHub.
-   Upload isi folder, bukan file ZIP. Pertahankan vendor, licenses, tests,
-   dan backend. File lama lain di GitHub tidak perlu dihapus.
-3. Commit changes. Tunggu GitHub Pages selesai, lalu tekan Ctrl+Shift+R.
-   Pastikan sidebar menunjukkan V13.8.10.
-4. Buka Cetak Produksi > Kelola font > Deteksi font yang terpasang.
-   Izinkan akses font jika diminta. Pastikan Arial Bold siap.
-5. Jika perlu memilih manual: pada kolom Arial Bold, klik Pilih file.
-   Masukkan C:\Windows\Fonts\arialbd.ttf pada kolom Nama file > Buka.
-   Swis721 BT tetap Regular/Roman. Yang sudah tersimpan tidak perlu dipilih ulang.
-6. Buat lembar cetak BARU dari pesanan. Panel Font pada lembar ini harus
-   menampilkan Arial Bold (lokal asli) · 28 pt untuk nama tanpa NIP.
-7. Cetak PDF dengan Actual size / 100%.
+PENYEBAB PERBEDAAN
+Versi 13.8.10 memakai lebar normal (100%) untuk nama yang masih muat.
+Pada referensi CDR, banyak objek nama memakai lebar sekitar 70% dengan tinggi
+hampir tetap. Nama pendek dari aplikasi karena itu tampak lebih lebar/tebal.
+Revisi ini mempertahankan Arial Bold 28 pt dan mengatur lebar awal menjadi 70%.
 
-Nama tanpa NIP sekarang Arial Bold tepat 28 pt. Nama dengan NIP dan baris NIP
-mempertahankan Swis721 BT Regular. Batas 7,3 cm tanpa logo / 5,5 cm dengan logo
-hanya mengecilkan lebar tulisan yang melebihi batas. Nama lebih pendek tidak
-DIPERBESAR agar memenuhi batas. Spasi nama pendek yang sudah ada tetap berlaku.
+CARA MEMASANG
+1. Simpan Backup & draf serta Backup cetak dari aplikasi yang dipakai sekarang.
+2. Buka folder aplikasi NametagFlow-v13.8.11-LENGKAP dalam ZIP.
+3. Upload SEMUA ISI folder aplikasi tersebut ke folder index.html lama di GitHub.
+   Jangan upload ZIP atau folder pembungkusnya sebagai satu file.
+   Pertahankan folder vendor, licenses, tests, dan backend.
+4. Tunggu penerbitan selesai, lalu Ctrl+Shift+R. Pastikan versi V13.8.11.
+5. Buat lembar cetak BARU. Panel font menampilkan Arial Bold 28 pt, lebar 70%.
+6. Jika perlu, atur Cetak Produksi > Ukuran tulisan > Lebar nama tanpa NIP.
+   Rentang 40-100%. Angka 100% mengembalikan proporsi nama versi 13.8.10.
+7. Cetak PDF dengan Actual size / 100% dan ukur satu hasil uji.
 
-Riwayat lama tidak otomatis berubah Bold. Buat lembar BARU untuk hasil baru.
-Arial Regular yang tersimpan dipertahankan untuk riwayat v13.8.6–v13.8.9.
+Arial Bold dan Swis721 BT yang sudah tersimpan tetap digunakan.
+Jika font belum siap, buka Kelola font. Arial Bold: C:\Windows\Fonts\arialbd.ttf.
+Nama dengan NIP, baris NIP, ukuran nametag, susunan halaman, dan backend tidak
+berubah. Apps Script tidak perlu diperbarui untuk revisi ini.
 
-Apps Script tidak perlu diubah untuk pembaruan font ini.
-Semua file paket v13.8.9 tetap disertakan. Font asli tidak termasuk ZIP,
-tidak diunggah ke GitHub, dan dibaca dari PC melalui menu Kelola font.
-Rincian: PETUNJUK.txt. Contoh PDF/PNG/SVG lama adalah arsip, bukan contoh Bold baru.
+Riwayat PDF lama dipertahankan dengan profil aslinya. Mengunduh ulang lembar
+lama tidak mengubah lebarnya menjadi 70%; buat lembar baru dari pesanan.
+
+Batas nama tetap 73 mm tanpa logo / 55 mm dengan logo. Nama yang sangat panjang
+bisa tetap mempunyai lebar yang sama karena sudah mencapai batas tersebut.
+Referensi memiliki beberapa penyesuaian manual per nama, sehingga profil 70%
+merupakan acuan umum, bukan klaim semua objek CDR identik satu per satu.
+
+Buka Perbandingan-Sebelum-Sesudah.pdf untuk melihat perbedaannya.

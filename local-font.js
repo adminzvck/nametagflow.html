@@ -1,7 +1,7 @@
 /* Local licensed-font bridge for NametagFlow. Font bytes stay on this device and are never uploaded. */
 (function(root){
 'use strict';
-var BUILD='13.8.10', loaded={arial:null,arialBold:null,swis:null}, sources={arial:'',arialBold:'',swis:''}, restored=false, restoring=null;
+var BUILD='13.8.11', loaded={arial:null,arialBold:null,swis:null}, sources={arial:'',arialBold:'',swis:''}, restored=false, restoring=null;
 var LABELS={arial:'Arial Regular',arialBold:'Arial Bold',swis:'Swis721 BT Regular'};
 function arialKey(engine){var v=String(engine||BUILD).split('.').map(Number);return v[0]>13||(v[0]===13&&(v[1]>8||(v[1]===8&&v[2]>=10)))?'arialBold':'arial';}
 var DB_NAME='NametagFlowLocalFonts',DB_VERSION=1,STORE='fonts';
