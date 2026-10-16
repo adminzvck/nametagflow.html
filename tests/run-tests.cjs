@@ -2,7 +2,7 @@
 // Run with Node 18+ (no installation, no network, no production data).
 const fs=require('fs'),path=require('path'),vm=require('vm'),crypto=require('crypto'),assert=require('assert/strict');
 const root=path.resolve(__dirname,'..');global.crypto??=crypto.webcrypto;
-const C=require(root+'/core.js');const PF=require(root+'/print-font.js');const LFModule=require(root+'/local-font.js');function emFont(src,name,ratio){const glyphs={};for(const [ch,g] of Object.entries(src.glyphs))glyphs[ch]={...g,a:g.a*ratio,b:g.b.map(v=>v*ratio),d:g.d.replace(/-?\d*\.?\d+(?:e[-+]?\d+)?/gi,m=>String(Number(m)*ratio))};return{name,_local:true,glyphs};}const localBold=emFont(PF.v13_7,'Arial Bold (lokal asli)',.6880118682);const localArial=emFont(PF,'Arial Regular (lokal asli)',.6880118682),localSwis=emFont(PF.swis,'Swis721 BT Regular (lokal asli)',.7172275511);global.NFLocalFonts={get:k=>k==='swis'?localSwis:k==='arialBold'?localBold:localArial,status:()=>({ready:true,arial:true,swis:true}),requireReady:()=>true,prepare:()=>({ready:true}),charsFromOrders:()=>''};const P=require(root+'/print-engine.js');global.PDFLib=require(root+'/vendor/pdf-lib.min.js');
+const C=require(root+'/core.js');const PF=require(root+'/print-font.js');const LFModule=require(root+'/local-font.js');function emFont(src,name,ratio){const glyphs={};for(const [ch,g] of Object.entries(src.glyphs))glyphs[ch]={...g,a:g.a*ratio,b:g.b.map(v=>v*ratio),d:g.d.replace(/-?\d*\.?\d+(?:e[-+]?\d+)?/gi,m=>String(Number(m)*ratio))};return{name,_local:true,glyphs};}const localBold=emFont(PF.v13_7,'Arial Bold (lokal asli)',.6880118682);const localArial=emFont(PF,'Arial Regular (lokal asli)',.6880118682),localSwis=emFont(PF.swis,'Swis721 BT Regular (lokal asli)',.7172275511);const localSwisBold={...localSwis,name:'Swis721 BT Bold (lokal asli)'};global.NFLocalFonts={get:k=>k==='swisBold'?localSwisBold:k==='swis'?localSwis:k==='arialBold'?localBold:localArial,status:()=>({ready:true,arial:true,swis:true}),requireReady:()=>true,prepare:()=>({ready:true}),charsFromOrders:()=>''};const P=require(root+'/print-engine.js');global.PDFLib=require(root+'/vendor/pdf-lib.min.js');
 const clone=structuredClone,models=['Lis + Nama','Lis + Nama + NIP','Lis + Logo + Nama','Lis + Logo + Nama + NIP','Lis + Logo + Nama + Line + NIP','Polos + Nama','Polos + Nama + NIP','Polos + Logo + Nama','Polos + Logo + Nama + NIP','Polos + Logo + Nama + Line + NIP'].map((s,i)=>`Model ${i+1} (${s})`);
 const order=(id='NT-TEST')=>({id,revision:'rev0',name:'SUPRIYADI',nip:'00198912022024210023',model:models[0],mp:'000123456789123456789',hook:'Magnet',logo:'',resi:'',sku:'',notes:'',currentStep:6,printCount:1,isReject:false,rejectReason:'',createdAt:'2026-09-29T05:00:00.000Z',productionDate:''});
 const snapshot=rows=>({orders:rows,archives:[],recycle:[],settings:{models,hooks:['Magnet','Peniti'],skus:[]}});
@@ -10,7 +10,7 @@ const state=rows=>({snapshot:snapshot(rows),pending:[]});
 const upsert=o=>({kind:'upsert',id:o.id,expectedRevision:o.revision,opId:C.uid(),data:C.fields(o)});
 const ack=(op,o)=>({committed:true,opId:op.opId,id:op.id,kind:op.kind,order:{...o,revision:C.uid('rev-')}});
 const cases=[];function test(name,fn){cases.push([name,fn]);}
-test('All browser print modules carry the same v13.8.11 build number',()=>{assert.equal(C.WEB_BUILD,'13.8.11');assert.equal(PF.version,C.WEB_BUILD);assert.equal(LFModule.BUILD,C.WEB_BUILD);assert.equal(P.BUILD,C.WEB_BUILD);});
+test('All browser print modules carry the same v13.8.12 build number',()=>{assert.equal(C.WEB_BUILD,'13.8.12');assert.equal(PF.version,C.WEB_BUILD);assert.equal(LFModule.BUILD,C.WEB_BUILD);assert.equal(P.BUILD,C.WEB_BUILD);});
 function printing(){const o={...order(),currentStep:1},j=P.createJob([o]);j.downloadedAt=j.createdAt;const s={...state([o]),printJobs:[j]};return{o,j,s};}
 function backend(){
  const tables=new Map();let crashFlush=0,flushes=0;
@@ -29,7 +29,7 @@ function backend(){
  function mutate(op,role='operator'){return ctx.nfMutate_(op,role,'TESTER');}
  function batch(ops,role='operator'){return ctx.nfMutateBatch_(ops.map(operation=>({operation,operator:'TESTER'})),role);}
  function reprint(o){return{kind:'reprint',id:o.id,opId:C.uid(),expectedRevision:o.revision,reason:'Kotor / bernoda',productionDate:'2026-09-30',data:C.fields(o)};}
- return{ctx,tables,active,archives,seed,seedArchive,mutate,batch,reprint,crashAfter:n=>{crashFlush=flushes+n;}};
+ return{ctx,tables,active,archives,seed,seedArchive,mutate,batch,reprint,stats:()=>({flushes}),crashAfter:n=>{crashFlush=flushes+n;}};
 }
 
 test('Legacy pending form saved after acknowledgment becomes ready',()=>{const o=order(),s=state([o]);C.queueOperations(s,[upsert(o)],'Test');const first=s.pending[0].operation,captured=C.overlay(s.snapshot,s.pending)[0];C.applyAcknowledgment(s,first,ack(first,{...o,...first.data}));C.queueOperations(s,[{...upsert(captured),data:{...C.fields(captured),name:'UPDATED'}}],'Test');assert.equal(C.readyOperations(s.pending).length,1);assert.equal(s.pending[0].operation.expectedRevision,s.snapshot.orders[0].revision);});
@@ -43,13 +43,13 @@ test('Corel layout fits 29 tags and paginates the 30th; PDF keeps actual paper s
 
 test('Archived Regular typography retains its prior metrics and short-name tracking',()=>{const sup=P.artwork({...order(),name:'SUPRIYADI'}, {}, {},false,'13.8.9'),short=P.artwork({...order(),name:'SAHREL',model:models[5]}, {}, {},false,'13.8.9'),spaced=P.artwork({...order(),name:'S A H R E L',model:models[5]}, {}, {},false,'13.8.9');assert.equal(sup.font,'Arial Regular (lokal asli)');assert(sup.nameWidth>51&&sup.nameWidth<53);assert(short.nameWidth>51&&short.nameWidth<54);assert.equal(short.nameSpacing,2.734);assert.equal(spaced.nameSpacing,0);});
 test('v13.8.5 archive still uses bundled substitute while v13.8.6 new jobs use local original fonts',()=>{const o=order(),old=P.artwork(o,{}, {},false,'13.8.5'),fresh=P.artwork(o,{}, {},false,'13.8.6');assert.equal(old.font,'Arial-compatible Regular (Arimo)');assert.equal(fresh.font,'Arial Regular (lokal asli)');});
-test('New names use 28 pt while NIP and historical metrics remain unchanged',()=>{assert(Math.abs(P.DEFAULTS.nameHeight-28*25.4/72)<.0001);assert(Math.abs(P.DEFAULTS.nameNipHeight-7.3812)<.0001);assert(Math.abs(P.DEFAULTS.nipHeight-4.5861)<.0001);assert(Math.abs(P.DEFAULTS.shortSpacing-2.734)<.0001);assert.equal(P.V13_8_DEFAULTS.nameHeight,6.771);});
+test('Current sizes are 28/21/13 pt while historical defaults remain unchanged',()=>{assert(Math.abs(P.DEFAULTS.nameHeight-28*25.4/72)<.0001);assert(Math.abs(P.DEFAULTS.nameNipHeight-21*25.4/72)<.0001);assert(Math.abs(P.DEFAULTS.nipHeight-13*25.4/72)<.0001);assert(Math.abs(P.DEFAULTS.shortSpacing-2.734)<.0001);assert.equal(P.V13_8_DEFAULTS.nameHeight,6.771);});
 test('Swis721 substitute keeps native horizontal metrics until it actually needs fitting',()=>{const o={...order(),name:'PATRIAH, S.Pd.I',nip:'19891202 202421 2 023',model:models[1]},a=P.artwork(o,{}, {},false,'13.8.6');assert.equal(a.font,'Swis721 BT Regular (lokal asli)');assert(a.nameCompression>.99);const paths=a.shapes.filter(x=>x.type==='path');assert(paths.length>0);assert(Math.abs(paths[0].sx-paths[0].sy)<.00001);});
 test('Reference border, NIP and divider strokes match measured CDR geometry',()=>{const bordered=P.artwork(order()),outer=bordered.shapes[0],inner=bordered.shapes[1];assert.equal(outer.line,.1);assert.equal(inner.line,.2);for(const i of [1,3,4,6,8,9]){const o={...order(),model:models[i],logo:'DEMO'},a=P.artwork(o,{}, {[P.logoKey(o)]:{omit:true}}),lines=a.shapes.filter(x=>x.type==='line');assert(lines.some(x=>x.line===.75));}});
 test('Reference logo boxes are smaller and remain inside the reserved logo column',()=>{for(const i of [2,3,4,7,8,9]){const o={...order(),model:models[i],logo:'DEMO'},a=P.artwork(o,{}, {[P.logoKey(o)]:fixtureLogo()}),image=a.shapes.find(x=>x.type==='image');assert(image.w<=12.4+.001);assert(image.h<=14.2+.001);assert(image.x+image.w<20);}});
 test('Legacy v13.6 jobs retain the old font and geometry when redownloaded',()=>{const old=P.LEGACY_DEFAULTS,o={...order(),model:models[1]},a=P.artwork(o,old,{},false,'13.6.0');assert.equal(a.font,'DejaVu Sans Bold');assert.equal(a.shapes.find(x=>x.type==='line').line,.3);assert.equal(P.plan(Array.from({length:25},(_,i)=>order('L-'+i)),old,{},false,'13.6.0').grid.capacity,24);});
 test('Saved v13.7 jobs retain Arimo Bold and v13.7 border geometry',()=>{const o={...order(),model:models[0]},a=P.artwork(o,P.V13_7_DEFAULTS,{},false,'13.7.0');assert.equal(a.font,'Arial-compatible Bold (Arimo)');assert.equal(a.shapes[0].line,.35);assert.equal(a.nameSpacing,0);});
-test('Old saved print settings migrate to the v13.8 Corel reference defaults for new jobs',()=>{const oldSaved={...P.V13_7_DEFAULTS};delete oldSaved.designVersion;const migrated=P.currentSettings(oldSaved);assert.equal(migrated.layoutMode,'corel29');assert.equal(migrated.condense,1);assert.equal(migrated.shortSpacing,2.734);assert.equal(migrated.nameHeight,28*25.4/72);assert.equal(migrated.nameNipHeight,7.3812);assert.equal(migrated.nipHeight,4.5861);assert.equal(migrated.designVersion,'13.8.11');});
+test('Old saved print settings migrate to the v13.8 Corel reference defaults for new jobs',()=>{const oldSaved={...P.V13_7_DEFAULTS};delete oldSaved.designVersion;const migrated=P.currentSettings(oldSaved);assert.equal(migrated.layoutMode,'corel29');assert.equal(migrated.condense,1);assert.equal(migrated.shortSpacing,2.734);assert.equal(migrated.nameHeight,28*25.4/72);assert.equal(migrated.nameNipHeight,21*25.4/72);assert.equal(migrated.nipHeight,13*25.4/72);assert.equal(migrated.designVersion,'13.8.12');});
 test('Missing logo and unsupported font glyph block production PDF',()=>{assert.throws(()=>P.createJob([{...order(),model:models[2]}]),/belum diunggah/);assert.throws(()=>P.artwork({...order(),name:'测试'}),/belum didukung/);});
 test('Gemini prompt prioritizes newest chat name, capitalization exceptions and Model 1 default',()=>{const prompt=C.bulkPrompt(snapshot([]).settings);assert.match(prompt,/nama di Catatan Pesanan.*chat.*lebih baru/i);assert.match(prompt,/huruf kecil semua.*HURUF KAPITAL/i);assert.match(prompt,/jangan diubah/i);assert.match(prompt,/HANYA mengirim nama.*Model 1/i);assert.match(prompt,/Model 10 = POLOS/i);assert(prompt.includes('NP\tNama\tNIP\tModel\tPengait\tLogo\tResi\tSKU\tCatatan'));});
 test('Optional SKU, leading zero identifiers and identical names survive import',()=>{const r=C.parseBulk('NP\tNama\tNIP\tModel\tPengait\tSKU\n0000123456789123456789\tADI\t00198912022024210023\t2\tM\tNEW\n0000123456789123456789\tADI\t00198912022024210023\t2\tM\tNEW',snapshot([]));assert.equal(r.rows.length,2);assert.equal(r.duplicateCount,1);assert.equal(r.rows[0].errors.length,0);assert.equal(r.rows[0].data.nip,'00198912022024210023');assert.equal(r.rows[0].data.mp,'0000123456789123456789');assert.equal(r.rows[0].data.sku,'NEW');});
@@ -87,9 +87,10 @@ function appHarness(rows,role='operator'){
  function element(id){if(elements.has(id))return elements.get(id);let html='';const e={id,value:'',textContent:'',disabled:false,open:false,className:'',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelectorAll:()=>[],showModal(){this.open=true;},close(){this.open=false;},get innerHTML(){return html;},set innerHTML(v){html=v;parse(v);}};elements.set(id,e);return e;}
  parse(fs.readFileSync(root+'/index.html','utf8'));
  const document={getElementById:id=>elements.get(id)||null,documentElement:{style:{setProperty(){}}},body:{classList:{toggle(){}}},querySelectorAll:()=>[],hidden:false};
- const ctx=vm.createContext({console,NFCore:C,NFPrint:P,NFPrintUI:{init(){},cancel(){}},document,localStorage:{getItem:()=>null,setItem(){}},sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},navigator:{onLine:true},indexedDB:{open:()=>({})},setInterval:()=>0,setTimeout:()=>0,clearTimeout(){},confirm:()=>true,FormData:class{},URL,Blob,Date});
+ const ctx=vm.createContext({console,NFCore:{...C},NFPrint:P,NFPrintUI:{init(){},cancel(){}},document,localStorage:{getItem:()=>null,setItem(){}},sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},navigator:{onLine:true},indexedDB:{open:()=>({})},setInterval:()=>0,setTimeout:()=>0,clearTimeout(){},confirm:()=>true,FormData:class{},URL,Blob,Date});
  ctx.window=ctx;ctx.addEventListener=()=>{};ctx.seed=clone(rows);ctx.seedRole=role;ctx.settings=snapshot([]).settings;
  vm.runInContext(fs.readFileSync(root+'/app.js','utf8'),ctx);
+ ctx.originalSync=vm.runInContext('sync',ctx);
  vm.runInContext("S={snapshot:{orders:seed,archives:[],recycle:[],role:seedRole,settings,capabilities:{reprint:true,printCycle:true}},pending:[]};token='TEST';operator='TEST';render=()=>{};sync=()=>{};editState=async fn=>{fn(S);return S;};",ctx);
  return{ctx,e:id=>elements.get(id),run:code=>vm.runInContext(code,ctx),getState:()=>vm.runInContext('S',ctx)};
 }
@@ -132,12 +133,12 @@ test('Native history asks for missing fonts before drawing a substitute',async()
 test('Legacy history remains accessible without connecting new local fonts',async()=>{const o={...order(),currentStep:1},job={...P.createJob([o]),engine:'13.8.5',settings:P.settings({},'13.8.5')};const fonts={...global.NFLocalFonts,restore:async()=>{throw new Error('legacy must not restore');}};const h=printUIHarness([o],{},fonts);h.s.printJobs=[job];await h.ctx.NFPrintUI.showJob(job.id);assert.match(h.html(),/print-saved-preview/);assert.match(h.e('pcSheet').innerHTML,/<svg/);});
 test('Demo loads the real font bridge before print modules and uses current settings',()=>{const html=fs.readFileSync(root+'/COBA-CETAK.html','utf8'),scripts=[...html.matchAll(/<script src="([^"?]+)(?:\?[^"\s]+)?"/g)].map(m=>m[1]);assert(scripts.indexOf('local-font.js')>=0);assert(scripts.indexOf('local-font.js')<scripts.indexOf('print-engine.js'));assert(scripts.indexOf('local-font.js')<scripts.indexOf('print-ui.js'));for(const file of scripts)assert(fs.existsSync(root+'/'+file),file);assert(html.includes('printSettings:NFPrint.currentSettings()'));assert(!html.includes('Font awal menggunakan DejaVu'));});
 
-test('Builder displays actual Arial and Swis font names above the sheet',async()=>{const rows=[{...order('A'),currentStep:1},{...order('B'),model:models[1],currentStep:1}],h=printUIHarness(rows,{});await h.open();assert.match(h.e('pcFontsUsed').innerHTML,/Arial Bold \(lokal asli\)/);assert.match(h.e('pcFontsUsed').innerHTML,/Swis721 BT Regular \(lokal asli\)/);assert.match(h.html(),/Kelola font/);});
+test('Builder displays actual Arial and Swis font names above the sheet',async()=>{const rows=[{...order('A'),currentStep:1},{...order('B'),model:models[1],currentStep:1}],h=printUIHarness(rows,{});await h.open();assert.match(h.e('pcFontsUsed').innerHTML,/Arial Bold \(lokal asli\)/);assert.match(h.e('pcFontsUsed').innerHTML,/Swis721 BT Bold \(lokal asli\)/);assert.match(h.html(),/Kelola font/);});
 test('Saved sheet displays its actual font and old sheets retain substitute labels',async()=>{const o={...order(),currentStep:1},job=P.createJob([o]),h=printUIHarness([o],{});h.s.printJobs=[job];await h.ctx.NFPrintUI.showJob(job.id);assert.match(h.html(),/Font pada lembar ini/);assert.match(h.html(),/Arial Bold \(lokal asli\)/);h.s.printJobs=[{...job,engine:'13.8.5',settings:P.settings({},'13.8.5')}];await h.ctx.NFPrintUI.showJob(job.id);assert.match(h.html(),/Arimo/);assert.doesNotMatch(h.html(),/Arial Bold \(lokal asli\)/);});
 test('Font manager opens when fonts are ready and preserves draft settings and logo choice',async()=>{const o={...order(),model:models[2],logo:'DEMO',currentStep:1},h=printUIHarness([o],{},{...global.NFLocalFonts,restore:async()=>{}});await h.open();h.e('pc_tagWidth').value=81;h.omits[0].checked=true;h.omits[0].onchange();h.e('pcReviewed').checked=true;await h.e('pcManageFonts').onclick();assert.match(h.html(),/pcArialFile/);assert.match(h.html(),/pcFontBack/);await h.e('pcFontContinue').onclick();assert.equal(Number(h.e('pc_tagWidth').value),81);assert.match(h.html(),/data-logo-omit="0" checked/);assert.equal(h.e('pcReviewed').checked,false);h.e('pcReviewed').checked=true;await h.e('pcExport').onclick();assert(h.saved());assert.equal(h.saved().settings.tagWidth,81);assert.equal(h.saved().assets[P.logoKey(o)].omit,true);});
 test('Returning from font manager preserves a failed-logo block',async()=>{const o={...order(),model:models[2],logo:'DEMO'},h=printUIHarness([o],{[P.logoKey(o)]:fixtureLogo()},{...global.NFLocalFonts,restore:async()=>{}});await h.open();h.uploads[0].files=[{type:'image/gif',size:123}];await h.uploads[0].onchange();await h.e('pcManageFonts').onclick();await h.e('pcFontBack').onclick();assert.equal(h.e('pcExport').disabled,true);assert.match(h.e('pcError').textContent,/PNG atau JPG/);});
 test('Font manager is accessible from empty history without selecting an order',async()=>{const h=printUIHarness([],{}, {...global.NFLocalFonts,restore:async()=>{}});h.ctx.NFPrintUI.history();assert.match(h.html(),/Kelola font/);await h.e('pcManageFonts').onclick();assert.match(h.html(),/pcArialFile/);await h.e('pcFontBack').onclick();assert.match(h.html(),/Belum ada lembar cetak/);});
-test('All ten new-job models use the required original font for each line',()=>{for(const model of models){const o={...order(),model},m=C.modelLayout(model),a=P.artwork(o,P.DEFAULTS,{},true);assert.equal(a.font,m.nip?'Swis721 BT Regular (lokal asli)':'Arial Bold (lokal asli)',model);assert.equal(a.nipFont,m.nip?'Swis721 BT Regular (lokal asli)':'',model);}});
+test('All ten new-job models use the required original font for each line',()=>{for(const model of models){const o={...order(),model},m=C.modelLayout(model),a=P.artwork(o,P.DEFAULTS,{},true);assert.equal(a.font,m.nip?'Swis721 BT Bold (lokal asli)':'Arial Bold (lokal asli)',model);assert.equal(a.nipFont,m.nip?'Swis721 BT Bold (lokal asli)':'',model);}});
 
 test('Bold names preserve 28 pt height and only compress above either width cap',()=>{for(const model of [models[0],models[2],models[5],models[7]]){const o={...order(),model},assets={[P.logoKey(o)]:{omit:true}},cap=C.modelLayout(model).logo?55:73,short=P.artwork({...o,name:'BRIAN P.P'}, {},assets),long=P.artwork({...o,name:'MUHAMMAD NAMA PANJANG SEKALI'}, {},assets);assert.equal(short.font,'Arial Bold (lokal asli)');assert(short.nameWidth<cap);assert.equal(short.nameCompression,1);assert(Math.abs(long.nameWidth-cap)<1e-8);assert(long.nameCompression<1);for(const a of [short,long]){assert(Math.abs(a.nameSizePt-28)<1e-10);const glyph=a.shapes.find(x=>x.type==='path');assert(Math.abs(glyph.sy*72/25.4-28)<1e-8);}}});
 test('Old saved settings migrate to 28 pt only for new jobs; old records stay Regular',()=>{const old={...P.V13_8_6_DEFAULTS,tagWidth:81},before=JSON.stringify(old),fresh=P.currentSettings(old);assert.equal(fresh.nameHeight,28*25.4/72);assert.equal(fresh.tagWidth,81);assert.equal(JSON.stringify(old),before);for(const engine of ['13.8.6','13.8.7','13.8.8','13.8.9']){assert.equal(P.artwork(order(),{}, {},false,engine).font,'Arial Regular (lokal asli)');assert.equal(P.settings({},engine).nameHeight,9.8414);}});
@@ -159,9 +160,9 @@ test('Long names still respect both physical width caps after Corel calibration'
   assert(Math.abs(a.nameWidth-cap)<1e-8);assert.equal(a.nameSizePt,28);assert(a.nameCompression<1);
  }
 });
-test('The six NIP models keep all original artwork and line geometry',()=>{
+test('Archived v13.8.11 NIP models keep all original artwork and line geometry',()=>{
  for(const model of models.filter(x=>C.modelLayout(x).nip)){
-  const o={...order(),model},assets={[P.logoKey(o)]:{omit:true}},old=P.artwork(o,{},assets,false,'13.8.10'),now=P.artwork(o,{},assets);
+  const o={...order(),model},assets={[P.logoKey(o)]:{omit:true}},old=P.artwork(o,{},assets,false,'13.8.10'),now=P.artwork(o,{},assets,false,'13.8.11');
   assert.deepEqual(now.shapes,old.shapes);assert.equal(now.nameWidth,old.nameWidth);assert.equal(now.nameWidthScale,1);
  }
 });
@@ -176,13 +177,93 @@ test('Width percentage is visible, saved and restored after opening the font man
  assert.equal(Number(h.e('pc_nameWidthScale').value),70);assert.match(h.e('pcFontsUsed').innerHTML,/lebar 70%/);
  h.e('pc_nameWidthScale').value=65;await h.e('pcManageFonts').onclick();await h.e('pcFontContinue').onclick();
  assert.equal(Number(h.e('pc_nameWidthScale').value),65);h.e('pcReviewed').checked=true;await h.e('pcExport').onclick();
- assert.equal(h.saved().settings.nameWidthScale,.65);assert.equal(h.saved().engine,'13.8.11');
+ assert.equal(h.saved().settings.nameWidthScale,.65);assert.equal(h.saved().engine,'13.8.12');
 });
 test('Historical artwork matches saved v13.8.10 reference hashes for every supported profile',()=>{
  const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/legacy-geometry-v13.8.10.json'),'utf8'));
  for(const row of fixture){const o={...order(),name:row.name,model:models[row.model-1]},a=P.artwork(o,{}, {[P.logoKey(o)]:{omit:true}},false,row.engine);
   const digest=crypto.createHash('sha256').update(JSON.stringify({shapes:a.shapes,font:a.font,nipFont:a.nipFont,nameWidth:a.nameWidth,nameSpacing:a.nameSpacing})).digest('hex');
   assert.equal(digest,row.sha256,row.engine+' model '+row.model);
+ }
+});
+
+
+test('New NIP models use Swiss Bold with separate 70/79 percent widths and fixed heights',()=>{
+ for(const model of models.filter(x=>C.modelLayout(x).nip)){
+  const o={...order(),name:'PATRIAH, S.Pd.I',model},assets={[P.logoKey(o)]:{omit:true}},a=P.artwork(o,{},assets);
+  assert.equal(a.font,'Swis721 BT Bold (lokal asli)');assert.equal(a.nipFont,a.font);assert.equal(a.nameWidthScale,.7);assert.equal(a.nipWidthScale,.79);assert(Math.abs(a.nameSizePt-21)<1e-10);
+  const before=P.artwork(o,{},assets,false,'13.8.11');assert.equal(before.font,'Swis721 BT Regular (lokal asli)');
+  assert.deepEqual(a.shapes.filter(x=>x.type!=='path'),before.shapes.filter(x=>x.type!=='path'));
+ }
+});
+test('Upgrading v13.8.11 retains calibrated Arial preferences and all non-NIP artwork',()=>{
+ const old=P.settings({nameWidthScale:.65,nameHeight:9,condense:.9},'13.8.11'),fresh=P.currentSettings(old);
+ assert.equal(fresh.nameWidthScale,.65);assert.equal(fresh.nameHeight,9);assert.equal(fresh.condense,.9);assert.equal(fresh.nameNipWidthScale,.7);assert.equal(fresh.nipWidthScale,.79);
+ for(const model of models.filter(x=>!C.modelLayout(x).nip)){
+  const o={...order(),model,name:'ISABELLA PUTRI R.'},assets={[P.logoKey(o)]:{omit:true}};
+  assert.deepEqual(P.artwork(o,old,assets,false,'13.8.11').shapes,P.artwork(o,fresh,assets).shapes);
+ }
+});
+test('NIP width controls display percentages and preserve values through font management and export',async()=>{
+ const h=printUIHarness([{...order(),model:models[1],currentStep:1}],{}, {...global.NFLocalFonts,restore:async()=>{}});await h.open();
+ assert.equal(Number(h.e('pc_nameNipWidthScale').value),70);assert.equal(Number(h.e('pc_nipWidthScale').value),79);assert.match(h.e('pcFontsUsed').innerHTML,/Swis721 BT Bold/);
+ h.e('pc_nameNipWidthScale').value=68;h.e('pc_nipWidthScale').value=78;
+ await h.e('pcManageFonts').onclick();assert.match(h.html(),/Swis721 BT Bold/);await h.e('pcFontContinue').onclick();
+ assert.equal(Number(h.e('pc_nameNipWidthScale').value),68);assert.equal(Number(h.e('pc_nipWidthScale').value),78);
+ h.e('pcReviewed').checked=true;await h.e('pcExport').onclick();assert.equal(h.saved().settings.nameNipWidthScale,.68);assert.equal(h.saved().settings.nipWidthScale,.78);
+});
+test('100 changes commit in three durable phases and retries do not duplicate data',()=>{
+ const b=backend(),ops=Array.from({length:100},(_,i)=>upsert({...order('NT-'+i),mp:'NP-'+i,revision:null}));
+ const result=b.batch(ops);assert.equal(result.results.filter(r=>r.ok).length,100);assert.equal(b.stats().flushes,3);assert.equal(b.active.data.length,101);
+ assert.equal(b.batch(ops).results.filter(r=>r.ok).length,100);assert.equal(b.stats().flushes,3);assert.equal(b.active.data.length,101);
+ assert.equal(b.ctx.nfSnapshot_('operator').capabilities.mutateBatch,100);
+ assert.throws(()=>b.batch([...ops,{...upsert({...order('NT-101'),revision:null})}]),/100/);
+});
+test('A lost batch response recovers 25 or 100 operations together at every durable phase',()=>{
+ for(const count of [25,100])for(const phase of [1,2,3]){
+  const b=backend(),ops=Array.from({length:count},(_,i)=>upsert({...order('NT-'+i),mp:'NP-'+i,revision:null}));
+  b.crashAfter(phase);assert.throws(()=>b.batch(ops),/TEST_INTERRUPTION/);const before=b.stats().flushes,result=b.batch(ops);
+  assert.equal(result.results.filter(r=>r.ok).length,count);assert.equal(b.active.data.length,count+1);
+  assert(b.stats().flushes-before<=2,'Recovery must remain grouped');assert.equal(b.tables.get('_NF_Operations').data.length,count+1);
+  assert(b.tables.get('_NF_Operations').data.slice(1).every(r=>r[2]==='DONE'));
+ }
+});
+test('Grouped retry preserves manual edits and only confirms rows actually committed',()=>{
+ const b=backend(),a=b.seed(order('NT-A')),c=b.seed(order('NT-C')),ops=[a,c].map(o=>({...upsert(o),data:{...C.fields(o),currentStep:7}}));
+ b.crashAfter(1);assert.throws(()=>b.batch(ops),/TEST_INTERRUPTION/);b.active.data[1][1]='MANUAL EDIT';
+ const result=b.batch(ops);assert.equal(result.results.find(r=>r.id==='NT-A').ok,false);assert.equal(result.results.find(r=>r.id==='NT-C').ok,true);
+ assert.equal(b.active.data[1][1],'MANUAL EDIT');assert.equal(b.active.data[1][10],6);assert.equal(b.active.data[2][10],7);
+});
+test('Grouped retry rejects changed payloads and invalid legacy print-cycle plans',()=>{
+ const b=backend(),o=b.seed(),op=upsert(o);b.crashAfter(1);assert.throws(()=>b.batch([op]),/TEST_INTERRUPTION/);
+ const changed={...op,data:{...op.data,name:'CHANGED'}};assert.equal(b.batch([changed]).results[0].code,'IDEMPOTENCY_CONFLICT');
+ const row=b.tables.get('_NF_Operations').data[1],plan=JSON.parse(row[3]);plan.after[9]=2;row[3]=JSON.stringify(plan);
+ assert.equal(b.batch([op]).results[0].code,'PRINT_CYCLE_CHANGED');assert.equal(b.active.data[1][9],1);
+});
+test('Mixed pending/new batches preserve journal rows and keep new identities checked',()=>{
+ const b=backend(),a=upsert({...order('NT-A'),mp:'A',revision:null}),c=upsert({...order('NT-C'),mp:'C',revision:null});
+ b.crashAfter(1);assert.throws(()=>b.batch([a]),/TEST_INTERRUPTION/);
+ const res=b.batch([a,c]);assert.equal(res.results.filter(r=>r.ok).length,2);assert.equal(b.active.data.length,3);assert.equal(b.tables.get('_NF_Operations').data.length,3);
+ assert.equal(b.batch([a,c]).results.filter(r=>r.ok).length,2);assert.equal(b.active.data.length,3);
+});
+test('Request transport errors retain uncertain-save semantics and a retryable code',async()=>{
+ const saved=global.fetch;global.fetch=async()=>{throw new TypeError('Failed to fetch');};
+ try{await assert.rejects(C.request(C.ENDPOINT,'TEST','snapshot'),e=>e.code==='NETWORK'&&C.retryable(e)&&/Status simpan belum pasti/.test(e.message));}finally{global.fetch=saved;}
+});
+
+
+test('Actual sync negotiates 25/100 batches and retains identical operation IDs after a lost response',async()=>{
+ for(const capacity of [25,100]){
+  const b=backend(),rows=Array.from({length:60},(_,i)=>b.seed({...order('SYNC-'+i),mp:'MP-'+i})),h=appHarness(rows),sizes=[],sentIds=[];let lose=true;
+  h.ctx.NFCore.request=async(_ep,_tk,action,payload)=>{
+   assert.equal(action,'mutateBatch');sizes.push(payload.operations.length);sentIds.push(payload.operations.map(x=>x.operation.opId));
+   const result=b.ctx.nfMutateBatch_(payload.operations,'operator');if(lose){lose=false;throw Object.assign(new Error('lost response'),{code:'NETWORK'});}return result;
+  };
+  h.ctx.capacity=capacity;
+  h.run("db={};sync=originalSync;S.lastSync=new Date().toISOString();S.snapshot.capabilities={writeBatch:true,mutateBatch:capacity};storage=async fn=>{if(fn)fn(S);return S;};NFCore.queueOperations(S,S.snapshot.orders.map(o=>({kind:'upsert',id:o.id,expectedRevision:o.revision,data:{...NFCore.fields(o),currentStep:7}})),'TEST');");
+  await h.run('sync()');assert.equal(h.getState().pending.length,60);assert(h.getState().pending.slice(0,Math.min(60,capacity)).every(p=>p.attempted&&p.code==='NETWORK'));
+  await h.run('sync()');assert.equal(h.getState().pending.length,0);assert.deepEqual(sentIds[0],sentIds[1]);
+  assert(sizes.every(n=>n<=capacity));assert.equal(sizes.length,capacity===25?4:2);assert.equal(b.active.data.length,61);assert(b.active.data.slice(1).every(r=>r[10]===7));
  }
 });
 

@@ -1,0 +1,31 @@
+HASIL UJI NAMETAGFLOW V13.8.12
+Tanggal pemeriksaan: 16 Oktober 2026.
+
+node tests/run-tests.cjs: 103/103 lulus.
+node tests/local-font-tests.cjs: 19/19 lulus.
+Total: 122/122.
+
+Cakupan tambahan:
+- Semua enam model NIP menggunakan Swis721 BT Bold pada nama dan nomor.
+- Kontrol lebar 70%/79% bertahan saat pengelola font dibuka dan PDF disimpan.
+- Nama tanpa NIP v13.8.11 dan pengaturan khususnya dipertahankan.
+- Delapan profil historis cocok dengan hash geometri baseline.
+- Regular lama dan Bold baru dipisah dalam cache; deteksi/restore tervalidasi.
+- 100 operasi dalam tiga fase simpan; retry tidak menggandakan pesanan.
+- Interupsi di setiap fase diuji untuk kelompok 25 dan 100.
+- Perubahan manual Sheet tidak ditimpa saat recovery.
+- Payload berubah dan perubahan siklus cetak ilegal ditolak.
+- Campuran operasi pending/baru mempertahankan jurnal dan validasi identitas.
+- Alur sync aplikasi diuji dengan backend 25/100 dan respons hilang sesudah
+  commit; kiriman ulang mempertahankan ID dan antrean selesai.
+
+Perbandingan pada harness yang sama:
+v13.8.11: 100 upsert = 4 request / 12 flush; recovery 25 = 50 flush.
+v13.8.12: 100 upsert = 1 request / 3 flush; recovery 25 = 2 flush.
+Ini hitungan operasi, bukan pengukuran detik produksi.
+
+Contoh Perbandingan-NIP-v13.8.12.pdf dirender dan diperiksa: teks utuh,
+tidak terpotong dan tidak bertumpuk. Sisi lama berasal dari PDF pengguna;
+sisi baru dari print-engine v13.8.12 memakai outline font referensi asli.
+Node tidak mengukur kerning canvas browser. Pemeriksaan cetak fisik diperlukan.
+Semua uji berjalan lokal tanpa jaringan atau akses data produksi.

@@ -1,0 +1,68 @@
+NAMETAGFLOW V13.8.12 - FONT NIP DAN PENYIMPANAN KELOMPOK
+
+PENTING
+Pembaruan ini perlu dipasang di DUA tempat: Apps Script dan GitHub.
+Upload GitHub saja memperbaiki font, tetapi percepatan pusat belum aktif.
+Data produksi tidak diubah oleh file ZIP ini. Pemasangan dilakukan pada proyek
+Apps Script dan repository GitHub yang sudah dipakai sekarang.
+
+1. SEBELUM MEMASANG
+- Tunggu Antrean simpan kosong dan semua perubahan terkonfirmasi pusat.
+- Simpan Backup & draf serta Backup cetak dari aplikasi.
+- Simpan salinan Code.gs lama dan pertahankan pengaturan/kode akses yang ada.
+
+2. PERBARUI APPS SCRIPT TERLEBIH DAHULU
+- Buka proyek Apps Script yang saat ini terhubung ke aplikasi/Sheet produksi.
+- Ganti isi Code.gs dengan SELURUH isi backend/Code.gs dari paket ini.
+- Pastikan NF.SPREADSHEET_ID tetap menunjuk Sheet produksi yang benar.
+  Paket mempertahankan ID dari sumber asli; jika pernah kamu ubah, pertahankan
+  ID yang sedang digunakan. Jangan mengganti atau membagikan kode akses.
+- Simpan, lalu Deploy > Manage deployments (Kelola deployment).
+- Pilih deployment web app yang sedang dipakai, klik ikon pensil/Edit.
+- Pilih New version/Versi baru pada Version, lalu Deploy.
+- Gunakan deployment yang sama supaya URL /exec tetap. Pertahankan akses dan
+  identitas eksekusi yang sudah berfungsi sebelumnya.
+- Tidak perlu menjalankan setupNametagFlow ulang untuk instalasi yang sudah ada.
+  Jangan menghapus atau membuat ulang tab Sheet maupun jurnal operasi.
+- Mengunggah folder backend ke GitHub TIDAK memperbarui Apps Script otomatis.
+
+3. PERBARUI GITHUB
+- Ekstrak ZIP, buka folder NametagFlow-v13.8.12-LENGKAP.
+- Upload seluruh ISI folder tersebut ke lokasi index.html lama, termasuk
+  subfolder pendukung; timpa file bernama sama dan commit.
+- Tunggu GitHub Pages selesai menerbitkan. Tekan Ctrl+Shift+R pada situs lama.
+- Pojok kiri bawah harus tertulis NAMETAGFLOW / V13.8.12.
+- Klik status koneksi kanan atas untuk memuat informasi pusat terbaru.
+- Setelah Apps Script terbaru terbaca, ringkasan simpan menampilkan
+  "Simpan kelompok aktif - hingga 100 perubahan/kiriman" (pemisah dapat berbeda).
+  Jika masih tertulis "Simpan kelompok 25", periksa deployment Apps Script.
+
+4. HUBUNGKAN FONT DAN BUAT PDF BARU
+- Cetak Produksi > Kelola font > Deteksi font yang terpasang.
+- Nama tanpa NIP: Arial Bold, 28 pt, lebar awal 70%.
+- Nama dengan NIP: Swis721 BT Bold, 21 pt, lebar awal 70%.
+- Nomor NIP: Swis721 BT Bold, 13 pt, lebar awal 79%.
+- Pilih file TTF asli Swis721 BT Bold yang terpasang/berlisensi pada PC Corel.
+  Jangan pilih Regular/Roman, Bold Italic, atau Condensed.
+- Arial Bold yang sudah tersimpan tetap dipakai. Swis Regular disimpan terpisah
+  untuk riwayat lama; Regular tidak dianggap pengganti Bold untuk lembar baru.
+- File font tidak dibundel atau diunggah ke server.
+- Buat lembar cetak BARU. Mengunduh ulang riwayat lama mempertahankan font lama.
+- Buka Ukuran tulisan untuk menyesuaikan tiga pengaturan lebar secara terpisah.
+- Perbandingan-NIP-v13.8.12.pdf menampilkan PDF sebelumnya dan koreksi font.
+- Cetak Actual size / 100%, lalu periksa satu sampel sebelum cetak banyak.
+
+5. MEMERIKSA HASIL SIMPAN
+- Perubahan muncul dahulu dari draf lokal; konfirmasi pusat tetap diperlukan.
+- Tunggu Antrean simpan 0 dan "Semua perubahan sudah dikonfirmasi pusat".
+- Jika koneksi gagal, antrean mengirim ulang dengan ID yang sama. Jangan
+  memindahkan tahap berulang hanya karena respons server belum diterima.
+- Jangan hapus data browser ketika masih ada draf/antrean tertunda.
+
+BATAS PENGUJIAN
+122 pengujian otomatis lulus menggunakan data sintetis. Tidak ada data
+produksi yang diakses atau diubah. Percepatan diuji dari jumlah kiriman dan
+operasi simpan, bukan pengukuran detik pada koneksi/akun Google milikmu.
+Gangguan jaringan atau layanan Google tetap dapat menambah waktu tunggu.
+Referensi Corel mempunyai penyesuaian manual per objek. Lebar 70%/79% adalah
+profil umum yang dapat disesuaikan, bukan klaim identik untuk semua objek.

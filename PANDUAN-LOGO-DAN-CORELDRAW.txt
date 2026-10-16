@@ -1,76 +1,18 @@
-PEMBARUAN V13.8.11 - LEBAR NAMA TANPA NIP
-Arial Bold tetap 28 pt; lebar awal nama tanpa NIP sekarang 70%.
-Lebar dapat diatur 40-100% melalui Ukuran tulisan. Pengaturan hanya berlaku
-pada lembar baru. Riwayat v13.8.10 tetap 100%, sesuai profil saat dibuat.
-Batas 73/55 mm tetap berlaku; nama sangat panjang dapat tetap sama lebarnya.
-Baca 00-BACA-DULU.txt dan Perbandingan-Sebelum-Sesudah.pdf.
+PANDUAN COREL / FONT V13.8.12
 
-NAMETAGFLOW V13.8.11 - LOGO, PDF, DAN CORELDRAW
+Nama tanpa NIP: Arial Bold 28 pt, lebar 70%.
+Nama dengan NIP: Swis721 BT Bold 21 pt, lebar 70%.
+Nomor NIP: Swis721 BT Bold 13 pt, lebar 79%.
 
-CETAK LOGO
-- Gunakan PNG atau JPG maksimal 5 MB. PNG transparan didukung.
-- Gambar diperiksa dimensinya, dipertahankan proporsinya, dan ditanam ke PDF.
-  Logo tidak bergantung pada tautan internet ketika PDF dibuka/dicetak.
-- Di bawah 150 dpi pada ukuran cetak ditolak; 150-299 dpi diberi peringatan.
-  Disarankan 300 dpi atau lebih. Nilai dpi mengikuti ukuran logo pada desain,
-  bukan angka dpi yang tertulis dalam metadata file. Logo sekitar 12–14 mm
-  setidaknya perlu sekitar 178 piksel untuk mencapai 300 dpi.
-- Logo seluruhnya transparan atau terlalu gelap pada latar hitam ditolak
-  saat upload. Gunakan versi putih/berwarna atau dengan latar terang.
-- Nama/logo yang benar tetap harus diperiksa pada pratinjau. Aplikasi tidak
-  dapat menentukan apakah gambar itu benar-benar lambang instansi pesanan.
-- Jika file pengganti rusak, gambar lama tidak digunakan diam-diam.
-- Sengaja kosongkan logo berlaku hanya untuk lembar yang sedang dibuat.
-- Simpan backup sebelum pindah perangkat; logo masih tersimpan per browser.
-- Setelah update dari versi lama, upload/pilih lagi logo untuk lembar baru.
-  Riwayat PDF lama tetap memakai logo yang tertanam pada job tersebut.
+Hubungkan font asli di Cetak Produksi > Kelola font. Gunakan file TTF Bold
+standar, bukan Regular, Italic, atau Condensed. Font dibaca dan disimpan
+hanya di browser PC produksi, tidak diunggah ke GitHub/server.
 
-MEMAKAI PDF DI CORELDRAW
-1. Dari NametagFlow, unduh PDF setelah nama, NIP, model dan logo diperiksa.
-2. Di CorelDRAW pilih File > Import (Ctrl+I), lalu pilih file PDF.
-   File > Open juga dapat digunakan untuk membuka dokumen PDF.
-3. Pilih halaman yang diperlukan. Jika muncul pilihan text/curves, pilih
-   Curves agar bentuk huruf dipertahankan.
-4. Jaga skala impor 100%; jangan menarik objek sehingga ukurannya berubah.
-   Cocokkan halaman: default 210 x 290 mm, atau A4 210 x 297 mm jika preset
-   A4 yang dipilih di aplikasi. Ukuran bingkai nametag 80,4 x 20,4 mm.
-5. Cetak dengan 100% / Actual size dan matikan Fit / Sesuaikan halaman.
-   Ukur satu hasil uji dahulu untuk memastikan skala printer sesuai.
-6. Bila diperlukan, simpan hasil impor sebagai CDR melalui Save As.
+Unggah logo PNG/JPG maksimal 5 MB. Gunakan setidaknya 150 dpi pada ukuran
+cetak (disarankan 300 dpi). Periksa posisi logo pada pratinjau setiap model.
+PDF memakai kurva huruf dan logo gambar. Buka di CorelDRAW pada ukuran asli.
+Cetak 100% / Actual size, tanpa Fit to page.
 
-YANG BISA DIEDIT
-- Nama/NIP sudah digambar sebagai kurva vektor. Bentuknya tidak memerlukan
-  font terpasang; objek dapat dipilih, digeser, diwarnai, atau diedit node-nya.
-- Nama/NIP bukan lagi teks yang dapat diketik ulang lewat Text Tool.
-  Untuk mengubah ejaan, paling mudah edit pesanan lalu buat PDF baru.
-- Logo PNG/JPG tetap bitmap, bukan otomatis berubah menjadi logo vektor.
-  Membesarkan logo melebihi resolusi aslinya dapat mengurangi ketajaman.
-- Job baru memakai Arial Bold asli untuk nama tanpa NIP dan Swis721 BT
-  Regular asli untuk nama dengan NIP serta baris NIP/jabatan.
-- Font dihubungkan dari PC dan disimpan lokal bila penyimpanan berhasil.
-  PDF berupa kurva sehingga pembukaan PDF yang sudah dihasilkan tidak
-  bergantung pada font terpasang pada komputer yang membuka PDF tersebut.
-- Job lama mempertahankan profil mesin versi lamanya.
-- Catatan custom tidak otomatis menjadi modifikasi desain.
-
-KOMPATIBILITAS DAN BATAS UJI
-PDF memakai format 1.7, vektor, bitmap tertanam, serta transparansi PNG.
-Ekspor menonaktifkan object streams untuk struktur PDF yang lebih sederhana.
-Dukungan impor PDF dikonfirmasi dari dokumentasi resmi Corel. Versi
-CorelDRAW pengguna belum diketahui dan impor langsung belum diuji di sini.
-Buat PDF uji terbaru dari COBA-CETAK.html dengan font asli, lalu periksa
-di CorelDRAW/printer yang digunakan.
-Elemen hitam/putih vektor memakai DeviceGray netral; bitmap logo mempertahankan
-warna sumbernya. Profil ICC khusus (misalnya Japan Color 2001 Coated) belum
-ditanam ke PDF, jadi warna logo tetap mengikuti pengaturan CorelDRAW/printer.
-
-SUMBER RESMI
-CorelDRAW 2026 Help - Adobe Portable Document Format (PDF):
-https://help.coreldraw.com/CorelDRAW/540111192/Documentation-Windows/CorelDRAW-en/CorelDRAW-Adobe-Portable-Document-Format-PDF.html
-Corel Discovery Center - How to edit PDFs in CorelDRAW:
-https://learn.corel.com/tutorials/how-to-edit-pdfs-in-coreldraw/
-
-BERKAS UJI
-Contoh-Cetak-10-Model.pdf: arsip contoh lama; baca CONTOH-LAMA.txt.
-COBA-CETAK.html: percobaan lokal tanpa menghubungi data pesanan pusat.
-tests/fixtures: gambar sintetis untuk pengujian PNG/JPG dan batas resolusi.
+Buat lembar BARU untuk koreksi font ini. PDF riwayat lama memakai profil
+awalnya. Font Regular lama tetap disimpan untuk membaca riwayat tersebut.
+Baca 00-BACA-DULU.txt untuk pembaruan Apps Script dan GitHub.

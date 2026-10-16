@@ -1,151 +1,68 @@
-PEMBARUAN V13.8.11 - LEBAR NAMA TANPA NIP
-Arial Bold tetap 28 pt; lebar awal nama tanpa NIP sekarang 70%.
-Lebar dapat diatur 40-100% melalui Ukuran tulisan. Pengaturan hanya berlaku
-pada lembar baru. Riwayat v13.8.10 tetap 100%, sesuai profil saat dibuat.
-Batas 73/55 mm tetap berlaku; nama sangat panjang dapat tetap sama lebarnya.
-Baca 00-BACA-DULU.txt dan Perbandingan-Sebelum-Sesudah.pdf.
+NAMETAGFLOW V13.8.12 - FONT NIP DAN PENYIMPANAN KELOMPOK
 
-NAMETAGFLOW V13.8.11 — PETUNJUK PAKET LENGKAP
+PENTING
+Pembaruan ini perlu dipasang di DUA tempat: Apps Script dan GitHub.
+Upload GitHub saja memperbaiki font, tetapi percepatan pusat belum aktif.
+Data produksi tidak diubah oleh file ZIP ini. Pemasangan dilakukan pada proyek
+Apps Script dan repository GitHub yang sudah dipakai sekarang.
 
-MULAI DARI SINI
-Baca 00-BACA-DULU.txt. Paket ini memuat seluruh 47 file FULL-SOURCE v13.8.6,
-12 file contoh/pratinjau yang dipulihkan dari paket v13.8.5, serta perbaikan
-v13.8.11 dan laporan pemeriksaannya. Riwayat lama tetap disertakan sebagai arsip.
-Petunjuk aktif adalah file ini, 00-BACA-DULU.txt, dan README.md.
+1. SEBELUM MEMASANG
+- Tunggu Antrean simpan kosong dan semua perubahan terkonfirmasi pusat.
+- Simpan Backup & draf serta Backup cetak dari aplikasi.
+- Simpan salinan Code.gs lama dan pertahankan pengaturan/kode akses yang ada.
 
-SEBELUM MEMASANG
-1. Di aplikasi lama, klik Backup & draf pada panel daftar pesanan dan simpan backup.
-   Simpan pula Backup cetak dari Riwayat Cetak Produksi jika diperlukan.
-2. Tunggu Antrean simpan selesai. Jangan hapus data situs/browser.
-3. Ekstrak ZIP. Upload isinya, bukan file ZIP atau folder pembungkusnya.
+2. PERBARUI APPS SCRIPT TERLEBIH DAHULU
+- Buka proyek Apps Script yang saat ini terhubung ke aplikasi/Sheet produksi.
+- Ganti isi Code.gs dengan SELURUH isi backend/Code.gs dari paket ini.
+- Pastikan NF.SPREADSHEET_ID tetap menunjuk Sheet produksi yang benar.
+  Paket mempertahankan ID dari sumber asli; jika pernah kamu ubah, pertahankan
+  ID yang sedang digunakan. Jangan mengganti atau membagikan kode akses.
+- Simpan, lalu Deploy > Manage deployments (Kelola deployment).
+- Pilih deployment web app yang sedang dipakai, klik ikon pensil/Edit.
+- Pilih New version/Versi baru pada Version, lalu Deploy.
+- Gunakan deployment yang sama supaya URL /exec tetap. Pertahankan akses dan
+  identitas eksekusi yang sudah berfungsi sebelumnya.
+- Tidak perlu menjalankan setupNametagFlow ulang untuk instalasi yang sudah ada.
+  Jangan menghapus atau membuat ulang tab Sheet maupun jurnal operasi.
+- Mengunggah folder backend ke GitHub TIDAK memperbarui Apps Script otomatis.
 
-UPLOAD GITHUB
-1. Buka repository yang sekarang dipakai untuk NametagFlow.
-2. Buka folder yang berisi index.html lama (sesuai sumber GitHub Pages).
-3. Pilih Add file > Upload files. Seret seluruh ISI folder hasil ekstrak.
-   Pertahankan folder vendor, licenses, tests, dan backend.
-4. Pastikan index.html, local-font.js, core.js, app.js, print-font.js,
-   print-engine.js, print-ui.js, styles.css berada sejajar. Jangan memakai
-   nama seperti app(1).js, dan jangan membuat folder baru di atas index.html.
-5. Commit changes. Tunggu penerbitan GitHub Pages selesai.
-6. Buka situs lalu Ctrl+Shift+R. Sidebar harus NAMETAGFLOW / V13.8.11.
-7. Muat ulang data pusat dan gunakan kode akses yang sama.
-File lama yang tidak ada di paket, termasuk NametagFlow.txt milik repository,
-boleh tetap ada. Upload ini mengganti file bernama sama, bukan menghapus
-file lain. NametagFlow.txt asli tidak tersedia dalam sumber yang diperiksa;
-isi file tersebut tidak direka ulang. Tidak perlu mengubah setting Pages
-bila situs sebelumnya sudah berjalan dan lokasi index.html tetap sama.
+3. PERBARUI GITHUB
+- Ekstrak ZIP, buka folder NametagFlow-v13.8.12-LENGKAP.
+- Upload seluruh ISI folder tersebut ke lokasi index.html lama, termasuk
+  subfolder pendukung; timpa file bernama sama dan commit.
+- Tunggu GitHub Pages selesai menerbitkan. Tekan Ctrl+Shift+R pada situs lama.
+- Pojok kiri bawah harus tertulis NAMETAGFLOW / V13.8.12.
+- Klik status koneksi kanan atas untuk memuat informasi pusat terbaru.
+- Setelah Apps Script terbaru terbaca, ringkasan simpan menampilkan
+  "Simpan kelompok aktif - hingga 100 perubahan/kiriman" (pemisah dapat berbeda).
+  Jika masih tertulis "Simpan kelompok 25", periksa deployment Apps Script.
 
-FILE WAJIB APLIKASI
-index.html, styles.css, core.js, app.js, local-font.js, print-font.js,
-print-engine.js, print-ui.js, vendor/pdf-lib.min.js.
-licenses tetap disertakan. backend, tests, PDF, gambar pratinjau, riwayat,
-dan petunjuk disertakan agar paket lengkap; tidak dimuat saat aplikasi utama
-berjalan. Jangan menempel file website ke editor Apps Script.
+4. HUBUNGKAN FONT DAN BUAT PDF BARU
+- Cetak Produksi > Kelola font > Deteksi font yang terpasang.
+- Nama tanpa NIP: Arial Bold, 28 pt, lebar awal 70%.
+- Nama dengan NIP: Swis721 BT Bold, 21 pt, lebar awal 70%.
+- Nomor NIP: Swis721 BT Bold, 13 pt, lebar awal 79%.
+- Pilih file TTF asli Swis721 BT Bold yang terpasang/berlisensi pada PC Corel.
+  Jangan pilih Regular/Roman, Bold Italic, atau Condensed.
+- Arial Bold yang sudah tersimpan tetap dipakai. Swis Regular disimpan terpisah
+  untuk riwayat lama; Regular tidak dianggap pengganti Bold untuk lembar baru.
+- File font tidak dibundel atau diunggah ke server.
+- Buat lembar cetak BARU. Mengunduh ulang riwayat lama mempertahankan font lama.
+- Buka Ukuran tulisan untuk menyesuaikan tiga pengaturan lebar secara terpisah.
+- Perbandingan-NIP-v13.8.12.pdf menampilkan PDF sebelumnya dan koreksi font.
+- Cetak Actual size / 100%, lalu periksa satu sampel sebelum cetak banyak.
 
-APPS SCRIPT: KAPAN PERLU DIUBAH?
-Perbaikan website/font v13.8.11 tidak mengubah backend. backend/Code.gs tetap
-v13.8.6, sama persis dengan FULL-SOURCE sebelumnya.
-Jika pesanan dapat dimuat dan Buat lembar cetak tidak meminta pembaruan
-Apps Script, gunakan deployment sekarang: tidak perlu menggantinya.
-Jika aplikasi menyatakan pusat/backend terlalu lama atau meminta Perbarui
-Apps Script, lakukan langkah berikut:
-1. Backup spreadsheet dan antrean perangkat terlebih dahulu.
-2. Buka proyek Apps Script yang sudah dipakai. Ganti isi Code.gs dengan
-   backend/Code.gs dari paket ini. Jangan tempel file .js website.
-3. Pertahankan Script Properties, kode akses, dan spreadsheet produksi.
-   backend/appsscript.json adalah acuan; proyek harus memakai V8.
-4. Deploy > Manage deployments > Edit deployment aktif > New version > Deploy.
-   Pakai deployment yang sama agar URL /exec tetap.
-5. Jangan menjalankan setupNametagFlow atau rotateAccessCodes untuk update.
-6. Kembali ke situs dan klik Muat ulang.
-Backend memakai Antrean Produksi Q (Tanggal Produksi), R (ID Siklus Cetak),
-Arsip Produksi O (Tanggal Produksi), P (ID Siklus Cetak). Jika ada data lain
-pada kolom tersebut, sistem menolak menimpanya; periksa sebelum upgrade.
+5. MEMERIKSA HASIL SIMPAN
+- Perubahan muncul dahulu dari draf lokal; konfirmasi pusat tetap diperlukan.
+- Tunggu Antrean simpan 0 dan "Semua perubahan sudah dikonfirmasi pusat".
+- Jika koneksi gagal, antrean mengirim ulang dengan ID yang sama. Jangan
+  memindahkan tahap berulang hanya karena respons server belum diterima.
+- Jangan hapus data browser ketika masih ada draf/antrean tertunda.
 
-CEK DAN KELOLA FONT KAPAN SAJA
-Pada halaman utama, klik Cetak Produksi > Kelola font.
-Tombol yang sama ada di bagian atas pembuat lembar dan riwayat lembar.
-Panel font tetap dapat dibuka meskipun kedua font sudah tersimpan.
-Di atas pratinjau kertas, Font pada lembar ini menunjukkan nama font yang
-benar-benar dipakai. Nama tanpa NIP: Arial Bold (lokal asli). Nama dengan
-NIP dan baris NIP/jabatan: Swis721 BT Regular (lokal asli).
-Jika arsip lama menunjukkan Arimo/Nimbus/DejaVu, buat lembar BARU dari
-pesanan untuk menggunakan font asli terbaru. Label arsip tidak dipalsukan.
-
-UKURAN DAN KETEBALAN TERBARU
-- Nama tanpa NIP: Arial Bold asli, tepat 28 pt = 9,8777777778 mm.
-- Nama dengan NIP: Swis721 BT Regular 7,3812 mm, tidak diubah.
-- NIP/jabatan: Swis721 BT Regular 4,5861 mm, tidak diubah.
-- Batas nama tanpa logo 73 mm, dengan logo 55 mm. Nama tanpa NIP memakai lebar awal 70%.
-  Jika masih melampaui batas, dipadatkan lagi; nama pendek tidak diperbesar.
-- Spasi tambahan 2,734 mm untuk nama satu kata di bawah 8 huruf tetap berlaku.
-- Ukuran nama tanpa NIP sekarang tampil dalam pt pada panel Ukuran tulisan.
-- Pengaturan versi sebelumnya otomatis memakai 28 pt saat membuat lembar baru.
-- Riwayat v13.8.6–v13.8.9 tetap memakai Arial Regular dan ukuran tersimpannya.
-  Arial Regular lama dipertahankan secara terpisah untuk membuka arsip itu.
-
-JIKA FILE ARIAL BOLD TIDAK TERLIHAT
-Coba tombol Deteksi font yang terpasang terlebih dahulu.
-Jika harus memilih file: klik Pilih file pada Arial Bold, lalu masukkan
-C:\Windows\Fonts\arialbd.ttf pada kolom Nama file dan klik Buka.
-Gunakan arialbd.ttf (Bold), bukan arial.ttf (Regular) atau arialbi.ttf
-(Bold Italic). Jika Windows berada di lokasi lain, sesuaikan lokasinya.
-Swis721 BT yang sudah tersimpan tetap dipakai dan tidak perlu dipilih ulang.
-
-HUBUNGKAN FONT SEKALI PADA SETIAP PC PRODUKSI
-1. Pastikan Arial Bold dan Swis721 BT Regular asli yang kamu miliki
-   tersedia di PC (font yang dipakai di Corel).
-2. Buka COBA-CETAK.html lewat alamat situs: alamat-situs/COBA-CETAK.html.
-   Bisa juga centang pesanan produksi > Buat lembar cetak.
-3. Bila muncul Hubungkan font Corel asli, klik Deteksi font yang terpasang
-   dan izinkan akses font lokal jika browser meminta.
-4. Jika deteksi tidak tersedia/ditolak, pilih file .ttf Arial Bold dan
-   Swis721 BT Regular lewat dua kolom yang disediakan. Arial wajib Bold;
-   Swis721 BT wajib Regular/Roman. Jangan pilih Italic,
-   bukan file .cdr, .otf, atau koleksi .ttc.
-5. Pastikan status kedua font siap lalu klik Lanjut cetak.
-6. Status tersimpan lokal berarti font dapat dipulihkan pada sesi berikutnya.
-   Jika tertulis hanya sesi ini (penyimpanan browser gagal), font dapat dipakai
-   saat itu tetapi perlu dihubungkan lagi setelah browser dimuat ulang.
-Font asli tidak termasuk ZIP, tidak dikirim ke backend/GitHub, dan tidak ikut
-backup cetak. Menghapus data situs/browser menghapus font lokal dan draf.
-
-UJI CETAK SEBELUM PRODUKSI
-1. Pada COBA-CETAK.html, klik Coba 10 model. Gunakan font asli dan logo contoh.
-   Halaman ini tidak mengirim pesanan ke pusat; riwayat contoh hanya sesi ini.
-2. Periksa ejaan, NIP, font, logo, nama pendek/panjang dan 10 model.
-3. Pilih kertas sesuai media: default 210 x 290 mm; A4 210 x 297 mm.
-   Ukuran bingkai 80,4 x 20,4 mm. Layout Corel hingga 29 nametag per halaman.
-4. Centang pemeriksaan dan klik Simpan & unduh PDF.
-5. Buka/import PDF di Corel, jaga skala 100%. Print Actual size / 100%, matikan
-   Fit / Sesuaikan halaman. Ukur satu bingkai dan cocokkan tulisan dengan CDR.
-6. Setelah uji cocok, gunakan pesanan produksi. Selesai Cetak hanya ditekan
-   sesudah cetak fisik selesai; unduh PDF saja tidak mengubah tahap pesanan.
-Tulisan PDF berupa kurva vektor, logo tetap bitmap. Untuk mengubah ejaan,
-edit pesanan lalu buat PDF baru. Font asli di PC dan printer fisik belum
-tersedia dalam pemeriksaan paket ini, jadi kecocokan akhir harus diuji di PC.
-
-RIWAYAT DAN FILE CONTOH LAMA
-PDF/PNG/SVG yang dipulihkan berasal dari v13.8.2–v13.8.5 dan menggunakan
-font/geometri versi lama. Baca CONTOH-LAMA.txt. Itu arsip referensi, bukan
-contoh hasil font asli v13.8.11. Untuk contoh terbaru, unduh dari COBA-CETAK.html
-sesudah menghubungkan font asli. Job lama tetap memakai profil mesin lamanya.
-Riwayat job font asli memerlukan font lokal sebelum ditampilkan/diunduh ulang.
-
-CETAK ULANG
-Pada Antrean produksi pilih Semua tanggal, cari pesanan, klik Cetak ulang,
-isi alasan lalu Masukkan ke antrean hari ini. Tunggu simpan pusat selesai.
-ID dan tanggal awal dipertahankan; jadwal produksi mengikuti hari cetak ulang.
-Nomor cetakan bertambah satu; PDF dari siklus sebelumnya tidak boleh menuntaskan
-siklus baru. Untuk pesanan arsip, gunakan akses pemilik untuk cetak ulang.
-
-BACKUP
-Backup & draf membawa antrean, riwayat, pengaturan, logo dan hubungan konfirmasi.
-Backup cetak membawa bagian cetak saja, tidak membuat operasi simpan pusat baru.
-Simpan backup sebelum pindah PC, tetapi hubungkan font sendiri pada PC tujuan.
-
-VERIFIKASI PAKET
-Jalankan node tests/run-tests.cjs dan node tests/local-font-tests.cjs (Node 18+).
-Laporan hasil berada di tests/HASIL-UJI-V13.8.11.txt.
-Pengujian memakai simulasi, tanpa mengubah data pusat atau deployment aktif.
+BATAS PENGUJIAN
+122 pengujian otomatis lulus menggunakan data sintetis. Tidak ada data
+produksi yang diakses atau diubah. Percepatan diuji dari jumlah kiriman dan
+operasi simpan, bukan pengukuran detik pada koneksi/akun Google milikmu.
+Gangguan jaringan atau layanan Google tetap dapat menambah waktu tunggu.
+Referensi Corel mempunyai penyesuaian manual per objek. Lebar 70%/79% adalah
+profil umum yang dapat disesuaikan, bukan klaim identik untuk semua objek.

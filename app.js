@@ -64,7 +64,7 @@ function renderSyncSummary(){
  $('syncSummary').classList.toggle('hidden',!S.snapshot);
  $('saveStatus').textContent=pending.length?`${inflightIds.size} sedang dikirim · ${waiting} menunggu${blocked?' · '+blocked+' perlu diperiksa':''}`:'Semua perubahan sudah dikonfirmasi pusat';
  const caps=S.snapshot?.capabilities||{};
- $('saveMode').textContent=caps.writeBatch?('Simpan cepat aktif'+(caps.optionalSku?' · SKU opsional':' · SKU opsional memerlukan pusat v13.4')):caps.mutateBatch?'Pusat masih v13.2 · pasang pembaruan simpan cepat':'Simpan satu per satu · pembaruan pusat diperlukan';
+ $('saveMode').textContent=caps.writeBatch?(caps.groupedRecovery?'Simpan kelompok aktif · hingga 100 perubahan/kiriman':'Simpan kelompok 25 · perbarui Apps Script ke v13.8.12 untuk percepatan'):caps.mutateBatch?'Pusat masih v13.2 · pasang pembaruan simpan cepat':'Simpan satu per satu · pembaruan pusat diperlukan';
  $('saveMode').className=caps.writeBatch?'save-mode':'save-mode needs-update';
  $('saveTiming').textContent=lastSaveStats?`${lastSaveStats.count} terkonfirmasi dalam ${(lastSaveStats.ms/1000).toFixed(1)} detik`:'';
 }
@@ -254,7 +254,7 @@ async function sync(force=false){
   if(!S.snapshot?.capabilities){const snapshot=await C.request(ep,tk,'snapshot');snapshot.capabilities??={mutateBatch:0};if(generation!==authGeneration)return;await editState(s=>{s.snapshot=snapshot;s.lastSync=new Date().toISOString();});}
   const started=Date.now();
   while(n++<100&&generation===authGeneration&&Date.now()-started<25000){
-   const caps=S.snapshot?.capabilities||{},limit=Math.max(1,Math.min(25,Number(caps.mutateBatch)||1));let batch=[];
+   const caps=S.snapshot?.capabilities||{},limit=Math.max(1,Math.min(100,Number(caps.mutateBatch)||1));let batch=[];
    // Freeze the payload in the same IndexedDB transaction as attempted=true.
    await editState(s=>{C.repairPendingDependencies(s);const ready=C.readyOperations(s.pending,limit);for(const p of ready)p.attempted=true;batch=JSON.parse(JSON.stringify(ready));inflightIds=new Set(batch.map(p=>p.operation.id));});
    if(!batch.length)break;
@@ -396,4 +396,4 @@ function previewBackup(backup){
 }
 $('exportBtn').textContent='Backup & draf';$('exportBtn').onclick=dataModal;
 NFPrintUI.init({state:()=>({...S,...printCache,pending:S.pending,printReceipts:S.printReceipts}),save:editPrintState,restore:restoreWorkspace,context:()=>endpoint+'|'+authGeneration,endpoint:()=>endpoint,operator:()=>operator,selectedOrders:()=>selectionRows().filter(o=>selected.has(o.id)),modal,toast,dirty:v=>modalDirty=v,isDirty:()=>modalDirty,editOrder:openOrder,finish:finishPrintJob});
-window.NFAppReady='13.8.11';
+window.NFAppReady='13.8.12';

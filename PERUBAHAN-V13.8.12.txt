@@ -1,0 +1,35 @@
+PERUBAHAN V13.8.12
+
+FONT
+- Referensi CDR menyebut Swis721 BT pada objek nama dengan NIP dan baris NIP;
+  face yang tertanam adalah Swis721 BT Bold (Swiss721BT-Bold, bobot 700).
+- Koreksi dari Regular menjadi Bold untuk dua baris tersebut.
+- Nama 21 pt/lebar 70%; NIP 13 pt/lebar 79%, masing-masing dapat disesuaikan.
+- Cache font terpisah swisBold dan swis, sehingga riwayat lama tidak berubah.
+- Validasi metadata menolak Regular, Italic, atau Condensed pada slot Bold.
+- Nama tanpa NIP dari v13.8.11 dan pengaturan lebarnya tetap dipertahankan.
+
+PENYIMPANAN
+- Batas backend naik dari 25 menjadi 100 operasi per kiriman.
+- Frontend mengikuti kemampuan backend; backend lama tetap dibatasi 25.
+- Pemulihan exact retry upsert diproses dalam kelompok memakai rencana jurnal
+  lama; tidak membuat ID baru dan tidak mengubah isi operasi yang telah dicoba.
+- Operasi pendahulu berbeda pada pesanan yang sama tetap dipulihkan melalui
+  jalur konservatif. Konflik revisi dan siklus cetak tidak diabaikan.
+- Koneksi Spreadsheet direuse hanya di dalam permintaan terkunci; pembacaan
+  ulang sebelum/selepas perubahan data tetap dilakukan.
+- Pesan Failed to fetch dijelaskan dalam bahasa Indonesia dan menunjukkan
+  bahwa status simpan belum pasti, dengan petunjuk Antrean simpan.
+
+HASIL UJI STRUKTURAL, BUKAN JANJI KECEPATAN WAKTU NYATA
+- 100 upsert baru: 4 kiriman/12 flush menjadi 1 kiriman/3 flush.
+- Pemulihan 25 upsert setelah jurnal tersimpan tetapi respons terputus:
+  50 flush menjadi 2 flush pada harness yang sama.
+- Jumlah di atas tidak menghitung penyimpanan log tampilan atau operasi baca;
+  yang dihitung adalah pemanggilan SpreadsheetApp.flush eksplisit.
+- Akun produksi, durasi internet, dan layanan Google belum diuji langsung.
+
+Rujukan implementasi:
+https://developers.google.com/apps-script/guides/support/best-practices
+https://developers.google.com/apps-script/reference/lock/lock
+https://developers.google.com/apps-script/concepts/deployments

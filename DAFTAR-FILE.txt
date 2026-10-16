@@ -1,6 +1,4 @@
-NAMETAGFLOW V13.8.11 — DAFTAR FILE
-
-Total 77 file. Seluruh nama file paket v13.8.9 tetap disertakan.
+NAMETAGFLOW V13.8.12 - DAFTAR FILE
 
 00-BACA-DULU.txt
 COBA-CETAK.html
@@ -16,7 +14,9 @@ PERBAIKAN-SYNTAX-V13.8.1.txt
 PERUBAHAN-V13.5.txt
 PERUBAHAN-V13.6.txt
 PERUBAHAN-V13.7.txt
+PERUBAHAN-V13.8.10.txt
 PERUBAHAN-V13.8.11.txt
+PERUBAHAN-V13.8.12.txt
 PERUBAHAN-V13.8.2.txt
 PERUBAHAN-V13.8.3.txt
 PERUBAHAN-V13.8.4.txt
@@ -26,13 +26,17 @@ PERUBAHAN-V13.8.7.txt
 PERUBAHAN-V13.8.8.txt
 PERUBAHAN-V13.8.9.txt
 PERUBAHAN-V13.8.txt
+PETUNJUK-GITHUB-V13.8.10.txt
 PETUNJUK-GITHUB-V13.8.11.txt
 PETUNJUK-GITHUB-V13.8.6.txt
 PETUNJUK-GITHUB-V13.8.7.txt
 PETUNJUK-GITHUB-V13.8.8.txt
 PETUNJUK-GITHUB-V13.8.9.txt
+PETUNJUK-PEMASANGAN-V13.8.12.txt
 PETUNJUK.txt
 PROMPT-HARIAN-GEMINI.txt
+Perbandingan-NIP-v13.8.12.pdf
+Perbandingan-Sebelum-Sesudah.pdf
 Pratinjau-10-Model-v13.8.2.png
 Pratinjau-10-Model-v13.8.2.svg
 Pratinjau-10-Model.png
@@ -50,6 +54,10 @@ RIWAYAT-V13.8.txt
 VERIFIKASI-Layout-Corel-29.pdf
 VERIFIKASI-Layout-Corel-29.png
 app.js
+arsip-panduan/00-BACA-DULU-v13.8.11.txt
+arsip-panduan/PANDUAN-LOGO-DAN-CORELDRAW-v13.8.11.txt
+arsip-panduan/PETUNJUK-v13.8.11.txt
+arsip-panduan/README-v13.8.11.md
 backend/Code.gs
 backend/appsscript.json
 core.js
@@ -63,7 +71,9 @@ print-engine.js
 print-font.js
 print-ui.js
 styles.css
+tests/HASIL-UJI-V13.8.10.txt
 tests/HASIL-UJI-V13.8.11.txt
+tests/HASIL-UJI-V13.8.12.txt
 tests/HASIL-UJI-V13.8.2.txt
 tests/HASIL-UJI-V13.8.3.txt
 tests/HASIL-UJI-V13.8.4.txt
@@ -72,6 +82,7 @@ tests/HASIL-UJI-V13.8.7.txt
 tests/HASIL-UJI-V13.8.8.txt
 tests/HASIL-UJI-V13.8.9.txt
 tests/HASIL-UJI.txt
+tests/fixtures/legacy-geometry-v13.8.10.json
 tests/fixtures/logo-demo.png
 tests/fixtures/logo-lowres.png
 tests/fixtures/logo-wide.jpg

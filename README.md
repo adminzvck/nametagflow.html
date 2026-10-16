@@ -1,24 +1,30 @@
-# NametagFlow v13.8.11 - proporsi tulisan Corel
+# NametagFlow v13.8.12
 
-Nama tanpa NIP memakai Arial Bold asli 28 pt dengan lebar awal **70%**.
-Pengaturan ini mengikuti proporsi mendatar yang paling umum pada referensi
-15 SEPTEMBER 02.cdr: rasio lebar/tinggi sekitar 0,69913.
+Koreksi font nama + NIP dan penyimpanan kelompok yang lebih efisien.
+Baca **00-BACA-DULU.txt** sebelum memasang. Versi ini perlu pembaruan
+**Apps Script serta GitHub**, kemudian hubungkan **Swis721 BT Bold** di PC.
 
-Baca **00-BACA-DULU.txt** untuk pemasangan dan **PERUBAHAN-V13.8.11.txt** untuk rincian.
+| Bagian | Font | Ukuran | Lebar awal |
+|---|---|---:|---:|
+| Nama tanpa NIP | Arial Bold | 28 pt | 70% |
+| Nama dengan NIP | Swis721 BT Bold | 21 pt | 70% |
+| Nomor NIP | Swis721 BT Bold | 13 pt | 79% |
 
-- Upload seluruh isi folder aplikasi ke lokasi index.html lama di GitHub.
-- Setelah penerbitan selesai, Ctrl+Shift+R dan pastikan versi V13.8.11.
-- Buat lembar cetak **baru**. PDF dan riwayat lama tidak berubah.
-- Cetak Produksi > Ukuran tulisan > Lebar nama tanpa NIP: 70% (dapat diatur 40-100%).
-- Font tetap Arial Bold (arialbd.ttf); tidak perlu mengganti ke Arial Regular.
-- Nama dengan NIP dan baris NIP tetap memakai pengaturan sebelumnya.
-- Backend tetap v13.8.6. Apps Script tidak perlu diperbarui untuk revisi ini.
-- Font proprietary tidak dibundel. Font dibaca dari PC produksi.
+Batas nama tetap 73 mm tanpa logo / 55 mm dengan logo. PDF dan riwayat lama
+mempertahankan profilnya; buat lembar baru untuk memakai koreksi ini.
+Pengaturan nama tanpa NIP yang sudah disesuaikan pada v13.8.11 dipertahankan.
 
-**Perbandingan-Sebelum-Sesudah.pdf** memuat contoh nama yang sama pada kedua profil.
-Contoh baru ini memakai outline Arial Bold yang tertanam dalam referensi CDR,
-tanpa membundel file font. Pengukuran kerning contoh Node dapat sedikit berbeda
-dari browser produksi. PDF/PNG/SVG versi sebelumnya tetap merupakan arsip.
+Pusat kini menerima hingga 100 perubahan per kelompok. Pengiriman ulang
+upsert yang terputus menggunakan rencana simpan dan ID operasi lama secara
+berkelompok. Pemeriksaan revisi, konflik, siklus cetak, dan verifikasi hasil
+simpan tetap berjalan. Backend lama tetap kompatibel pada batas kirim lama.
 
-Verifikasi: `node tests/run-tests.cjs` (93/93) dan
-`node tests/local-font-tests.cjs` (16/16). Lihat tests/HASIL-UJI-V13.8.11.txt.
+Uji lokal: **103/103** uji aplikasi/backend dan **19/19** uji font.
+Laporan: `tests/HASIL-UJI-V13.8.12.txt`.
+Contoh visual: **Perbandingan-NIP-v13.8.12.pdf**.
+Kecepatan nyata masih bergantung pada koneksi, ukuran Sheet, dan Google.
+Belum dipasang atau diuji pada data produksi pengguna.
+
+Font berlisensi tidak dibundel. Gambar/PDF contoh menyimpan outline saja.
+Panduan terdahulu dalam `arsip-panduan` dan file berlabel versi lama adalah
+arsip; gunakan panduan v13.8.12 untuk pemasangan saat ini.
