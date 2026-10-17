@@ -1,7 +1,7 @@
 /* Local licensed-font bridge for NametagFlow. Font bytes stay on this device and are never uploaded. */
 (function(root){
 'use strict';
-var BUILD='13.8.12', loaded={arial:null,arialBold:null,swis:null,swisBold:null}, sources={arial:'',arialBold:'',swis:'',swisBold:''}, restored=false, restoring=null;
+var BUILD='13.8.14', loaded={arial:null,arialBold:null,swis:null,swisBold:null}, sources={arial:'',arialBold:'',swis:'',swisBold:''}, restored=false, restoring=null;
 var LABELS={arial:'Arial Regular',arialBold:'Arial Bold',swis:'Swis721 BT Regular',swisBold:'Swis721 BT Bold'};
 function arialKey(engine){var v=String(engine||BUILD).split('.').map(Number);return v[0]>13||(v[0]===13&&(v[1]>8||(v[1]===8&&v[2]>=10)))?'arialBold':'arial';}
 function swisKey(engine){var v=String(engine||BUILD).split('.').map(Number);return v[0]>13||(v[0]===13&&(v[1]>8||(v[1]===8&&v[2]>=12)))?'swisBold':'swis';}

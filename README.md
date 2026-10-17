@@ -1,30 +1,19 @@
-# NametagFlow v13.8.12
+# NametagFlow v13.8.14
 
-Koreksi font nama + NIP dan penyimpanan kelompok yang lebih efisien.
-Baca **00-BACA-DULU.txt** sebelum memasang. Versi ini perlu pembaruan
-**Apps Script serta GitHub**, kemudian hubungkan **Swis721 BT Bold** di PC.
+Perbaikan hasil audit: menjaga setelan cetak saat pembaruan, membatalkan
+respons login/log yang kedaluwarsa, dan mencegah dialog cetak muncul kembali
+setelah ditutup. Transaksi lokal dan tinjauan konflik mengikuti sesi asal.
 
-| Bagian | Font | Ukuran | Lebar awal |
-|---|---|---:|---:|
-| Nama tanpa NIP | Arial Bold | 28 pt | 70% |
-| Nama dengan NIP | Swis721 BT Bold | 21 pt | 70% |
-| Nomor NIP | Swis721 BT Bold | 13 pt | 79% |
+Baca **00-BACA-DULU.txt** lalu unggah isi folder aplikasi ke GitHub Pages.
+Backend tetap **v13.8.12**; tidak perlu deploy ulang jika versi tersebut aktif.
 
-Batas nama tetap 73 mm tanpa logo / 55 mm dengan logo. PDF dan riwayat lama
-mempertahankan profilnya; buat lembar baru untuk memakai koreksi ini.
-Pengaturan nama tanpa NIP yang sudah disesuaikan pada v13.8.11 dipertahankan.
+Semua 10 model mempertahankan geometri v13.8.13, termasuk enam model logo
+dan kurva PDF. Contoh PDF v13.8.13 tetap relevan. Font berlisensi tidak dibundel.
+Pengaturan yang sudah terlanjur berubah sebelumnya perlu disetel ulang.
 
-Pusat kini menerima hingga 100 perubahan per kelompok. Pengiriman ulang
-upsert yang terputus menggunakan rencana simpan dan ID operasi lama secara
-berkelompok. Pemeriksaan revisi, konflik, siklus cetak, dan verifikasi hasil
-simpan tetap berjalan. Backend lama tetap kompatibel pada batas kirim lama.
+Pengujian lokal: **127/127** aplikasi/backend dan **19/19** font (146 total).
+Lihat **LAPORAN-AUDIT-V13.8.14.txt** dan **tests/HASIL-UJI-V13.8.14.txt**.
 
-Uji lokal: **103/103** uji aplikasi/backend dan **19/19** uji font.
-Laporan: `tests/HASIL-UJI-V13.8.12.txt`.
-Contoh visual: **Perbandingan-NIP-v13.8.12.pdf**.
-Kecepatan nyata masih bergantung pada koneksi, ukuran Sheet, dan Google.
-Belum dipasang atau diuji pada data produksi pengguna.
-
-Font berlisensi tidak dibundel. Gambar/PDF contoh menyimpan outline saja.
-Panduan terdahulu dalam `arsip-panduan` dan file berlabel versi lama adalah
-arsip; gunakan panduan v13.8.12 untuk pemasangan saat ini.
+Belum dipasang pada GitHub/akun pengguna. Pengujian memakai data sintetis;
+kecepatan jaringan dan hasil printer produksi belum diukur.
+Panduan/contoh versi lama disimpan sebagai arsip.

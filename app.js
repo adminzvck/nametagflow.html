@@ -1,6 +1,6 @@
 'use strict';
 const C=NFCore,$=id=>document.getElementById(id),STAGES=['Cetak vinyl','Laminasi','Akrilik','Resin','Pengait','Packing','Pengiriman'],COLORS=['#adc788','#c5c797','#90b9c3','#9cafd4','#bda8cc','#d8bf93','#90c5af'];
-let endpoint=localStorage.getItem('nf13_endpoint')||C.ENDPOINT,token=sessionStorage.getItem('nf13_token')||'',operator=localStorage.getItem('nf13_operator')||'',S={snapshot:null,pending:[],lastSync:''},db,page='active',pageNo=1,selected=new Set(),running=false,scanner=null,modalDirty=false,authGeneration=0;
+let endpoint=localStorage.getItem('nf13_endpoint')||C.ENDPOINT,token=sessionStorage.getItem('nf13_token')||'',operator=localStorage.getItem('nf13_operator')||'',S={snapshot:null,pending:[],lastSync:''},db,page='active',pageNo=1,selected=new Set(),running=false,scanner=null,modalDirty=false,authGeneration=0,modalRevision=0;
 const PAGE_SIZE=25,channel=typeof BroadcastChannel!=='undefined'?new BroadcastChannel('nf13-state'):null;
 let printCache={};
 let syncRequested=false,syncTimer,refreshRequested=false,retryCount=0,inflightIds=new Set(),lastSaveStats=null,groupByMP=localStorage.getItem('nf13_group_by_mp')==='true',collapsedMP=new Set();
@@ -15,9 +15,18 @@ function repairPrintCycleBlocks(state){
  }
  return repaired;
 }
-async function editState(fn){S=await storage(fn);channel?.postMessage({endpoint});render();return S;}
+function accessContext(){return{endpoint,generation:authGeneration};}
+function sameAccess(ctx){return ctx.endpoint===endpoint&&ctx.generation===authGeneration;}
+function assertAccess(ctx){if(!sameAccess(ctx))throw new Error('Akses atau ruang produksi berubah. Buka ulang tindakan ini.');}
+async function editState(fn,ctx=accessContext()){
+ assertAccess(ctx);const value=await storage(s=>{assertAccess(ctx);fn(s);},ctx.endpoint);
+ if(sameAccess(ctx)){S=value;channel?.postMessage({endpoint:ctx.endpoint});render();}return value;
+}
 // Print artwork is a separate record: normal save acknowledgments never rewrite logos/history.
-async function editPrintState(fn){printCache=await storage(fn,endpoint+'::print');channel?.postMessage({endpoint});render();return printCache;}
+async function editPrintState(fn,ctx=accessContext()){
+ assertAccess(ctx);const value=await storage(s=>{assertAccess(ctx);fn(s);},ctx.endpoint+'::print');
+ if(sameAccess(ctx)){printCache=value;channel?.postMessage({endpoint:ctx.endpoint});render();}return value;
+}
 function restoreWorkspace(backup,includePending=false){return new Promise((resolve,reject)=>{
  const ep=endpoint,generation=authGeneration;
  if(backup.endpoint&&backup.endpoint!==ep){reject(new Error('Backup berasal dari alamat backend lain.'));return;}
@@ -32,9 +41,9 @@ function restoreWorkspace(backup,includePending=false){return new Promise((resol
  tx.onerror=()=>reject(failed||tx.error);tx.onabort=()=>reject(failed||tx.error||new Error('Pemulihan gagal. Antrean dan riwayat sebelumnya tetap disimpan.'));
 });}
 function commitPrintJob(id,fresh){return new Promise((resolve,reject)=>{
- const ep=endpoint,tx=db.transaction('workspaces','readwrite'),store=tx.objectStore('workspaces'),mainReq=store.get(ep),printReq=store.get(ep+'::print');let main,prints,count=0,failed;
- function ready(){if(++count!==2)return;try{main=mainReq.result||{pending:[]};prints=printReq.result||{};const combined={...main,...prints,snapshot:fresh,pending:main.pending,printReceipts:main.printReceipts};NFPrint.finishJob(combined,id,operator);main.snapshot=fresh;main.lastSync=new Date().toISOString();main.pending=combined.pending;main.printReceipts=combined.printReceipts;prints.printJobs=combined.printJobs;store.put(main,ep);store.put(prints,ep+'::print');}catch(e){failed=e;tx.abort();}}
- mainReq.onsuccess=ready;printReq.onsuccess=ready;tx.oncomplete=()=>{if(endpoint===ep){S=main;printCache=prints;channel?.postMessage({endpoint:ep});render();}resolve();};tx.onerror=()=>reject(failed||tx.error);tx.onabort=()=>reject(failed||tx.error||new Error('Konfirmasi cetak gagal disimpan di perangkat.'));
+ const ep=endpoint,generation=authGeneration,tx=db.transaction('workspaces','readwrite'),store=tx.objectStore('workspaces'),mainReq=store.get(ep),printReq=store.get(ep+'::print');let main,prints,count=0,failed;
+ function ready(){if(++count!==2)return;try{if(ep!==endpoint||generation!==authGeneration)throw new Error('Akses berubah. Buka ulang riwayat cetak.');main=mainReq.result||{pending:[]};prints=printReq.result||{};const combined={...main,...prints,snapshot:fresh,pending:main.pending,printReceipts:main.printReceipts};NFPrint.finishJob(combined,id,operator);main.snapshot=fresh;main.lastSync=new Date().toISOString();main.pending=combined.pending;main.printReceipts=combined.printReceipts;prints.printJobs=combined.printJobs;store.put(main,ep);store.put(prints,ep+'::print');}catch(e){failed=e;tx.abort();}}
+ mainReq.onsuccess=ready;printReq.onsuccess=ready;tx.oncomplete=()=>{if(endpoint===ep&&generation===authGeneration){S=main;printCache=prints;channel?.postMessage({endpoint:ep});render();}resolve();};tx.onerror=()=>reject(failed||tx.error);tx.onabort=()=>reject(failed||tx.error||new Error('Konfirmasi cetak gagal disimpan di perangkat.'));
 });}
 function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('show'),4200);}
 function errorMessage(e){return e?.message||String(e);}
@@ -128,14 +137,26 @@ function renderRecycle(){
 }
 function renderLogs(){const logs=S.logs||[];$('pagination').innerHTML='';$('resultCount').textContent=logs.length;$('content').innerHTML=logs.length?`<div class="table-wrap"><table><thead><tr><th>WAKTU</th><th>AKSI</th><th>PESANAN</th><th>OPERATOR</th></tr></thead><tbody>${logs.map(l=>`<tr><td>${fmtDate(l.time,true)}</td><td>${C.esc(l.field==='reprint'?'Cetak ulang':l.field)}</td><td>${C.esc(l.newValue)}<small>${C.esc(l.id)}</small>${l.field==='reprint'?'<small>'+C.esc(l.note||'')+'</small>':''}</td><td>${C.esc(l.operator)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><strong>Belum ada log yang dimuat.</strong>Gunakan Muat ulang untuk mengambil log terbaru.</div>';}
 function go(p){page=p;pageNo=1;selected.clear();$('stageFilter').value='';$('search').value='';$('dateFilter').value='';$('modelFilter').value='';$('hookFilter').value='';render();if(p==='logs')loadLogs();}
-async function loadLogs(){try{const logs=await C.request(endpoint,token,'logs');await editState(s=>s.logs=logs);}catch(e){toast(errorMessage(e));}}
-function modal(title,html){$('modal').classList.remove('bulk-modal','packing-modal','print-modal');$('modalTitle').textContent=title;$('modalBody').innerHTML=html;modalDirty=false;if(!$('modal').open)$('modal').showModal();}
-async function closeModal(){if(!token){toast('Masukkan kode akses untuk membuka ruang produksi.');return;}if(modalDirty&&!confirm('Tutup tanpa menyimpan isian formulir ini?'))return;if(scanner){try{await scanner.stop();await scanner.clear();}catch(e){}scanner=null;}NFPrintUI.cancel();$('modal').close();modalDirty=false;}
+async function loadLogs(){const ctx=accessContext();try{const logs=await C.request(ctx.endpoint,token,'logs');if(!sameAccess(ctx))return;await editState(s=>s.logs=logs,ctx);}catch(e){if(sameAccess(ctx))toast(errorMessage(e));}}
+function modal(title,html,printView=false){modalRevision++;if(!printView)NFPrintUI.cancel();$('modal').classList.remove('bulk-modal','packing-modal','print-modal');$('modalTitle').textContent=title;$('modalBody').innerHTML=html;modalDirty=false;if(!$('modal').open)$('modal').showModal();}
+async function closeModal(){if(!token){toast('Masukkan kode akses untuk membuka ruang produksi.');return;}if(modalDirty&&!confirm('Tutup tanpa menyimpan isian formulir ini?'))return;if(scanner){try{await scanner.stop();await scanner.clear();}catch(e){}scanner=null;}NFPrintUI.cancel();modalRevision++;$('modal').close();modalDirty=false;}
 $('closeModal').onclick=closeModal;$('modal').addEventListener('cancel',e=>{e.preventDefault();closeModal();});$('modalBody').addEventListener('input',()=>modalDirty=true);
 function authModal(){
  modal('Hubungkan ruang produksi',`<p class="form-help">Masukkan nama operator dan kode akses yang diberikan pemilik. Kode hanya disimpan selama sesi browser ini.</p><form id="authForm"><div class="form-grid"><label class="field full">Nama operator<input id="authName" required value="${C.esc(operator)}" autocomplete="name"></label><label class="field full">Kode akses<input id="authToken" type="password" required autocomplete="off" value="${C.esc(token)}"></label></div><details><summary>Alamat backend</summary><input id="authEndpoint" type="url" value="${C.esc(endpoint)}" aria-label="URL backend"><p>Gunakan URL deployment /exec yang diberikan pemilik.</p></details><p id="authError" class="form-error"></p><div class="form-actions"><button type="button" class="btn" id="logoutBtn">Keluar</button><button class="btn primary" id="loginBtn">Hubungkan</button></div></form>`);
  $('logoutBtn').onclick=()=>{token='';authGeneration++;sessionStorage.removeItem('nf13_token');updateConnection('Belum terhubung');modalDirty=false;render();authModal();};
- $('authForm').onsubmit=async e=>{e.preventDefault();const btn=$('loginBtn');btn.disabled=true;$('authError').textContent='';const ep=$('authEndpoint').value.trim(),tk=$('authToken').value.trim(),name=$('authName').value.trim();try{const snapshot=await C.request(ep,tk,'snapshot');endpoint=ep;token=tk;operator=name;authGeneration++;printCache=await storage(null,endpoint+'::print');sessionStorage.setItem('nf13_token',token);localStorage.setItem('nf13_endpoint',endpoint);localStorage.setItem('nf13_operator',operator);await editState(s=>{s.snapshot=snapshot;s.lastSync=new Date().toISOString();if(snapshot.role!=='admin')s.logs=[];});if(snapshot.role!=='admin'&&['logs','recycle'].includes(page))go('active');modalDirty=false;closeModal();updateConnection('Terhubung pusat','ok');sync();}catch(err){$('authError').textContent=errorMessage(err);}finally{btn.disabled=false;}};
+ $('authForm').onsubmit=async e=>{
+  e.preventDefault();const btn=$('loginBtn');if(btn.disabled)return;btn.disabled=true;$('authError').textContent='';
+  const ep=$('authEndpoint').value.trim(),tk=$('authToken').value.trim(),name=$('authName').value.trim(),view=modalRevision;let generation=authGeneration;
+  const current=()=>view===modalRevision&&generation===authGeneration;
+  try{
+   const snapshot=await C.request(ep,tk,'snapshot');if(!current())return;
+   const prints=await storage(null,ep+'::print');if(!current())return;
+   endpoint=ep;token=tk;operator=name;generation=++authGeneration;printCache=prints;retryCount=0;lastSaveStats=null;
+   sessionStorage.setItem('nf13_token',token);localStorage.setItem('nf13_endpoint',endpoint);localStorage.setItem('nf13_operator',operator);
+   await editState(s=>{s.snapshot=snapshot;s.lastSync=new Date().toISOString();if(snapshot.role!=='admin')s.logs=[];});if(!current())return;
+   if(snapshot.role!=='admin'&&['logs','recycle'].includes(page))go('active');modalDirty=false;closeModal();updateConnection('Terhubung pusat','ok');sync();
+  }catch(err){if(current())$('authError').textContent=errorMessage(err);}finally{if(current())btn.disabled=false;}
+ };
 }
 function options(values,value){const list=[...values];if(value&&!list.includes(value))list.unshift(value);return '<option value="">Pilih…</option>'+list.map(v=>`<option ${v===value?'selected':''} value="${C.esc(v)}">${C.esc(v)}</option>`).join('');}
 function modelGuide(){return `<details class="model-guide"><summary>Lihat gambar acuan 10 model</summary><img src="${C.CATALOG_IMAGE}" alt="Katalog asli John Store: Model 1 sampai 10" loading="lazy"><p>Model 1–5: lis luar. Model 6–10: tanpa lis luar. Model 5 dan 10: garis vertikal pembatas logo. Istilah Line pada pilihan model berarti garis vertikal tersebut.</p></details>`;}
@@ -249,15 +270,15 @@ async function sync(force=false){
  if(running){syncRequested=true;refreshRequested=refreshRequested||force===true;return;}
  if(navigator.onLine===false){updateConnection('Koneksi terputus','warn');return;}
  clearTimeout(syncTimer);running=true;syncRequested=false;const generation=authGeneration,ep=endpoint,tk=token;let failed=false,locked=false,lastFailure=null;
- const task=async()=>{updateConnection(S.pending.length?'Mengirim perubahan…':'Memeriksa pusat…');try{
-  locked=true;S=await storage();let n=0,wrote=false,needsSnapshot=force===true;
+ const task=async()=>{if(generation!==authGeneration||ep!==endpoint)return;updateConnection(S.pending.length?'Mengirim perubahan…':'Memeriksa pusat…');try{
+  locked=true;const saved=await storage(null,ep);if(generation!==authGeneration||ep!==endpoint)return;S=saved;let n=0,wrote=false,needsSnapshot=force===true;
   if(!S.snapshot?.capabilities){const snapshot=await C.request(ep,tk,'snapshot');snapshot.capabilities??={mutateBatch:0};if(generation!==authGeneration)return;await editState(s=>{s.snapshot=snapshot;s.lastSync=new Date().toISOString();});}
   const started=Date.now();
   while(n++<100&&generation===authGeneration&&Date.now()-started<25000){
    const caps=S.snapshot?.capabilities||{},limit=Math.max(1,Math.min(100,Number(caps.mutateBatch)||1));let batch=[];
    // Freeze the payload in the same IndexedDB transaction as attempted=true.
    await editState(s=>{C.repairPendingDependencies(s);const ready=C.readyOperations(s.pending,limit);for(const p of ready)p.attempted=true;batch=JSON.parse(JSON.stringify(ready));inflightIds=new Set(batch.map(p=>p.operation.id));});
-   if(!batch.length)break;
+   if(generation!==authGeneration)return;if(!batch.length)break;
    updateConnection('Menyimpan '+batch.length+' · '+S.pending.length+' tersisa','warn');
    let responseHandled=false;const sent=Date.now();
    try{
@@ -295,13 +316,15 @@ async function sync(force=false){
  }
 }
 async function checkOp(opId){
+ const ctx=accessContext();
  const p=S.pending.find(x=>x.operation.opId===opId);if(!p)return;const op=p.operation,current=S.snapshot?.orders.find(x=>x.id===op.id);
  modal('Periksa perubahan',`<p class="form-help">${C.esc(p.error||'Perubahan ini belum mendapat konfirmasi pusat. Jika koneksi terputus, kirim ulang dengan ID yang sama agar tidak membuat duplikat.')}</p><div class="compare"><div><h3>Draf perangkat ini</h3><pre>${C.esc(JSON.stringify(op.data||{aksi:op.kind,id:op.id},null,2))}</pre></div><div><h3>Versi pusat terakhir dimuat</h3><pre>${C.esc(JSON.stringify(current?C.fields(current):{status:'Tidak ada di antrean aktif'},null,2))}</pre></div></div><p class="form-help">Untuk mengambil versi pusat terbaru, tutup dialog lalu klik Muat ulang.</p><div class="form-actions"><button class="btn" id="retryOp">Coba kirim lagi</button>${p.status==='blocked'?'<button class="btn danger" id="discardOp">Gunakan versi pusat</button>':''}${p.status==='blocked'&&op.kind==='upsert'&&current?'<button class="btn primary" id="rebaseOp">Terapkan draf setelah diperiksa</button>':''}</div><p id="opError" class="form-error"></p>`);
+ const view=modalRevision,valid=()=>sameAccess(ctx)&&view===modalRevision;
  $('retryOp').onclick=async()=>{await editState(s=>{const x=s.pending.find(x=>x.operation.opId===opId);if(x){x.status='queued';x.error='';}});closeModal();sync();};
  if($('discardOp'))$('discardOp').onclick=async()=>{if(!confirm('Ekspor draf lalu batalkan SEMUA perubahan tertunda untuk pesanan ini?'))return;download('draf-dibatalkan-'+op.id+'.json',S.pending.filter(x=>x.operation.id===op.id));await editState(s=>{NFPrint.cancelOperations(s,s.pending.filter(x=>x.operation.id===op.id).map(x=>x.operation.opId));s.pending=s.pending.filter(x=>x.operation.id!==op.id);});closeModal();};
- if($('rebaseOp'))$('rebaseOp').onclick=async()=>{try{const fresh=await C.request(endpoint,token,'snapshot'),remote=fresh.orders.find(x=>x.id===op.id);if(!remote)throw new Error('Pesanan tidak lagi aktif. Gunakan pemulihan jika diperlukan.');if(remote.revision!==current.revision){await editState(s=>s.snapshot=fresh);checkOp(opId);toast('Versi pusat berubah lagi. Periksa perbandingan terbaru.');return;}if(!confirm('Terapkan draf ini di atas versi pusat yang telah ditampilkan?'))return;
+ if($('rebaseOp'))$('rebaseOp').onclick=async()=>{try{if(!valid())return;const fresh=await C.request(ctx.endpoint,token,'snapshot');if(!valid())return;const remote=fresh.orders.find(x=>x.id===op.id);if(!remote)throw new Error('Pesanan tidak lagi aktif. Gunakan pemulihan jika diperlukan.');if(remote.revision!==current.revision){await editState(s=>s.snapshot=fresh,ctx);if(!valid())return;checkOp(opId);toast('Versi pusat berubah lagi. Periksa perbandingan terbaru.');return;}if(!confirm('Terapkan draf ini di atas versi pusat yang telah ditampilkan?'))return;
  const dependent=S.pending.filter(x=>x.operation.id===op.id);if(dependent.length>1)throw new Error('Ada beberapa perubahan untuk ID ini. Ekspor draf dan gunakan versi pusat dahulu, lalu edit ulang.');
- await editState(s=>{s.pending=s.pending.filter(x=>x.operation.opId!==opId);s.snapshot=fresh;const replacement={...op,data:NFPrint.rebaseData(s,op,remote),opId:C.uid(),expectedRevision:remote.revision};s.pending.push({operation:replacement,status:'queued',createdAt:new Date().toISOString(),operator});NFPrint.relinkOperation(s,opId,replacement.opId);});closeModal();sync();}catch(e){$('opError').textContent=errorMessage(e);}};
+ await editState(s=>{s.pending=s.pending.filter(x=>x.operation.opId!==opId);s.snapshot=fresh;const replacement={...op,data:NFPrint.rebaseData(s,op,remote),opId:C.uid(),expectedRevision:remote.revision};s.pending.push({operation:replacement,status:'queued',createdAt:new Date().toISOString(),operator});NFPrint.relinkOperation(s,opId,replacement.opId);},ctx);if(!valid())return;closeModal();sync();}catch(e){if(valid())$('opError').textContent=errorMessage(e);}};
 }
 function batchModal(){
  if(!S.snapshot)return authModal();
@@ -354,7 +377,7 @@ $('selectAllResults').onclick=selectAllResults;$('targetStage').onchange=()=>{$(
 $('reprintSelected').onclick=()=>reprintModal([...selected]);
 $('clearSelection').onclick=()=>{selected.clear();$('targetStage').value='';render();};$('advanceSelected').onclick=async()=>{const rows=filterRows(viewOrders()).filter(o=>selected.has(o.id)&&o.currentStep<7&&!o._action);if(!rows.length)return;if(!confirm('Lanjutkan tahap '+rows.length+' nametag yang dipilih?'))return;await enqueue(rows.map(o=>({kind:'upsert',id:o.id,expectedRevision:o.revision,data:{...C.fields(o),currentStep:o.currentStep+1,isReject:false}})));selected.clear();render();};$('archiveSelected').onclick=async()=>{const rows=filterRows(viewOrders()).filter(o=>selected.has(o.id)&&o.currentStep===7&&!o._action);if(!rows.length){toast('Pilih pesanan tahap Pengiriman terlebih dahulu.');return;}if(!confirm('Arsipkan '+rows.length+' nametag yang dipilih?'))return;await enqueue(rows.map(o=>({kind:'archive',id:o.id,expectedRevision:o.revision})));selected.clear();render();};
 $('addBtn').onclick=()=>openOrder();$('batchBtn').onclick=batchModal;$('scanBtn').onclick=scanModal;$('settingsBtn').onclick=authModal;$('connection').onclick=()=>token?sync(true):authModal();$('refreshBtn').onclick=()=>page==='logs'?loadLogs():sync(true);$('exportBtn').onclick=()=>download('nametagflow-backup-'+today()+'.json',{version:13,exportedAt:new Date().toISOString(),snapshot:S.snapshot,pending:S.pending,operationReceipts:S.operationReceipts,print:{settings:printCache.printSettings,assets:printCache.printAssets,jobs:printCache.printJobs?.map(j=>({...j,moves:NFPrint.exportMoves(j,S)})),receipts:S.printReceipts},packingChecks:S.packingChecks,legacy:{orders:JSON.parse(localStorage.getItem('nametag_orders')||'[]'),archives:JSON.parse(localStorage.getItem('nametag_archives')||'[]')}});
-window.addEventListener('online',sync);window.addEventListener('offline',()=>updateConnection('Koneksi terputus','warn'));channel?.addEventListener('message',async e=>{if(e.data.endpoint===endpoint&&db){S=await storage();printCache=await storage(null,endpoint+'::print');render();}});
+window.addEventListener('online',sync);window.addEventListener('offline',()=>updateConnection('Koneksi terputus','warn'));channel?.addEventListener('message',async e=>{if(e.data.endpoint===endpoint&&db){const ctx=accessContext();try{const saved=await storage(null,ctx.endpoint),prints=await storage(null,ctx.endpoint+'::print');if(!sameAccess(ctx))return;S=saved;printCache=prints;render();}catch(err){if(sameAccess(ctx))toast(errorMessage(err));}}});
 (async()=>{try{db=await openDB();S=await storage(s=>repairPrintCycleBlocks(s));printCache=await storage(null,endpoint+'::print');render();if(token)sync();else authModal();setInterval(()=>{if(!document.hidden)sync(true);},60000);}catch(e){$('notice').className='notice error';$('notice').textContent='Penyimpanan perangkat tidak tersedia: '+errorMessage(e)+'. Jangan input pesanan sebelum masalah ini selesai.';}})();
 
 function safeLegacy(key){try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[];}catch(e){return [];}}
@@ -396,4 +419,4 @@ function previewBackup(backup){
 }
 $('exportBtn').textContent='Backup & draf';$('exportBtn').onclick=dataModal;
 NFPrintUI.init({state:()=>({...S,...printCache,pending:S.pending,printReceipts:S.printReceipts}),save:editPrintState,restore:restoreWorkspace,context:()=>endpoint+'|'+authGeneration,endpoint:()=>endpoint,operator:()=>operator,selectedOrders:()=>selectionRows().filter(o=>selected.has(o.id)),modal,toast,dirty:v=>modalDirty=v,isDirty:()=>modalDirty,editOrder:openOrder,finish:finishPrintJob});
-window.NFAppReady='13.8.12';
+window.NFAppReady='13.8.14';

@@ -1,18 +1,21 @@
 /* NametagFlow print geometry. Units are millimetres; preview and PDF share paths. */
 (function(root){
 'use strict';
-const C=root.NFCore,F=root.NFPrintFont,L=root.NFLocalFonts,BUILD='13.8.12',MM=72/25.4;
+const C=root.NFCore,F=root.NFPrintFont,L=root.NFLocalFonts,BUILD='13.8.14',MM=72/25.4;
 const LEGACY_DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:8,gapX:3,gapY:2,nameHeight:7.5,nameNipHeight:5.4,nipHeight:3.1,shortSpacing:.8,condense:.62,cropMarks:true,layoutMode:'grid',designVersion:'13.6'};
 const V13_7_DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:7.5,nameNipHeight:5.4,nipHeight:3.1,shortSpacing:2.4,condense:.86,cropMarks:false,layoutMode:'corel29',designVersion:'13.7'};
 const V13_8_DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:6.771,nameNipHeight:5.294,nipHeight:3.290,shortSpacing:2.734,condense:1,cropMarks:false,layoutMode:'corel29',designVersion:'13.8.2'};
-const DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:28*25.4/72,nameNipHeight:21*25.4/72,nipHeight:13*25.4/72,shortSpacing:2.734,condense:1,nameWidthScale:.7,nameNipWidthScale:.7,nipWidthScale:.79,cropMarks:false,layoutMode:'corel29',designVersion:'13.8.12'};
+const DEFAULTS={pageWidth:210,pageHeight:290,tagWidth:80.4,tagHeight:20.4,margin:11.85,gapX:.85,gapY:.25,nameHeight:28*25.4/72,nameNipHeight:21*25.4/72,nipHeight:13*25.4/72,shortSpacing:2.734,condense:1,nameWidthScale:.7,nameNipWidthScale:.7,nipWidthScale:.79,cropMarks:false,layoutMode:'corel29',designVersion:'13.8.14'};
 // The CDR's common horizontal/vertical text-scale ratio is 0.6991316.
 // Use an editable 70% default for new sheets; historical sheets keep their geometry.
+const V13_8_13_DEFAULTS={...DEFAULTS,designVersion:'13.8.13'};
+const V13_8_12_DEFAULTS={...DEFAULTS,designVersion:'13.8.12'};
 const V13_8_11_DEFAULTS={...DEFAULTS,nameNipHeight:7.3812,nipHeight:4.5861,nameNipWidthScale:1,nipWidthScale:1,designVersion:'13.8.11'};
 const V13_8_10_DEFAULTS={...V13_8_11_DEFAULTS,nameWidthScale:1,designVersion:'13.8.10'};
 const V13_8_6_DEFAULTS={...V13_8_10_DEFAULTS,nameHeight:9.8414,designVersion:'13.8.9'};
 function referenceWidthEngine(engine=BUILD){const v=String(engine||BUILD).split('.').map(Number);return v[0]>13||(v[0]===13&&(v[1]>8||(v[1]===8&&v[2]>=11)));}
 function swisBoldEngine(engine=BUILD){const v=String(engine||BUILD).split('.').map(Number);return v[0]>13||(v[0]===13&&(v[1]>8||(v[1]===8&&v[2]>=12)));}
+function exactCurveEngine(engine=BUILD){const v=String(engine||BUILD).split('.').map(Number);return v[0]>13||(v[0]===13&&(v[1]>8||(v[1]===8&&v[2]>=13)));}
 function swisFontKey(engine=BUILD){return swisBoldEngine(engine)?'swisBold':'swis';}
 function boldFontEngine(engine=BUILD){const v=String(engine||BUILD).split('.').map(Number);return v[0]>13||(v[0]===13&&(v[1]>8||(v[1]===8&&v[2]>=10)));}
 function arialFontKey(engine=BUILD){return boldFontEngine(engine)?'arialBold':'arial';}
@@ -20,8 +23,8 @@ const clone=v=>JSON.parse(JSON.stringify(v)),round=v=>Math.round(v*100000)/10000
 const ranges={pageWidth:[100,1000],pageHeight:[100,1000],tagWidth:[40,150],tagHeight:[16,40],margin:[0,50],gapX:[0,20],gapY:[0,20],nameHeight:[2,12],nameNipHeight:[2,9],nipHeight:[1.5,5],shortSpacing:[0,4],condense:[.4,1.2],nameWidthScale:[.4,1],nameNipWidthScale:[.4,1],nipWidthScale:[.4,1]};
 function engineProfile(engine=BUILD){const v=String(engine||BUILD).split('.').map(Number),major=v[0]||0,minor=v[1]||0;if(major<13||(major===13&&minor<7))return 'legacy';if(major===13&&minor<8)return 'v13_7';return 'current';}
 function legacyEngine(engine){return engineProfile(engine)==='legacy';}
-function settings(input={},engine=BUILD){const profile=engineProfile(engine),base=profile==='legacy'?LEGACY_DEFAULTS:profile==='v13_7'?V13_7_DEFAULTS:nativeFontEngine(engine)?(boldFontEngine(engine)?(referenceWidthEngine(engine)?(swisBoldEngine(engine)?DEFAULTS:V13_8_11_DEFAULTS):V13_8_10_DEFAULTS):V13_8_6_DEFAULTS):V13_8_DEFAULTS,s={...base,...input};if(!referenceWidthEngine(engine))s.nameWidthScale=1;if(!swisBoldEngine(engine)){s.nameNipWidthScale=1;s.nipWidthScale=1;}s.layoutMode=profile==='legacy'?'grid':(s.layoutMode==='grid'?'grid':'corel29');s.designVersion=base.designVersion;for(const [key,[min,max]] of Object.entries(ranges)){s[key]=Number(s[key]);if(!Number.isFinite(s[key])||s[key]<min||s[key]>max)throw new Error(key.endsWith('WidthScale')?'Lebar tulisan harus 40–100%.':'Ukuran '+key+' harus '+min+'–'+max+(key==='condense'?'':' mm')+'.');}s.cropMarks=!!s.cropMarks;grid(s);return s;}
-function currentSettings(input={}){if(!input||!Object.keys(input).length)return settings(DEFAULTS);const migrated={...input,designVersion:DEFAULTS.designVersion},oldDesign=input.designVersion!==DEFAULTS.designVersion;for(const key of Object.keys(DEFAULTS)){if(key==='designVersion')continue;const value=input[key];if(value===undefined)continue;if(oldDesign&&(value===V13_7_DEFAULTS[key]||value===LEGACY_DEFAULTS[key]))migrated[key]=DEFAULTS[key];}/* New jobs adopt the current typography; saved jobs keep their original engine and settings. */if(oldDesign&&!referenceWidthEngine(input.designVersion||'0'))Object.assign(migrated,{nameHeight:DEFAULTS.nameHeight,nameNipHeight:DEFAULTS.nameNipHeight,nipHeight:DEFAULTS.nipHeight,shortSpacing:DEFAULTS.shortSpacing,condense:DEFAULTS.condense,nameWidthScale:DEFAULTS.nameWidthScale});if(oldDesign&&!swisBoldEngine(input.designVersion||'0'))Object.assign(migrated,{nameNipHeight:DEFAULTS.nameNipHeight,nipHeight:DEFAULTS.nipHeight,nameNipWidthScale:DEFAULTS.nameNipWidthScale,nipWidthScale:DEFAULTS.nipWidthScale});if(!Object.prototype.hasOwnProperty.call(input,'layoutMode'))Object.assign(migrated,{layoutMode:DEFAULTS.layoutMode,margin:DEFAULTS.margin,gapX:DEFAULTS.gapX,gapY:DEFAULTS.gapY});return settings(migrated);}
+function settings(input={},engine=BUILD){const profile=engineProfile(engine),base=profile==='legacy'?LEGACY_DEFAULTS:profile==='v13_7'?V13_7_DEFAULTS:nativeFontEngine(engine)?(boldFontEngine(engine)?(referenceWidthEngine(engine)?(swisBoldEngine(engine)?(exactCurveEngine(engine)?(engine==='13.8.13'?V13_8_13_DEFAULTS:DEFAULTS):V13_8_12_DEFAULTS):V13_8_11_DEFAULTS):V13_8_10_DEFAULTS):V13_8_6_DEFAULTS):V13_8_DEFAULTS,s={...base,...input};if(!referenceWidthEngine(engine))s.nameWidthScale=1;if(!swisBoldEngine(engine)){s.nameNipWidthScale=1;s.nipWidthScale=1;}s.layoutMode=profile==='legacy'?'grid':(s.layoutMode==='grid'?'grid':'corel29');s.designVersion=base.designVersion;for(const [key,[min,max]] of Object.entries(ranges)){s[key]=Number(s[key]);if(!Number.isFinite(s[key])||s[key]<min||s[key]>max)throw new Error(key.endsWith('WidthScale')?'Lebar tulisan harus 40–100%.':'Ukuran '+key+' harus '+min+'–'+max+(key==='condense'?'':' mm')+'.');}s.cropMarks=!!s.cropMarks;grid(s);return s;}
+function currentSettings(input={}){if(!input||!Object.keys(input).length)return settings(DEFAULTS);const migrated={...input,designVersion:DEFAULTS.designVersion},oldDesign=input.designVersion!==DEFAULTS.designVersion;for(const key of Object.keys(DEFAULTS)){if(key==='designVersion')continue;const value=input[key];if(value===undefined)continue;if(oldDesign&&engineProfile(input.designVersion||'13.6')!=='current'&&(value===V13_7_DEFAULTS[key]||value===LEGACY_DEFAULTS[key]))migrated[key]=DEFAULTS[key];}/* New jobs adopt the current typography; saved jobs keep their original engine and settings. */if(oldDesign&&!referenceWidthEngine(input.designVersion||'0'))Object.assign(migrated,{nameHeight:DEFAULTS.nameHeight,nameNipHeight:DEFAULTS.nameNipHeight,nipHeight:DEFAULTS.nipHeight,shortSpacing:DEFAULTS.shortSpacing,condense:DEFAULTS.condense,nameWidthScale:DEFAULTS.nameWidthScale});if(oldDesign&&!swisBoldEngine(input.designVersion||'0'))Object.assign(migrated,{nameNipHeight:DEFAULTS.nameNipHeight,nipHeight:DEFAULTS.nipHeight,nameNipWidthScale:DEFAULTS.nameNipWidthScale,nipWidthScale:DEFAULTS.nipWidthScale});if(!Object.prototype.hasOwnProperty.call(input,'layoutMode'))Object.assign(migrated,{layoutMode:DEFAULTS.layoutMode,margin:DEFAULTS.margin,gapX:DEFAULTS.gapX,gapY:DEFAULTS.gapY});return settings(migrated);}
 function grid(s){if(s.layoutMode==='corel29'){const cols=2,rows=Math.floor((s.pageHeight-s.margin+s.gapY+1e-8)/(s.tagHeight+s.gapY)),mainWidth=cols*s.tagWidth+s.gapX,center=(s.pageWidth-mainWidth)/2,shift=Math.max(0,s.tagHeight/2-.2),left=center+shift,sideLeft=left-s.tagHeight-.4,sideTop=s.margin+26.55,sideGap=.18,sideCount=sideLeft>=0?Math.max(0,Math.floor((s.pageHeight-sideTop+sideGap+1e-8)/(s.tagWidth+sideGap))):0;if(rows<1||left<0||left+mainWidth>s.pageWidth)throw new Error('Nametag tidak muat pada layout Corel. Periksa ukuran kertas dan nametag.');return{mode:'corel29',cols,rows,capacity:cols*rows+sideCount,left,top:s.margin,sideLeft,sideTop,sideGap,sideCount};}const cols=Math.floor((s.pageWidth-2*s.margin+s.gapX+1e-8)/(s.tagWidth+s.gapX)),rows=Math.floor((s.pageHeight-2*s.margin+s.gapY+1e-8)/(s.tagHeight+s.gapY));if(cols<1||rows<1)throw new Error('Nametag tidak muat. Periksa ukuran kertas, margin, dan jarak.');return{mode:'grid',cols,rows,capacity:cols*rows,left:(s.pageWidth-(cols*s.tagWidth+(cols-1)*s.gapX))/2,top:s.margin,sideCount:0};}
 function logoKey(o){const name=C.text(o.logo).normalize('NFC').toUpperCase().replace(/\s+/g,' ');return name?'LOGO:'+name:'ORDER:'+o.id;}
 function jobAssets(job){
@@ -75,10 +78,19 @@ function artwork(order,input=DEFAULTS,assets={},preview=false,engine=BUILD){
  const w=s.tagWidth,h=s.tagHeight,inset=m.border?2.075:0,b={x:inset,y:inset,w:w-2*inset,h:h-2*inset},shapes=[],warnings=[];
  if(m.border){if(legacy)shapes.push({type:'rect',x:.12,y:.12,w:w-.24,h:h-.24,fill:'#ffffff',stroke:'#000000',line:.24});else if(v137)shapes.push({type:'rect',x:.15,y:.15,w:w-.3,h:h-.3,fill:'#ffffff',stroke:'#000000',line:.35});else shapes.push({type:'rect',x:.05,y:.05,w:w-.1,h:h-.1,fill:'#ffffff',stroke:'#000000',line:.1});}
  shapes.push(profile==='current'&&m.border?{type:'rect',...b,fill:'#000000',stroke:'#000000',line:.2}:{type:'rect',...b,fill:'#000000'});
- const pad=m.border?1.3:2.4,logoW=15.5,textLeft=m.logo?b.x+logoW+2:b.x+pad,right=b.x+b.w-pad,available=right-textLeft,maxName=m.logo?55:73,nameW=Math.min(available,maxName),textX=textLeft+(available-nameW)/2;
+ // v13.8.13: align logo models to the outer tag, so the plain variants
+ // retain the same logo positions as their bordered reference examples.
+ const referenceLogo=m.logo&&exactCurveEngine(engine),pad=m.border?1.3:2.4,logoW=15.5,dividerX=referenceLogo?17.8:b.x+logoW+1,textLeft=referenceLogo?20.7:m.logo?b.x+logoW+2:b.x+pad,right=referenceLogo?w-4.7:b.x+b.w-pad,available=right-textLeft,maxName=m.logo?55:73,nameW=Math.min(available,maxName),textX=textLeft+(available-nameW)/2;
  if(available<12)throw new Error('Area nama terlalu sempit untuk model berlogo.');
  if(m.logo){const key=logoKey(order),asset=assets[key];let rect;
-  if(legacy)rect={x:b.x+1.6,y:b.y+1.1,w:logoW-2.8,h:b.h-2.2};
+  if(referenceLogo){
+   // Visible reference extents: blue ~12.33 x 12.26 mm; gold ~15.38 x
+   // 13.89 (model 4), ~14.94 x 13.50 (9); shield ~10.52 x 14.47 (5/10).
+   // These are fitting boxes: other aspect ratios remain proportional.
+   const spec=m.divider?{cx:9.8,w:11.2,h:14.5}:m.number===4?{cx:10.35,w:15.4,h:14}:m.number===9?{cx:11.05,w:15,h:13.6}:{cx:10.05,w:12.4,h:13.2},height=Math.min(spec.h,b.h-1.4);
+   rect={x:spec.cx-spec.w/2,y:(h-height)/2,w:spec.w,h:height};
+  }
+  else if(legacy)rect={x:b.x+1.6,y:b.y+1.1,w:logoW-2.8,h:b.h-2.2};
   else{const maxW=m.divider?11.2:12.4,maxH=Math.min(b.h-2.8,m.divider?14.2:13.2);rect={x:b.x+1.8,y:b.y+(b.h-maxH)/2,w:maxW,h:maxH};}
   if(asset?.data){const info=logoImageInfo(asset),scale=Math.min(rect.w/info.width,rect.h/info.height),dpi=25.4/scale;
    if(dpi<150&&!preview)throw new Error('Resolusi logo '+(C.text(order.logo)||order.name)+' hanya '+Math.round(dpi)+' dpi. Gunakan gambar lebih besar (minimal 150 dpi, disarankan 300 dpi).');
@@ -87,7 +99,7 @@ function artwork(order,input=DEFAULTS,assets={},preview=false,engine=BUILD){
   else if(asset?.omit){warnings.push('Area logo sengaja dikosongkan.');}
   else if(preview){shapes.push({type:'rect',...rect,fill:'#233e50',stroke:'#aac5d6',line:.15});const t=fitText('LOGO',rect,2.1,0,legacy ? .8 : .9,font);shapes.push(...t.paths.map(p=>({type:'path',...p,fill:'#ffffff'})));warnings.push('Unggah logo atau pilih area logo kosong.');}
   else throw new Error('Logo '+(C.text(order.logo)||'Model '+m.number)+' belum diunggah.');
-  if(m.divider)shapes.push({type:'line',x:b.x+logoW+1,y:b.y,x2:b.x+logoW+1,y2:b.y+b.h,line:legacy ? .32 : .75,stroke:'#ffffff'});
+  if(m.divider)shapes.push({type:'line',x:dividerX,y:b.y,x2:dividerX,y2:b.y+b.h,line:legacy ? .32 : .75,stroke:'#ffffff'});
  }
   const widthScale=m.nip?s.nameNipWidthScale:s.nameWidthScale,rawName=printableText(order.name),letters=Array.from(rawName).filter(c=>/\p{L}/u.test(c)).length,tracking=letters>0&&letters<8&&(profile!=='current'||!/(?:\s)/u.test(rawName.trim()))?s.shortSpacing*widthScale:0,lineY=b.y+b.h*(profile==='current'?.56:.58);
   const nameBox={x:textX,y:b.y+.85,w:nameW,h:m.nip?lineY-b.y-1.65:b.h-1.7},nameFont=profile==='current'&&m.nip?(native&&L&&L.get(swisFontKey(engine),C.text(order.name)+C.text(order.nip))||F.swis||font):font,nameCondense=s.condense*widthScale;
@@ -95,7 +107,7 @@ function artwork(order,input=DEFAULTS,assets={},preview=false,engine=BUILD){
  shapes.push(...name.paths.map(p=>({type:'path',...p,fill:'#ffffff'})));
  let nipFont=null;
  if(name.compression<.55)warnings.push('Nama sangat panjang; periksa keterbacaan.');
- if(m.nip){shapes.push({type:'line',x:textLeft,y:lineY,x2:right,y2:lineY,line:legacy ? .3 : .75,stroke:'#ffffff'});let raw=printableText(order.nip);if(/^\d[\d .-]*$/.test(raw))raw='NIP. '+raw;
+ if(m.nip){shapes.push({type:'line',x:referenceLogo&&m.divider?dividerX:textLeft,y:lineY,x2:referenceLogo&&m.divider?b.x+b.w:right,y2:lineY,line:legacy?.3:referenceLogo&&m.number===9?.5:.75,stroke:'#ffffff'});let raw=printableText(order.nip);if(/^\d[\d .-]*$/.test(raw))raw='NIP. '+raw;
   nipFont=profile==='current'?(native&&L&&L.get(swisFontKey(engine),raw)||F.swis||font):font;const nipCondense=s.condense*s.nipWidthScale,nip=fitText(raw,{x:textLeft,y:lineY+.85,w:available,h:b.y+b.h-lineY-1.55},s.nipHeight,0,nipCondense,nipFont,proportionalFitEngine(engine));
   shapes.push(...nip.paths.map(p=>({type:'path',...p,fill:'#ffffff'})));if(!raw)warnings.push('Baris NIP / jabatan kosong.');if(nip.compression<.55)warnings.push('NIP / jabatan sangat panjang; periksa keterbacaan.');
  }else if(C.text(order.nip))warnings.push('Model ini tidak menampilkan NIP / jabatan.');
@@ -116,17 +128,44 @@ function plan(orders,input,assets={},preview=false,engine=BUILD){
 }
 function crops(x,y,w,h){const gap=.4,len=1;return[[x-gap-len,y,x-gap,y],[x,y-gap-len,x,y-gap],[x+w+gap,y,x+w+gap+len,y],[x+w,y-gap-len,x+w,y-gap],[x-gap-len,y+h,x-gap,y+h],[x,y+h+gap,x,y+h+gap+len],[x+w+gap,y+h,x+w+gap+len,y+h],[x+w,y+h+gap,x+w,y+h+gap+len]];}
 function sheetSvg(layout,pageIndex=0){const s=layout.settings,items=layout.pages[pageIndex];return`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${s.pageWidth} ${s.pageHeight}" class="print-sheet" role="img" aria-label="Lembar ${pageIndex+1}"><rect width="${s.pageWidth}" height="${s.pageHeight}" fill="white"/>${items.map(v=>{const group=v.rotation===90?`<g transform="matrix(0 1 -1 0 ${v.x+s.tagHeight} ${v.y})">${svgShapes(v.art.shapes)}</g>`:`<g transform="translate(${v.x} ${v.y})">${svgShapes(v.art.shapes)}</g>`,cw=v.rotation===90?s.tagHeight:s.tagWidth,ch=v.rotation===90?s.tagWidth:s.tagHeight;return group+(s.cropMarks?crops(v.x,v.y,cw,ch).map(([x,y,x2,y2])=>`<path d="M${x},${y}L${x2},${y2}" stroke="#666" stroke-width=".1"/>`).join(''):'');}).join('')}</svg>`;}
+// TrueType outlines use quadratic SVG Q segments. The bundled PDF library maps
+// Q to PDF v (a different cubic curve). Convert exactly before exporting new
+// sheets, while keeping the SVG preview and archived sheets unchanged.
+function pdfFontPath(d){
+ if(!/[Qq]/.test(d))return d;
+ const tokens=d.match(/[+-]?(?:\d*\.\d+|\d+\.?\d*)(?:e[+-]?\d+)?|[a-z]/gi)||[],out=[];
+ let i=0,x=0,y=0,startX=0,startY=0,op=null;
+ while(i<tokens.length){
+  if(/^[a-z]$/i.test(tokens[i])){const token=tokens[i++];op=token==='z'?'Z':token;}
+  const count={M:2,L:2,H:1,V:1,Q:4,C:6,Z:0}[op];
+  if(count===undefined)throw new Error('Kurva font tidak didukung. Pilih file TTF standar.');
+  const a=tokens.slice(i,i+count).map(Number);i+=count;
+  if(a.length!==count||a.some(v=>!Number.isFinite(v)))throw new Error('Kurva font tidak valid. Pilih ulang file TTF.');
+  if(op==='Q'){
+   const [qx,qy,endX,endY]=a;
+   out.push('C'+[x+(qx-x)*2/3,y+(qy-y)*2/3,endX+(qx-endX)*2/3,endY+(qy-endY)*2/3,endX,endY].join(' '));
+   x=endX;y=endY;
+  }else{
+   out.push(op+a.join(' '));
+   if(op==='Z'){x=startX;y=startY;op=null;}
+   else if(op==='H')x=a[0];
+   else if(op==='V')y=a[0];
+   else{x=a[count-2];y=a[count-1];if(op==='M'){startX=x;startY=y;op='L';}}
+  }
+ }
+ return out.join('');
+}
 async function pdf(job){
  if(nativeFontEngine(job.engine||BUILD)){if(!L)throw new Error('Modul font lokal belum dimuat. Muat ulang aplikasi.');L.requireReady(job.orders||[],job.engine||BUILD);}
  const lib=root.PDFLib;if(!lib)throw new Error('Mesin PDF belum termuat. Muat ulang halaman.');const layout=plan(job.orders,job.settings,jobAssets(job),false,job.engine||BUILD),doc=await lib.PDFDocument.create();
  doc.setTitle('NametagFlow '+job.id);doc.setSubject('Cetak ukuran asli 100%. '+layout.settings.tagWidth+' x '+layout.settings.tagHeight+' mm. Layout '+layout.settings.layoutMode+'.');doc.setCreator('NametagFlow '+(job.engine||BUILD));doc.setCreationDate(new Date(job.createdAt));doc.setModificationDate(new Date(job.createdAt));
- const color=hex=>hex==='#000000'?lib.grayscale(0):hex==='#ffffff'?lib.grayscale(1):lib.rgb(parseInt(hex.slice(1,3),16)/255,parseInt(hex.slice(3,5),16)/255,parseInt(hex.slice(5,7),16)/255),images=new Map();
+ const color=hex=>hex==='#000000'?lib.grayscale(0):hex==='#ffffff'?lib.grayscale(1):lib.rgb(parseInt(hex.slice(1,3),16)/255,parseInt(hex.slice(3,5),16)/255,parseInt(hex.slice(5,7),16)/255),images=new Map(),fontPaths=new Map(),exactCurves=exactCurveEngine(job.engine||BUILD);
  for(const items of layout.pages){const s=layout.settings,page=doc.addPage([s.pageWidth*MM,s.pageHeight*MM]),point=(item,x,y)=>item.rotation===90?{x:(item.x+s.tagHeight-y)*MM,y:(s.pageHeight-item.y-x)*MM}:{x:(item.x+x)*MM,y:(s.pageHeight-item.y-y)*MM};
   for(const item of items){for(const p of item.art.shapes){
    if(p.type==='rect'){if(item.rotation===90){const x=(item.x+s.tagHeight-p.y-p.h)*MM,y=(s.pageHeight-item.y-p.x-p.w)*MM;page.drawRectangle({x,y,width:p.h*MM,height:p.w*MM,color:color(p.fill),...(p.stroke?{borderColor:color(p.stroke),borderWidth:p.line*MM}:{})});}else{const x=(item.x+p.x)*MM,y=(s.pageHeight-item.y-p.y)*MM;page.drawRectangle({x,y:y-p.h*MM,width:p.w*MM,height:p.h*MM,color:color(p.fill),...(p.stroke?{borderColor:color(p.stroke),borderWidth:p.line*MM}:{})});}}
    else if(p.type==='line'){const a=point(item,p.x,p.y),b=point(item,p.x2,p.y2);page.drawLine({start:a,end:b,thickness:p.line*MM,color:color(p.stroke)});}
    else if(p.type==='image'){if(!images.has(p.data))images.set(p.data,p.data.startsWith('data:image/png')?await doc.embedPng(p.data):await doc.embedJpg(p.data));if(item.rotation===90){const x=(item.x+s.tagHeight-p.y-p.h)*MM,y=(s.pageHeight-item.y-p.x)*MM;page.drawImage(images.get(p.data),{x,y,width:p.w*MM,height:p.h*MM,rotate:lib.degrees(-90)});}else{const x=(item.x+p.x)*MM,y=(s.pageHeight-item.y-p.y)*MM;page.drawImage(images.get(p.data),{x,y:y-p.h*MM,width:p.w*MM,height:p.h*MM});}}
-   else{const a=point(item,p.x,p.y);page.pushOperators(lib.pushGraphicsState(),item.rotation===90?lib.concatTransformationMatrix(0,-p.sx*MM,p.sy*MM,0,a.x,a.y):lib.concatTransformationMatrix(p.sx*MM,0,0,p.sy*MM,a.x,a.y));page.drawSvgPath(p.d,{x:0,y:0,scale:1,color:color(p.fill)});page.pushOperators(lib.popGraphicsState());}
+   else{const a=point(item,p.x,p.y);page.pushOperators(lib.pushGraphicsState(),item.rotation===90?lib.concatTransformationMatrix(0,-p.sx*MM,p.sy*MM,0,a.x,a.y):lib.concatTransformationMatrix(p.sx*MM,0,0,p.sy*MM,a.x,a.y));if(exactCurves&&!fontPaths.has(p.d))fontPaths.set(p.d,pdfFontPath(p.d));page.drawSvgPath(exactCurves?fontPaths.get(p.d):p.d,{x:0,y:0,scale:1,color:color(p.fill)});page.pushOperators(lib.popGraphicsState());}
   }
   if(s.cropMarks){const cw=item.rotation===90?s.tagHeight:s.tagWidth,ch=item.rotation===90?s.tagWidth:s.tagHeight;for(const [x,y,x2,y2] of crops(item.x,item.y,cw,ch))page.drawLine({start:{x:x*MM,y:(s.pageHeight-y)*MM},end:{x:x2*MM,y:(s.pageHeight-y2)*MM},color:lib.grayscale(.45),thickness:.1*MM});}
   }
@@ -208,6 +247,6 @@ function restoreBackup(main,prints,backup,includePending=false){
 }
 function acknowledge(state,op,result){if(!result?.committed)return;state.printReceipts??={};if(state.printReceipts[op.opId]||op.printJobId)state.printReceipts[op.opId]={jobId:op.printJobId,...state.printReceipts[op.opId],confirmed:true,confirmedAt:new Date().toISOString()};}
 function jobStatus(j,state){if(j.completedAt)return 'Cetak dikonfirmasi';if(j.finishSubmittedAt){const moves=(j.moves||[]).map(m=>moveState(m,state)),left=moves.filter(m=>!m.confirmed&&!m.cancelled);if(!left.length)return moves.some(m=>m.cancelled&&!m.confirmed)?'Cetak dikonfirmasi · perpindahan dibatalkan':'Cetak dikonfirmasi';return left.some(m=>!state.pending.some(p=>p.operation.opId===m.activeOpId&&p.status!=='blocked'))?'Periksa perpindahan di antrean simpan':'Cetak dikonfirmasi · menunggu '+left.length+' penyimpanan';}return j.downloadedAt?'PDF diunduh · belum dikonfirmasi cetak':'Siap diunduh';}
-root.NFPrint={BUILD,DEFAULTS,V13_8_10_DEFAULTS,V13_8_6_DEFAULTS,V13_8_DEFAULTS,V13_7_DEFAULTS,LEGACY_DEFAULTS,settings,currentSettings,grid,engineProfile,legacyEngine,nativeFontEngine,boldFontEngine,arialFontKey,swisBoldEngine,swisFontKey,fontFor,logoKey,jobAssets,logoImageInfo,checkLogoPixels,signature,sameCycle,fitText,proportionalFitEngine,artwork,tagSvg,plan,sheetSvg,pdf,createJob,finishJob,acknowledge,relinkOperation,rebaseData,cancelOperations,moveState,exportMoves,restoreBackup,jobStatus};
+root.NFPrint={BUILD,exactCurveEngine,pdfFontPath,DEFAULTS,V13_8_10_DEFAULTS,V13_8_6_DEFAULTS,V13_8_DEFAULTS,V13_7_DEFAULTS,LEGACY_DEFAULTS,settings,currentSettings,grid,engineProfile,legacyEngine,nativeFontEngine,boldFontEngine,arialFontKey,swisBoldEngine,swisFontKey,fontFor,logoKey,jobAssets,logoImageInfo,checkLogoPixels,signature,sameCycle,fitText,proportionalFitEngine,artwork,tagSvg,plan,sheetSvg,pdf,createJob,finishJob,acknowledge,relinkOperation,rebaseData,cancelOperations,moveState,exportMoves,restoreBackup,jobStatus};
 if(typeof module!=='undefined')module.exports=root.NFPrint;
 })(globalThis);

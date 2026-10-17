@@ -1,0 +1,32 @@
+LAPORAN AUDIT NAMETAGFLOW V13.8.14
+Tanggal: 17 Oktober 2026
+Sumber audit: paket aplikasi v13.8.13 dan backend v13.8.12.
+
+HASIL
+Ada masalah yang terbukti melalui reproduksi lokal, lalu diperbaiki:
+
+1. Pengaturan cetak bisa berubah ketika versi desain naik.
+   Penyebab: migrasi menganggap nilai yang kebetulan sama dengan default
+   v13.6/v13.7 sebagai setelan lama. Contoh: mode Grid menjadi Corel 29,
+   margin 8 mm berubah menjadi 11,85 mm; ukuran/spasi khusus juga terdampak.
+   Perbaikan: deteksi berdasarkan versi sumber. Setelan v13.8.x dipertahankan;
+   migrasi font dari versi sebelum Bold tetap mengikuti aturan sebelumnya.
+
+2. Dialog cetak dapat terbuka kembali setelah ditutup.
+   Penyebab: pembacaan/deteksi font berjalan asinkron tanpa identitas dialog
+   pada awal pembukaan. Hasil lama dapat melanjutkan pembukaan formulir.
+   Perbaikan: pembukaan, font, dan kelanjutan ekspor memeriksa dialog serta
+   sesi asal. Riwayat atau formulir baru membatalkan pembukaan sebelumnya.
+
+3. Respons akses/log yang terlambat dapat dipakai di sesi berikutnya.
+   Penyebab: login yang sedang berlangsung tidak dibatalkan saat Keluar;
+   pemuatan log menggunakan sesi global setelah respons diterima.
+   Perbaikan: respons harus cocok dengan generasi sesi dan dialog asal.
+   Guard serupa diterapkan pada transaksi lokal, pembaruan antartab,
+   peninjauan konflik, callback kunci sinkronisasi dan konfirmasi cetak.
+
+Enam skenario regresi awal gagal terhadap kode v13.8.13 dan lulus setelah
+perbaikan. Pengujian tambahan memeriksa jalur normal dan kasus lintas sesi.
+
+
+Lihat LAPORAN-AUDIT-V13.8.14.txt untuk cakupan dan batas pengujian.

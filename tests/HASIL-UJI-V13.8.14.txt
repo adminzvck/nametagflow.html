@@ -1,0 +1,23 @@
+HASIL UJI V13.8.14
+
+127/127 pengujian aplikasi/backend lulus.
+19/19 pengujian font lokal lulus.
+Total: 146/146. Data sintetis; tanpa jaringan atau data produksi.
+
+Jalankan dari folder aplikasi dengan Node 18+:
+  node tests/run-tests.cjs
+  node tests/local-font-tests.cjs
+
+16 kasus baru mencakup migrasi setelan khusus, login/log respons terlambat,
+pembatalan dialog/font cetak, perpindahan ruang produksi, transaksi lokal,
+callback kunci sync, tinjauan konflik, konfirmasi cetak dan fixture 10 model.
+Enam skenario awal direproduksi gagal pada kode v13.8.13 sebelum perbaikan.
+
+Fixture geometry-v13.8.13.json berasal dari kode v13.8.13 yang belum diubah.
+Setiap model dibandingkan dengan engine baru dan engine riwayat v13.8.13.
+80 + 20 fixture historis sebelumnya tetap lulus. Pengujian penyimpanan
+25/100 item, retry dan pemulihan journal juga tetap lulus.
+
+Sintaks 9 file JS/CJS utama/pengujian dan skrip inline HTML valid.
+Backend byte-identical dengan paket v13.8.13, versi backend tetap 13.8.12.
+Batas: belum diuji di browser, akun Google atau printer pengguna.

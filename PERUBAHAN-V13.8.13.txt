@@ -1,0 +1,19 @@
+PERUBAHAN V13.8.13
+
+- Model 3/8: posisi logo ditambatkan ke tepi luar, bukan tepi bidang hitam.
+- Model 4/9: ruang logo melebar ditambah sesuai referensi Corel, posisi teks
+  dan garis diselaraskan. Model 9 memakai garis horizontal 0,5 mm.
+- Model 5/10: posisi kolom diselaraskan; logo tinggi mendapat ruang 14,5 mm;
+  garis T tersambung hingga tepi kanan bidang hitam.
+- Semua gambar tetap proporsional, terpusat vertikal, dan tidak menyentuh teks.
+- Ekspor PDF baru mengubah Q (kuadratik) menjadi C (kubik) secara matematis,
+  menghindari pemetaan Q ke operator PDF v oleh pdf-lib yang mengubah kurva.
+- Hasil preview SVG menggunakan kurva asli. PDF dan preview kini konsisten.
+- Histori <=13.8.12 mempertahankan geometri dan perilaku ekspor sebelumnya.
+- Data, antrean simpan, backend dan pengaturan font pengguna tetap kompatibel.
+- Backend/Code.gs identik dengan v13.8.12. Pembaruan ini dipasang di GitHub.
+
+Detail ukuran bersumber pada objek vektor/bitmap dalam referensi Corel,
+kemudian dibulatkan sebagai profil umum. Tidak mengklaim setiap objek
+manual pada referensi mempunyai ukuran identik. Logo perisai dalam CDR
+memiliki transformasi gambar; aplikasi mempertahankan rasio file asli.

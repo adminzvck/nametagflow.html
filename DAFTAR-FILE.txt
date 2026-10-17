@@ -1,11 +1,13 @@
-NAMETAGFLOW V13.8.12 - DAFTAR FILE
+NAMETAGFLOW V13.8.14 - DAFTAR FILE
 
 00-BACA-DULU.txt
 COBA-CETAK.html
 CONTOH-LAMA.txt
+Contoh-6-Model-Logo-v13.8.13.pdf
 Contoh-Cetak-10-Model-v13.8.2.pdf
 Contoh-Cetak-10-Model.pdf
 DAFTAR-FILE.txt
+LAPORAN-AUDIT-V13.8.14.txt
 LAPORAN-PERBAIKAN-V13.7.txt
 LAPORAN-PERBAIKAN-V13.8.txt
 PANDUAN-LOGO-DAN-CORELDRAW.txt
@@ -17,6 +19,8 @@ PERUBAHAN-V13.7.txt
 PERUBAHAN-V13.8.10.txt
 PERUBAHAN-V13.8.11.txt
 PERUBAHAN-V13.8.12.txt
+PERUBAHAN-V13.8.13.txt
+PERUBAHAN-V13.8.14.txt
 PERUBAHAN-V13.8.2.txt
 PERUBAHAN-V13.8.3.txt
 PERUBAHAN-V13.8.4.txt
@@ -33,8 +37,12 @@ PETUNJUK-GITHUB-V13.8.7.txt
 PETUNJUK-GITHUB-V13.8.8.txt
 PETUNJUK-GITHUB-V13.8.9.txt
 PETUNJUK-PEMASANGAN-V13.8.12.txt
+PETUNJUK-PEMASANGAN-V13.8.13.txt
+PETUNJUK-PEMASANGAN-V13.8.14.txt
 PETUNJUK.txt
 PROMPT-HARIAN-GEMINI.txt
+Panduan-6-Model-Logo-v13.8.13.pdf
+Perbandingan-Kurva-v13.8.13.pdf
 Perbandingan-NIP-v13.8.12.pdf
 Perbandingan-Sebelum-Sesudah.pdf
 Pratinjau-10-Model-v13.8.2.png
@@ -55,9 +63,17 @@ VERIFIKASI-Layout-Corel-29.pdf
 VERIFIKASI-Layout-Corel-29.png
 app.js
 arsip-panduan/00-BACA-DULU-v13.8.11.txt
+arsip-panduan/00-BACA-DULU-v13.8.12.txt
+arsip-panduan/00-BACA-DULU-v13.8.13.txt
 arsip-panduan/PANDUAN-LOGO-DAN-CORELDRAW-v13.8.11.txt
+arsip-panduan/PANDUAN-LOGO-DAN-CORELDRAW-v13.8.12.txt
+arsip-panduan/PANDUAN-LOGO-DAN-CORELDRAW-v13.8.13.txt
 arsip-panduan/PETUNJUK-v13.8.11.txt
+arsip-panduan/PETUNJUK-v13.8.12.txt
+arsip-panduan/PETUNJUK-v13.8.13.txt
 arsip-panduan/README-v13.8.11.md
+arsip-panduan/README-v13.8.12.md
+arsip-panduan/README-v13.8.13.md
 backend/Code.gs
 backend/appsscript.json
 core.js
@@ -74,6 +90,8 @@ styles.css
 tests/HASIL-UJI-V13.8.10.txt
 tests/HASIL-UJI-V13.8.11.txt
 tests/HASIL-UJI-V13.8.12.txt
+tests/HASIL-UJI-V13.8.13.txt
+tests/HASIL-UJI-V13.8.14.txt
 tests/HASIL-UJI-V13.8.2.txt
 tests/HASIL-UJI-V13.8.3.txt
 tests/HASIL-UJI-V13.8.4.txt
@@ -82,9 +100,12 @@ tests/HASIL-UJI-V13.8.7.txt
 tests/HASIL-UJI-V13.8.8.txt
 tests/HASIL-UJI-V13.8.9.txt
 tests/HASIL-UJI.txt
+tests/fixtures/geometry-v13.8.13.json
 tests/fixtures/legacy-geometry-v13.8.10.json
+tests/fixtures/legacy-logo-geometry-v13.8.12.json
 tests/fixtures/logo-demo.png
 tests/fixtures/logo-lowres.png
+tests/fixtures/logo-portrait.png
 tests/fixtures/logo-wide.jpg
 tests/local-font-tests.cjs
 tests/make-user-preview.cjs

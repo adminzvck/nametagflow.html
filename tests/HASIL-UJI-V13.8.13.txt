@@ -1,0 +1,32 @@
+HASIL UJI V13.8.13
+
+111/111 pengujian aplikasi/backend lulus.
+19/19 pengujian font lokal lulus.
+Total: 130/130. Menggunakan data sintetis, tanpa akses data produksi.
+
+Cakupan baru:
+- Keenam model logo: gambar persegi, melebar dan tinggi; ukuran nametag
+  standar serta batas kecil/besar; rasio, posisi vertikal dan jarak teks.
+- Model 5/10: garis horizontal menyatu dengan garis vertikal dan tepi kanan.
+- Anchor logo model lis/polos, ruang lambang melebar, batas teks 55 mm.
+- 20 fixture geometri historis dari engine asli v13.8.11/12.
+- 80 fixture profil historis sebelumnya tetap lulus.
+- Konversi kurva font kuadratik ke kubik: sampling parameter 0..1 identik
+  secara matematis dengan toleransi <1e-12, termasuk kontur bertingkat.
+- PDF baru memakai operator kubik yang benar; PDF lama tetap memakai
+  operator asal. Posisi putar 90 derajat tetap benar.
+- Sintaks seluruh JavaScript lolos. Backend identik byte dengan v13.8.12.
+
+Pemeriksaan tambahan dengan sumber asli (di luar fixture sintetis):
+- 91 glyph contoh pada PDF baru cocok dengan kurva Arial Bold dan
+  Swis721 BT Bold yang dikonversi secara matematis dari font sumber Corel.
+- PDF arsip v13.8.12 untuk keenam model logo identik byte ketika dibuat
+  ulang dengan aplikasi asli dan aplikasi yang telah diperbarui.
+- PDF enam model dan lembar 29 posisi telah dirender serta diperiksa.
+- Model 5/10 pada PDF contoh memakai logo biru dari Corel; logo perisai
+  diuji melalui fixture bentuk tinggi. Logo pesanan tetap ditentukan pengguna.
+- Tidak ada font TTF/OTF/TTC berlisensi yang dimasukkan ke paket.
+
+Batas: belum diuji pada browser/akun Google atau printer pengguna.
+Preview Node menggunakan outline asli tanpa kerning canvas browser.
+Percepatan simpan v13.8.12 tetap berlaku; tidak mengklaim waktu dalam detik.

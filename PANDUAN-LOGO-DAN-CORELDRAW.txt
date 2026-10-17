@@ -1,18 +1,49 @@
-PANDUAN COREL / FONT V13.8.12
+PANDUAN LOGO V13.8.14
+Geometri sama dengan v13.8.13; contoh PDF v13.8.13 tetap berlaku.
 
-Nama tanpa NIP: Arial Bold 28 pt, lebar 70%.
-Nama dengan NIP: Swis721 BT Bold 21 pt, lebar 70%.
-Nomor NIP: Swis721 BT Bold 13 pt, lebar 79%.
+2. ENAM MODEL BERLOGO
+Model 3  : lis, logo kiri, nama kanan.
+Model 4  : lis, logo kiri, nama dan NIP kanan.
+Model 5  : lis, kolom logo kiri, nama dan NIP kanan, garis T menyambung.
+Model 8  : polos, logo kiri, nama kanan.
+Model 9  : polos, logo kiri, nama dan NIP kanan.
+Model 10 : polos, kolom logo kiri, nama dan NIP kanan, garis T menyambung.
 
-Hubungkan font asli di Cetak Produksi > Kelola font. Gunakan file TTF Bold
-standar, bukan Regular, Italic, atau Condensed. Font dibaca dan disimpan
-hanya di browser PC produksi, tidak diunggah ke GitHub/server.
+Posisi logo mengacu pada tepi luar nametag. Model polos tidak lagi menggeser
+logo ke kiri hanya karena tidak memakai lis. Ruang model 4/9 disesuaikan
+untuk lambang yang melebar; model 5/10 menampung logo tinggi/perisai.
+Gambar tetap mengikuti rasio aslinya dan berada di tengah secara vertikal.
+Nama dibatasi maksimal 55 mm. Garis model 5/10 mencapai garis vertikal dan
+tepi kanan bidang hitam. Ketebalan garis model 9 mengikuti contoh 0,5 mm.
 
-Unggah logo PNG/JPG maksimal 5 MB. Gunakan setidaknya 150 dpi pada ukuran
-cetak (disarankan 300 dpi). Periksa posisi logo pada pratinjau setiap model.
-PDF memakai kurva huruf dan logo gambar. Buka di CorelDRAW pada ukuran asli.
-Cetak 100% / Actual size, tanpa Fit to page.
+3. LOGO YANG DIGUNAKAN
+- Unggah logo pesanan PNG/JPG maksimal 5 MB. Logo tidak dipilih otomatis
+  berdasarkan nomor model; gunakan logo yang sesuai dengan pesanan.
+- Untuk hasil di latar hitam, PNG transparan tanpa ruang kosong berlebih
+  di sekeliling gambar paling mudah diposisikan sesuai referensi.
+- Latar putih atau ruang kosong dalam file ikut tampil. Aplikasi menjaga
+  isi gambar, warna dan rasio; tidak menggambar ulang atau menghapus latar.
+- Minimal 150 dpi pada ukuran cetak, disarankan 300 dpi atau lebih.
+- Contoh PDF menggunakan logo biru/emas dari Corel. Model 5/10 pada contoh
+  memakai logo biru untuk memperlihatkan susunannya; logo dapat diganti.
 
-Buat lembar BARU untuk koreksi font ini. PDF riwayat lama memakai profil
-awalnya. Font Regular lama tetap disimpan untuk membaca riwayat tersebut.
-Baca 00-BACA-DULU.txt untuk pembaruan Apps Script dan GitHub.
+4. FONT DAN PDF
+- Nama tanpa NIP: Arial Bold, 28 pt, lebar awal 70%.
+- Nama dengan NIP: Swis721 BT Bold, 21 pt, lebar awal 70%.
+- Nomor NIP: Swis721 BT Bold, 13 pt, lebar awal 79%.
+- Hubungkan font asli melalui Cetak Produksi > Kelola font.
+- Kurva lengkung TrueType sekarang dikonversi dengan benar ke PDF.
+- Font tidak dibundel; font tersimpan lokal di browser PC produksi.
+- Model tanpa logo mempertahankan ukuran dan posisi v13.8.12.
+
+5. CONTOH DAN HASIL UJI
+Panduan-6-Model-Logo-v13.8.13.pdf : penjelasan enam model, diberi nomor.
+Contoh-6-Model-Logo-v13.8.13.pdf  : contoh lembar cetak ukuran asli.
+Perbandingan-Kurva-v13.8.13.pdf  : perbandingan lengkungan huruf.
+tests/HASIL-UJI-V13.8.14.txt     : rincian pengujian.
+
+146 pengujian otomatis lulus. Enam model diperiksa pada PDF, termasuk
+posisi diputar 90 derajat dalam susunan 29 nametag. Riwayat v13.8.11/12
+menjaga geometri asal. Pengujian tidak mengakses atau mengubah data produksi.
+Referensi Corel mengandung penyesuaian manual per objek; pembaruan mengikuti
+susunan dan proporsi umumnya. Kerning akhir mengikuti browser/font asli.

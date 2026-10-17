@@ -1,0 +1,64 @@
+NAMETAGFLOW V13.8.13 - LOGO REFERENSI DAN KURVA PDF
+
+Pembaruan tampilan/cetak dipasang lewat GitHub. Backend di paket ini tetap
+v13.8.12. Jika Apps Script v13.8.12 sudah aktif, tidak perlu deploy ulang.
+Jika belum, pasang backend v13.8.12 agar penyimpanan kelompok aktif;
+petunjuknya ada di PETUNJUK-PEMASANGAN-V13.8.12.txt.
+
+1. PEMASANGAN PEMBARUAN
+- Tunggu Antrean simpan 0, kemudian simpan Backup & draf dan Backup cetak.
+- Ekstrak ZIP dan buka folder NametagFlow-v13.8.13-LENGKAP.
+- Unggah seluruh ISI folder ke lokasi index.html lama di GitHub, termasuk
+  subfolder pendukung. Timpa file bernama sama, lalu commit.
+- Tunggu GitHub Pages selesai menerbitkan. Buka situs, tekan Ctrl+Shift+R.
+- Pastikan tulisan versi aplikasi menunjukkan V13.8.13.
+- Buat lembar cetak BARU. Riwayat lama mempertahankan desain versi asalnya;
+  mengunduh ulang riwayat lama tidak menerapkan koreksi desain baru.
+- Cetak Actual size / 100%, tanpa Fit to page.
+
+2. ENAM MODEL BERLOGO
+Model 3  : lis, logo kiri, nama kanan.
+Model 4  : lis, logo kiri, nama dan NIP kanan.
+Model 5  : lis, kolom logo kiri, nama dan NIP kanan, garis T menyambung.
+Model 8  : polos, logo kiri, nama kanan.
+Model 9  : polos, logo kiri, nama dan NIP kanan.
+Model 10 : polos, kolom logo kiri, nama dan NIP kanan, garis T menyambung.
+
+Posisi logo mengacu pada tepi luar nametag. Model polos tidak lagi menggeser
+logo ke kiri hanya karena tidak memakai lis. Ruang model 4/9 disesuaikan
+untuk lambang yang melebar; model 5/10 menampung logo tinggi/perisai.
+Gambar tetap mengikuti rasio aslinya dan berada di tengah secara vertikal.
+Nama dibatasi maksimal 55 mm. Garis model 5/10 mencapai garis vertikal dan
+tepi kanan bidang hitam. Ketebalan garis model 9 mengikuti contoh 0,5 mm.
+
+3. LOGO YANG DIGUNAKAN
+- Unggah logo pesanan PNG/JPG maksimal 5 MB. Logo tidak dipilih otomatis
+  berdasarkan nomor model; gunakan logo yang sesuai dengan pesanan.
+- Untuk hasil di latar hitam, PNG transparan tanpa ruang kosong berlebih
+  di sekeliling gambar paling mudah diposisikan sesuai referensi.
+- Latar putih atau ruang kosong dalam file ikut tampil. Aplikasi menjaga
+  isi gambar, warna dan rasio; tidak menggambar ulang atau menghapus latar.
+- Minimal 150 dpi pada ukuran cetak, disarankan 300 dpi atau lebih.
+- Contoh PDF menggunakan logo biru/emas dari Corel. Model 5/10 pada contoh
+  memakai logo biru untuk memperlihatkan susunannya; logo dapat diganti.
+
+4. FONT DAN PDF
+- Nama tanpa NIP: Arial Bold, 28 pt, lebar awal 70%.
+- Nama dengan NIP: Swis721 BT Bold, 21 pt, lebar awal 70%.
+- Nomor NIP: Swis721 BT Bold, 13 pt, lebar awal 79%.
+- Hubungkan font asli melalui Cetak Produksi > Kelola font.
+- Kurva lengkung TrueType sekarang dikonversi dengan benar ke PDF.
+- Font tidak dibundel; font tersimpan lokal di browser PC produksi.
+- Model tanpa logo mempertahankan ukuran dan posisi v13.8.12.
+
+5. CONTOH DAN HASIL UJI
+Panduan-6-Model-Logo-v13.8.13.pdf : penjelasan enam model, diberi nomor.
+Contoh-6-Model-Logo-v13.8.13.pdf  : contoh lembar cetak ukuran asli.
+Perbandingan-Kurva-v13.8.13.pdf  : perbandingan lengkungan huruf.
+tests/HASIL-UJI-V13.8.13.txt     : rincian pengujian.
+
+130 pengujian otomatis lulus. Enam model diperiksa pada PDF, termasuk
+posisi diputar 90 derajat dalam susunan 29 nametag. Riwayat v13.8.11/12
+menjaga geometri asal. Pengujian tidak mengakses atau mengubah data produksi.
+Referensi Corel mengandung penyesuaian manual per objek; pembaruan mengikuti
+susunan dan proporsi umumnya. Kerning akhir mengikuti browser/font asli.

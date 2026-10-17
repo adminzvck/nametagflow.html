@@ -1,0 +1,48 @@
+NAMETAGFLOW V13.8.14 - HASIL AUDIT MENYELURUH
+
+Perbaikan kestabilan: pengaturan cetak, perpindahan sesi, respons terlambat,
+dan dialog cetak. Backend tetap v13.8.12.
+
+CARA MEMASANG
+1. Unduh backup perangkat lewat Backup & draf sebelum mengganti file web.
+2. Ekstrak ZIP lalu buka folder NametagFlow-v13.8.14-LENGKAP.
+3. Unggah isi folder aplikasi ke lokasi GitHub Pages yang sama.
+   Pastikan index.html berada pada folder sumber Pages, bukan di dalam
+   folder versi tambahan. Unggah semua file aplikasi agar modul seragam.
+4. Sesudah GitHub Pages selesai memperbarui, tekan Ctrl+Shift+R.
+5. Pastikan versi di sidebar menunjukkan V13.8.14.
+6. Jika Apps Script v13.8.12 sudah aktif, tidak perlu deploy ulang backend.
+   Jika masih lebih lama, ikuti PETUNJUK-PEMASANGAN-V13.8.12.txt.
+
+PERBAIKAN
+- Pilihan Grid, margin, jarak, ukuran dan pemadatan tulisan yang disetel
+  pada v13.8.x tidak lagi dianggap nilai bawaan versi jauh lebih lama.
+- Respons login yang tiba sesudah Keluar atau penutupan dialog diabaikan.
+- Log, transaksi lokal, sinkronisasi dan peninjauan konflik terikat pada
+  sesi/ruang produksi asal, sehingga respons lama tidak mengganti sesi baru.
+- Dialog cetak yang sudah ditutup tidak muncul lagi ketika pembacaan font
+  selesai terlambat. Beralih ke riwayat juga membatalkan pembukaan sebelumnya.
+- Kesalahan karakter font ditampilkan dengan pesan yang dapat dibaca.
+
+DESAIN DAN DATA
+- Semua 10 model tetap memakai geometri v13.8.13.
+- Nama tanpa NIP: Arial Bold 28 pt, lebar awal 70%.
+- Nama dengan NIP: Swis721 BT Bold 21 pt, lebar awal 70%.
+- NIP / jabatan: Swis721 BT Bold 13 pt, lebar awal 79%.
+- Logo model 3/4/5/8/9/10, garis T, dan kurva PDF mengikuti v13.8.13.
+- Riwayat cetak lama mempertahankan engine dan desainnya.
+- Pengaturan yang sudah terlanjur berubah oleh pembaruan sebelumnya tidak
+  dapat ditebak ulang; atur ulang nilainya jika sebelumnya memakai setelan khusus.
+- Font asli tetap dihubungkan dari PC, tidak disertakan dalam ZIP.
+- Antrean, riwayat dan logo lokal tetap memakai tempat penyimpanan yang sama.
+
+LAPORAN DAN CONTOH
+LAPORAN-AUDIT-V13.8.14.txt menjelaskan temuan dan batas pemeriksaan.
+tests/HASIL-UJI-V13.8.14.txt memuat ringkasan 146 pengujian yang lulus.
+Contoh PDF v13.8.13 tetap relevan karena geometri cetak tidak berubah:
+  Panduan-6-Model-Logo-v13.8.13.pdf
+  Contoh-6-Model-Logo-v13.8.13.pdf
+  Perbandingan-Kurva-v13.8.13.pdf
+Panduan dan contoh bernomor versi lama lainnya merupakan arsip.
+
+Paket ini belum diunggah ke GitHub atau dipasang pada akun pengguna.
